@@ -1,0 +1,276 @@
+/* ==========================================================================
+   AgriGrow Nakhon Phanom — Modern Premium GIS Smart Farm Stylesheet
+   เวอร์ชันตกแต่งพิเศษ: Modern Glassmorphism & Cyber-Agritech Dashboard
+   ========================================================================== */
+
+:root {
+    --theme-primary: #059669;
+    --theme-primary-dark: #047857;
+    --theme-secondary: #10b981;
+    --theme-light: #ecfdf5;
+    --theme-border: #a7f3d0;
+    --theme-header-from: #064e3b;
+    --theme-header-to: #0b151f;
+    --theme-bg: #f8fafc;
+    --theme-shadow: rgba(5, 150, 105, 0.28);
+    --theme-glow: rgba(16, 185, 129, 0.35);
+}
+
+/* Base & Typography */
+* {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Prompt', 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at 10% 10%, rgba(236, 253, 245, 0.8) 0%, #f8fafc 80%);
+    background-attachment: fixed;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.012em;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.45);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.7);
+}
+
+/* ==================== SIDEBAR MODERN DESIGN ==================== */
+.theme-header {
+    background: linear-gradient(175deg, var(--theme-header-from) 0%, #062b20 50%, var(--theme-header-to) 100%) !important;
+    position: relative;
+    box-shadow: 6px 0 30px -8px rgba(6, 78, 59, 0.35);
+}
+
+.theme-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.16), transparent 70%);
+    pointer-events: none;
+}
+
+/* Sidebar Tab Buttons */
+.tab-btn {
+    position: relative;
+    transition: all 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 14px;
+    border: 1px solid transparent;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 22px -3px var(--theme-shadow), 0 0 15px var(--theme-glow);
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.tab-btn.active::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 65%;
+    background: #ffffff;
+    border-radius: 9999px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+/* ==================== STICKY HEADER WITH BLUR ==================== */
+header.sticky {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+}
+
+/* ==================== BUTTONS & BADGES ==================== */
+.theme-btn-primary {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 18px -3px var(--theme-shadow);
+    transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -3px var(--theme-shadow);
+}
+
+.theme-btn-primary:active {
+    transform: translateY(0);
+}
+
+.theme-badge {
+    background-color: var(--theme-light);
+    border-color: var(--theme-border);
+    color: var(--theme-primary-dark);
+    font-weight: 600;
+}
+
+.theme-step-badge {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px var(--theme-shadow);
+}
+
+.score-btn {
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 12px;
+}
+
+.score-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.score-btn.active {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+    color: #ffffff;
+    border-color: var(--theme-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -3px var(--theme-shadow);
+}
+
+.swatch-btn {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.swatch-btn:hover {
+    transform: scale(1.15);
+}
+
+.swatch-btn.active {
+    transform: scale(1.25);
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px var(--theme-primary);
+}
+
+/* ==================== CARDS & CONTAINERS ==================== */
+.bg-white.rounded-2xl {
+    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(226, 232, 240, 0.85);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.bg-white.rounded-2xl:hover {
+    box-shadow: 0 14px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Dark 3D Cyber-Farm Container */
+.bg-slate-900 {
+    background: linear-gradient(145deg, #0d1527 0%, #080c16 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 22px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Interactive Floating AI Button */
+#floatingAiBtn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 45%, #047857 100%) !important;
+    box-shadow: 0 10px 28px -4px rgba(5, 150, 105, 0.55), 0 0 22px rgba(16, 185, 129, 0.45) !important;
+    border: 2px solid rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(8px);
+    animation: float-gentle 3.5s ease-in-out infinite alternate;
+    transition: all 0.26s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+#floatingAiBtn:hover {
+    transform: translateY(-6px) scale(1.06) !important;
+    box-shadow: 0 16px 36px -4px rgba(5, 150, 105, 0.7), 0 0 32px rgba(16, 185, 129, 0.6) !important;
+}
+
+@keyframes float-gentle {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-7px); }
+}
+
+/* Pulsing Live Dot */
+@keyframes pulse-ring {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #10b981;
+    animation: pulse-ring 2s infinite cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+/* Table Enhancements */
+table th {
+    letter-spacing: 0.02em;
+}
+
+table tbody tr {
+    transition: background-color 0.18s ease;
+}
+
+table tbody tr:hover {
+    background-color: rgba(241, 245, 249, 0.85);
+}
+
+/* Inputs & Form Elements Focus */
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px var(--theme-light), 0 0 0 1.5px var(--theme-primary) !important;
+}
+
+/* Stage Dot & Pins */
+.stage-dot.done {
+    background-color: var(--theme-primary);
+    color: #ffffff;
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 10px var(--theme-shadow);
+}
+
+.custom-crop-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+    border: 3px solid #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    font-size: 19px;
+    color: #ffffff;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-crop-pin:hover {
+    transform: scale(1.2) translateY(-4px);
+}
+
+/* Print Overrides */
+@media print {
+    .no-print { display: none !important; }
+    body { background: #ffffff; }
+}
