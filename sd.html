@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>พิพิธภัณฑ์ปลาแม่น้ำโขง นครพนม — นิทรรศการ AR ปลาน้ำโขง 3 มิติ</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Sarabun', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background-color: #04121f;
+      color: #e2f1ff;
+      overflow-x: hidden;
+    }
+    .glass-panel {
+      background: rgba(8, 28, 48, 0.78);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+    }
+    .ar-hud-border {
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.25), inset 0 0 20px rgba(14, 165, 233, 0.12);
+    }
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #22d3ee, #38bdf8, transparent);
+      box-shadow: 0 0 12px #22d3ee;
+      animation: scanMove 3.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes scanMove {
+      0%, 100% { top: 8%; opacity: 0.3; }
+      50% { top: 88%; opacity: 0.95; }
+    }
+    .pulse-ring {
+      animation: pulseRing 2s infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 211, 238, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #04121f; }
+    ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-cyan-500/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-700 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2 12c3-4.5 7.5-6 12-4.5 2.5.8 4.5 2.5 6 4.5 1.5-2 3-3.5 3-3.5v7s-1.5-1.5-3-3.5c-1.5 2-3.5 3.7-6 4.5-4.5 1.5-9 0-12-4.5z"/>
+            <circle cx="15" cy="11" r="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="siteMainTitle" class="text-base sm:text-lg font-bold tracking-tight text-white">พิพิธภัณฑ์ปลาแม่น้ำโขง จ.นครพนม</h1>
+            <span id="siteMainBadge" class="px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-full">AR &amp; AI 4.0</span>
+          </div>
+          <p id="siteMainSubtitle" class="text-xs text-cyan-200/75">สถานที่จัดแสดงโลกของปลาแม่น้ำโขง (หนองญาติ) • ระบบจำลองพันธุ์ปลา 3D, WebAR &amp; AI ออกรายงานอัตโนมัติ</p>
+        </div>
+      </div>
+
+      <!-- Navigation Option Tabs -->
+      <nav class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full py-1" aria-label="แท็บตัวเลือกหลัก">
+        <button id="tabBtn-ar" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25" data-tab="ar">
+          🥽 ห้องสำรวจ AR 3D
+        </button>
+        <button id="tabBtn-catalog" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-800/80 text-cyan-100 hover:bg-slate-700/80" data-tab="catalog">
+          🐟 สารานุกรมปลาน้ำโขง
+        </button>
+        <button id="tabBtn-zones" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-800/80 text-cyan-100 hover:bg-slate-700/80" data-tab="zones">
+          🏛️ โซนพิพิธภัณฑ์ &amp; สแกนป้าย
+        </button>
+        <button id="tabBtn-quiz" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-800/80 text-cyan-100 hover:bg-slate-700/80" data-tab="quiz">
+          🎯 ควิซนักอนุรักษ์
+        </button>
+        <button id="tabBtn-ai" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition bg-slate-800/80 text-amber-300 border border-amber-400/40 hover:bg-slate-700/80" data-tab="ai">
+          🤖 AI ขอรายงาน &amp; สั่งงาน
+        </button>
+        <button id="tabBtn-editor" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition bg-slate-800/80 text-emerald-300 border border-emerald-400/40 hover:bg-slate-700/80" data-tab="editor">
+          🛠️ แก้ไขเว็บเรียลไทม์
+        </button>
+      </nav>
+
+      <!-- Utility Controls -->
+      <div class="flex items-center gap-2">
+        <button id="btnInlineEditToggle" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/30 transition">
+          ✏️ คลิกแก้เว็บสด: ปิด
+        </button>
+        <button id="btnToggleAudio" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800/90 border border-cyan-500/30 text-cyan-200 hover:bg-slate-700 transition flex items-center gap-1.5" title="เปิด/ปิดเสียงบรรยากาศใต้น้ำ">
+          <span id="audioIcon">🔇</span>
+          <span id="audioLabel" class="hidden md:inline">เสียงใต้น้ำ: ปิด</span>
+        </button>
+        <button id="btnMuseumInfo" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-amber-500/20 border border-amber-400/40 text-amber-200 hover:bg-amber-500/30 transition">
+          📍 ข้อมูลเข้าชม
+        </button>
+      </div>
+    </div>
+    <!-- Live Custom Announcement Bar -->
+    <div id="liveMekongBanner" class="bg-gradient-to-r from-cyan-900/90 via-blue-900/90 to-slate-900/90 border-t border-cyan-500/30 px-4 sm:px-6 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-bold text-[10px]">LIVE AI</span>
+        <span id="liveMekongBannerText" class="text-cyan-100 font-medium">✨ ระบบอัปเกรดใหม่: มีแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานพันธุ์ปลาฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="switchTab('ai'); askMekongAI('ขอรายงานสรุปพันธุ์ปลาแม่น้ำโขงฉบับเต็ม');" class="px-2.5 py-0.5 rounded bg-amber-400 text-slate-950 font-bold text-[11px] hover:bg-amber-300 transition">📑 ขอรายงานทันที</button>
+        <button type="button" onclick="switchTab('editor')" class="px-2.5 py-0.5 rounded bg-cyan-500/30 text-cyan-200 border border-cyan-400/40 font-semibold text-[11px] hover:bg-cyan-500/40 transition">🛠️ แก้ไขเว็บสด</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- ==================== TAB 1: AR 3D VIEWER ==================== -->
+    <section id="view-ar" class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Left / Center: Interactive 3D & WebAR Viewport (8 cols) -->
+        <div class="lg:col-span-8 flex flex-col gap-3">
+          <div id="arViewportContainer" class="relative w-full h-[430px] sm:h-[520px] rounded-2xl overflow-hidden border border-cyan-400/40 ar-hud-border bg-gradient-to-b from-[#072640] via-[#041728] to-[#030e1a]">
+            
+            <!-- Optional Live Camera Video Background for Real AR feel -->
+            <video id="arCameraVideo" class="hidden absolute inset-0 w-full h-full object-cover opacity-85" autoplay playsinline muted></video>
+
+            <!-- Three.js Canvas Mount -->
+            <div id="threeCanvasMount" class="relative z-10 w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+            <!-- Scanning Laser Effect (Shown when AR Scan is active) -->
+            <div id="arScanLaser" class="scan-line hidden z-20"></div>
+
+            <!-- Top-Left AR HUD Overlay -->
+            <div class="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2 pointer-events-none">
+              <div class="px-3 py-1.5 rounded-xl bg-slate-950/75 border border-cyan-400/40 backdrop-blur-md flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-ring"></span>
+                <span id="hudModeLabel" class="text-xs font-semibold text-cyan-200">AR โหมดอุโมงค์ใต้น้ำหนองญาติ</span>
+              </div>
+              <div class="px-2.5 py-1 rounded-lg bg-slate-950/70 border border-slate-700 text-[11px] text-cyan-100/90">
+                ลากเมาส์/นิ้วเพื่อหมุน 360° • เลื่อนลูกกลิ้งเพื่อซูม
+              </div>
+            </div>
+
+            <!-- Top-Right AR Action Buttons -->
+            <div class="absolute top-3 right-3 z-20 flex flex-wrap items-center gap-1.5">
+              <button id="btnToggleCameraAR" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 hover:bg-cyan-500/35 text-cyan-200 border border-cyan-400/50 backdrop-blur-md transition flex items-center gap-1">
+                📷 <span id="cameraBtnText">เปิดกล้อง AR จริง</span>
+              </button>
+              <button id="btnToggleScale" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-cyan-100 border border-cyan-500/30 backdrop-blur-md transition">
+                📏 เทียบขนาดมนุษย์
+              </button>
+              <button id="btnToggleXray" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-cyan-100 border border-cyan-500/30 backdrop-blur-md transition">
+                🧬 โครงสร้าง 3D
+              </button>
+              <button id="btnSnapshot" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-400/50 backdrop-blur-md transition">
+                📸 ถ่ายภาพ AR
+              </button>
+            </div>
+
+            <!-- Interactive Anatomy Hotspot Pills (Bottom-Left) -->
+            <div class="absolute bottom-16 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+              <div id="hotspotButtonsContainer" class="flex flex-wrap gap-1.5 pointer-events-auto">
+                <!-- Populated dynamically per fish -->
+              </div>
+              <div id="scaleIndicatorBadge" class="hidden px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-200 text-xs font-medium backdrop-blur-md">
+                🤿 เทียบกับนักประดาน้ำสูง 1.75 เมตร
+              </div>
+            </div>
+
+            <!-- Bottom AR Control Bar -->
+            <div class="absolute bottom-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/80 border border-cyan-500/30 backdrop-blur-md">
+              <div class="flex items-center gap-2">
+                <button id="btnFeedFish" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow">
+                  🍤 ให้อาหารปลาใน AR
+                </button>
+                <button id="btnScanEffect" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyan-500/20 hover:bg-cyan-500/35 text-cyan-200 border border-cyan-400/40 transition">
+                  📡 สแกนวิเคราะห์สายพันธุ์
+                </button>
+                <button id="btnResetCamera" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+                  🔄 รีเซ็ตมุมมอง
+                </button>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-cyan-200">
+                <label for="swimSpeedRange" class="text-[11px] text-cyan-300/80">ความเร็วว่าย:</label>
+                <input id="swimSpeedRange" type="range" min="0.2" max="2.5" step="0.1" value="1.0" class="w-20 accent-cyan-400 cursor-pointer" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Species Selector Carousel under Viewport -->
+          <div class="glass-panel rounded-2xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-cyan-300">เลือกสายพันธุ์ปลาน้ำโขงเพื่อแสดงผลใน AR (6 สายพันธุ์เด่น)</span>
+              <span id="feedCounterBadge" class="text-xs text-amber-300 font-medium">ให้อาหารสะสม: 0 ครั้ง</span>
+            </div>
+            <div id="speciesQuickBar" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Detailed AR Species Telemetry & Info Card (4 cols) -->
+        <div class="lg:col-span-4 flex flex-col gap-4">
+          <div class="glass-panel rounded-2xl p-5 flex-1 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span id="fishZoneTag" class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 mb-1">
+                    โซนอุโมงค์ปลาน้ำโขงยักษ์
+                  </span>
+                  <h2 id="fishThaiName" class="text-2xl font-bold text-white">ปลาบึก</h2>
+                  <p id="fishLocalName" class="text-xs text-cyan-300">ชื่อท้องถิ่น/อังกฤษ: Mekong Giant Catfish</p>
+                  <p id="fishSciName" class="text-xs italic text-slate-400">Pangasianodon gigas</p>
+                </div>
+                <span id="fishStatusBadge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 shrink-0">
+                  ใกล้สูญพันธุ์อย่างยิ่ง (CR)
+                </span>
+              </div>
+
+              <!-- Key Telemetry Metrics -->
+              <div class="grid grid-cols-2 gap-2.5 pt-1">
+                <div class="p-3 rounded-xl bg-slate-900/75 border border-cyan-500/20">
+                  <span class="text-[11px] text-slate-400 block">ความยาวสูงสุด</span>
+                  <span id="fishLength" class="text-base font-bold text-cyan-300">3.0 เมตร</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/75 border border-cyan-500/20">
+                  <span class="text-[11px] text-slate-400 block">น้ำหนักสูงสุด</span>
+                  <span id="fishWeight" class="text-base font-bold text-cyan-300">300 กิโลกรัม</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/75 border border-cyan-500/20">
+                  <span class="text-[11px] text-slate-400 block">ระดับความลึกอาศัย</span>
+                  <span id="fishDepth" class="text-sm font-semibold text-white">10 – 50 เมตร (ร่องน้ำลึก)</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/75 border border-cyan-500/20">
+                  <span class="text-[11px] text-slate-400 block">อาหารตามธรรมชาติ</span>
+                  <span id="fishDiet" class="text-sm font-semibold text-white">ตะไคร่น้ำและพืชใต้น้ำ</span>
+                </div>
+              </div>
+
+              <!-- Active Hotspot / Scan Highlight Box -->
+              <div id="arInspectBox" class="p-3.5 rounded-xl bg-cyan-950/60 border border-cyan-400/40 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span id="arInspectTitle" class="text-xs font-bold text-cyan-300 uppercase tracking-wider">🔍 จุดสังเกตทางชีววิทยา (AR Hotspot)</span>
+                  <span class="text-[11px] text-cyan-400">คลิกปุ่มบนจอ AR</span>
+                </div>
+                <p id="arInspectDesc" class="text-xs sm:text-sm text-cyan-50 leading-relaxed">
+                  เลือกปุ่มจุดสังเกตบนหน้าจอ AR เพื่อส่องดูลักษณะเด่นของปลาแต่ละชนิดแบบใกล้ชิด
+                </p>
+              </div>
+
+              <!-- Biological & Cultural Description -->
+              <div class="space-y-2 pt-1">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300">ข้อมูลนิเวศวิทยาและความสำคัญในลุ่มน้ำโขง</h3>
+                <p id="fishDescription" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+              </div>
+            </div>
+
+            <!-- Reference Links & Bookmark -->
+            <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              <button id="btnBookmarkFish" type="button" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-cyan-200 border border-cyan-500/30 transition flex items-center gap-1.5">
+                <span id="bookmarkStar">☆</span> <span id="bookmarkText">บันทึกปลาที่ชอบ</span>
+              </button>
+              <a id="fishSourceLink" href="https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B8%9A%E0%B8%B6%E0%B8%81" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-cyan-400 hover:text-cyan-300 underline">
+                อ่านข้อมูลอ้างอิงเพิ่มเติม ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: ENCYCLOPEDIA CATALOG ==================== -->
+    <section id="view-catalog" class="hidden space-y-5">
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">สารานุกรมพันธุ์ปลาน้ำจืดลุ่มแม่น้ำโขง แม่น้ำสงคราม และลำน้ำก่ำ</h2>
+          <p class="text-xs sm:text-sm text-cyan-200/80">ค้นหาและกรองชนิดปลาที่จัดแสดงในพิพิธภัณฑ์สัตว์น้ำจืดโลกของปลาแม่น้ำโขง (หนองญาติ จ.นครพนม) พร้อมเปิดดูโมเดล AR ทันที</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <input id="catalogSearchInput" type="text" placeholder="ค้นหาชื่อปลา เช่น ปลาบึก, ปลาเอิน..." class="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400" />
+          <select id="catalogFilterCategory" aria-label="กรองกลุ่มปลา" class="px-3 py-2 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-sm text-cyan-100 focus:outline-none focus:border-cyan-400">
+            <option value="all">ทุกกลุ่มสายพันธุ์ (6)</option>
+            <option value="giant">ปลายักษ์ไร้เกล็ด/กระเบน</option>
+            <option value="scaled">ปลามีเกล็ดลุ่มน้ำโขง</option>
+            <option value="predator">ปลานักล่าลำน้ำโขง</option>
+            <option value="bookmarked">รายการที่บันทึกไว้ (★)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="catalogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: MUSEUM ZONES & AR MARKER SCANNER ==================== -->
+    <section id="view-zones" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left: Museum Zones in Nong Yat, Nakhon Phanom -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Nakhon Phanom Freshwater Aquarium</span>
+              <h2 class="text-xl font-bold text-white">แผนผังโซนจัดแสดง พิพิธภัณฑ์ปลาแม่น้ำโขง (หนองญาติ)</h2>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+              ค่าเข้าชม 30 บาท/คน
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            ตั้งอยู่บริเวณริมอ่างเก็บน้ำหนองญาติ ตำบลหนองญาติ อำเภอเมืองนครพนม จังหวัดนครพนม ใกล้กับหอเฉลิมพระเกียรติราชวงศ์จักรี รวบรวมพันธุ์ปลาน้ำจืดหายากของลุ่มแม่น้ำโขง แม่น้ำสงคราม และลำน้ำก่ำ คลิกเลือกโซนด้านล่างเพื่อจำลองการสแกนป้าย AR ประจำตู้จัดแสดง:
+          </p>
+
+          <div id="zoneCardsContainer" class="space-y-3">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Interactive AR Marker Scanner Simulator -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-white">📱 จำลองสแกนป้าย AR ประจำจุดจัดแสดง</h3>
+              <span id="markerStatusPill" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/20 text-cyan-300">พร้อมสแกน</span>
+            </div>
+            <p class="text-xs text-slate-300">
+              เมื่อนักท่องเที่ยวเดินชมภายในอุโมงค์ปลาน้ำจืด สามารถใช้สมาร์ตโฟนส่องป้าย AR Marker หน้าตู้ปลาเพื่อเรียกดูโมเดลปลา 3 มิติพร้อมข้อมูลเสียงบรรยาย
+            </p>
+
+            <!-- Simulated Marker Card -->
+            <div class="p-5 rounded-2xl bg-slate-950/90 border-2 border-dashed border-cyan-400/50 flex flex-col items-center text-center space-y-3 relative overflow-hidden">
+              <div id="markerScannerBeam" class="scan-line"></div>
+              <div class="w-28 h-28 rounded-xl bg-slate-900 border border-cyan-400/40 flex flex-col items-center justify-center p-2 shadow-inner">
+                <div class="text-3xl mb-1" id="markerPreviewEmoji">🐋</div>
+                <span id="markerPreviewCode" class="text-[11px] font-mono text-cyan-300 tracking-widest">AR-MK-01</span>
+              </div>
+              <div>
+                <h4 id="markerZoneTitle" class="text-base font-bold text-white">โซนที่ 1: อุโมงค์ปลาน้ำจืดขนาดใหญ่ (Underwater Tunnel)</h4>
+                <p id="markerZoneDesc" class="text-xs text-cyan-200/80 mt-1">พบกับปลาบึก ปลาเทพา และปลากระเบนน้ำจืดแหวกว่ายเหนือศีรษะในมุมมอง 180 องศา</p>
+              </div>
+              <button id="btnLaunchZoneAR" type="button" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/20 transition">
+                🚀 เปิดดูปลาประจำโซนนี้ในห้อง AR 3D
+              </button>
+            </div>
+          </div>
+
+          <!-- External Grounded References -->
+          <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-300">แหล่งข้อมูลอ้างอิงพิพิธภัณฑ์และงานวิจัย</h4>
+            <ul class="text-xs space-y-1.5 text-slate-300">
+              <li>• <a href="https://knowledgeportal.okmd.or.th/kmap/67356685889fe" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">OKMD Knowledge Portal: Maekong Underwater World นครพนม</a></li>
+              <li>• <a href="https://www.wongnai.com/reviews/14f4ce21ae9342e78030df50f2f800a8" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">รีวิวสถานที่จัดแสดงโลกของปลาแม่น้ำโขง ต.หนองญาติ จ.นครพนม</a></li>
+              <li>• <a href="https://ngthai.com/wildlife/66857/biggest-freshwater-fish/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">National Geographic Thailand: ปลาน้ำจืดขนาดใหญ่สุดในโลกแห่งแม่น้ำโขง</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: CONSERVATION QUIZ ==================== -->
+    <section id="view-quiz" class="hidden space-y-5">
+      <div class="max-w-3xl mx-auto glass-panel rounded-2xl p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Mekong River Interactive Learning</span>
+            <h2 class="text-xl font-bold text-white">แบบทดสอบ AR นักอนุรักษ์พันธุ์ปลาแม่น้ำโขง</h2>
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-xs font-bold text-cyan-200">
+            คะแนนของคุณ: <span id="quizScoreText">0</span> / 5
+          </div>
+        </div>
+
+        <div id="quizContainer" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+          <button id="btnResetQuiz" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            🔄 เริ่มทำแบบทดสอบใหม่
+          </button>
+          <span id="quizProgressLabel" class="text-xs text-cyan-300">ตอบครบทั้ง 5 ข้อเพื่อรับเกียรติบัตรดิจิทัลนักอนุรักษ์แม่น้ำโขง</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: AI REPORT GENERATOR & ASSISTANT ==================== -->
+    <section id="view-ai" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left 7 Cols: Interactive AI Chat & Command Studio -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-500/20 pb-3">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Mekong Aquarium AI Assistant 4.0</span>
+                <h2 class="text-xl font-bold text-white">🤖 ผู้ช่วย AI วิเคราะห์พันธุ์ปลาน้ำโขง &amp; ออกรายงานอัตโนมัติ</h2>
+              </div>
+              <button type="button" onclick="askMekongAI('ขอรายงานสรุปพันธุ์ปลาแม่น้ำโขงฉบับเต็ม')" class="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow transition">
+                📑 ขอรายงานฉบับเต็มทันที
+              </button>
+            </div>
+
+            <!-- Quick AI Command Pills -->
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="askMekongAI('ขอรายงานสรุปพันธุ์ปลาแม่น้ำโขงฉบับเต็ม')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/40 hover:bg-amber-500/30 transition">
+                📄 ขอรายงานฉบับสมบูรณ์
+              </button>
+              <button type="button" onclick="askMekongAI('ขอรายงานสถานะการอนุรักษ์ปลาใกล้สูญพันธุ์')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/20 text-rose-200 border border-rose-400/40 hover:bg-rose-500/30 transition">
+                🚨 รายงานปลาใกล้สูญพันธุ์ (CR)
+              </button>
+              <button type="button" onclick="askMekongAI('เปลี่ยนชื่อเว็บเป็น ศูนย์วิจัยและพิพิธภัณฑ์ปลาแม่น้ำโขงอัจฉริยะ จ.นครพนม')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 hover:bg-cyan-500/30 transition">
+                ✏️ สั่ง AI เปลี่ยนชื่อเว็บสด
+              </button>
+              <button type="button" onclick="askMekongAI('ปรับความเร็วว่ายเป็น 2.0')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 hover:bg-emerald-500/30 transition">
+                ⚡ สั่งเร่งความเร็วปลา 3D
+              </button>
+              <button type="button" onclick="askMekongAI('เพิ่มปลาโจกแม่น้ำโขงเข้าสู่ระบบ')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/20 text-purple-200 border border-purple-400/40 hover:bg-purple-500/30 transition">
+                + สั่งเพิ่มพันธุ์ปลาใหม่สด
+              </button>
+            </div>
+
+            <!-- AI Chat Messages Box -->
+            <div id="mekongAiChatBox" class="h-[380px] overflow-y-auto rounded-xl bg-slate-950/75 border border-cyan-500/25 p-4 space-y-3 text-xs sm:text-sm"></div>
+          </div>
+
+          <form id="mekongAiForm" class="flex gap-2 pt-2">
+            <input id="mekongAiInput" type="text" placeholder="พิมพ์สั่ง AI เช่น 'ขอรายงาน', 'เปลี่ยนชื่อเว็บเป็น...', 'เพิ่มประกาศว่า...', 'ปรับความเร็วว่ายเป็น 2.0'..." class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-cyan-500/40 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400" />
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow">
+              ส่งคำสั่ง 🚀
+            </button>
+          </form>
+        </div>
+
+        <!-- Right 5 Cols: Official Printable Report Document Preview -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-500/20 pb-3">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-cyan-300">Official Report Output</span>
+              <h3 class="text-base font-bold text-white">📑 เอกสารรายงานทางการ (พร้อมพิมพ์ / โหลด Word)</h3>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="window.print()" class="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition">🖨️ พิมพ์/PDF</button>
+              <button type="button" onclick="downloadMekongWordReport()" class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs hover:bg-amber-300 transition">📥 โหลด Word</button>
+            </div>
+          </div>
+          <div id="mekongOfficialReportPreview" class="bg-slate-950/85 border border-cyan-500/30 rounded-xl p-4 text-xs space-y-3 max-h-[450px] overflow-y-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: REAL-TIME LIVE WEB EDITOR ==================== -->
+    <section id="view-editor" class="hidden space-y-5">
+      <div class="glass-panel rounded-2xl p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-500/25 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Real-Time Live DOM &amp; Data Editor</span>
+            <h2 class="text-xl font-bold text-white">🛠️ แก้ไขหน้าเว็บและข้อมูลพันธุ์ปลาแบบเรียลไทม์ (พิมพ์ปุ๊บเปลี่ยนปั๊บ)</h2>
+          </div>
+          <button type="button" onclick="toggleMekongInlineEdit()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow">
+            ✏️ เปิด/ปิด โหมดคลิกแก้ข้อความบนหน้าเว็บโดยตรง
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-cyan-500/25 space-y-3">
+            <h3 class="text-sm font-bold text-cyan-300">📝 แก้ไขหัวข้อเว็บไซต์และแบนเนอร์ประกาศสด</h3>
+            <div>
+              <label class="block text-slate-300 mb-1">1. ชื่อเว็บไซต์หลัก (Header Title):</label>
+              <input id="editSiteTitleInput" type="text" value="พิพิธภัณฑ์ปลาแม่น้ำโขง จ.นครพนม" oninput="applyMekongLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-white font-semibold" />
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">2. คำอธิบายย่อย (Subtitle):</label>
+              <input id="editSiteSubInput" type="text" value="สถานที่จัดแสดงโลกของปลาแม่น้ำโขง (หนองญาติ) • ระบบจำลองพันธุ์ปลา 3D, WebAR & AI ออกรายงานอัตโนมัติ" oninput="applyMekongLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-white" />
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">3. ข้อความแบนเนอร์ประกาศด้านบน:</label>
+              <input id="editSiteBannerInput" type="text" value="✨ ระบบอัปเกรดใหม่: มีแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานพันธุ์ปลาฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที" oninput="applyMekongLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-white" />
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-cyan-500/25 space-y-3">
+            <h3 class="text-sm font-bold text-amber-300">🐟 แก้ไขข้อมูลปลาที่กำลังแสดงในห้อง AR 3D สด</h3>
+            <div>
+              <label class="block text-slate-300 mb-1">ชื่อพันธุ์ปลาปัจจุบัน:</label>
+              <input id="editFishNameInput" type="text" value="ปลาบึก" oninput="applyMekongFishLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-white font-bold" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-300 mb-1">ความยาวสูงสุด:</label>
+                <input id="editFishLenInput" type="text" value="3.0 เมตร" oninput="applyMekongFishLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-cyan-200" />
+              </div>
+              <div>
+                <label class="block text-slate-300 mb-1">น้ำหนักสูงสุด:</label>
+                <input id="editFishWeightInput" type="text" value="300 กิโลกรัม" oninput="applyMekongFishLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-cyan-200" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">คำอธิบายระบบนิเวศ:</label>
+              <textarea id="editFishDescInput" rows="2" oninput="applyMekongFishLiveEdit()" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-cyan-500/40 text-white"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Museum Visitor Info Modal -->
+  <div id="museumModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel max-w-lg w-full rounded-2xl p-6 space-y-4 border border-cyan-400/40 shadow-2xl">
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white">📍 ข้อมูลการเข้าชมพิพิธภัณฑ์ปลาแม่น้ำโขง</h3>
+          <p class="text-xs text-cyan-300">สถานที่จัดแสดงโลกของปลาแม่น้ำโขง (Mekong Underwater World)</p>
+        </div>
+        <button id="btnCloseModal" type="button" class="text-slate-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+      <div class="space-y-2.5 text-xs sm:text-sm text-slate-200">
+        <p><strong class="text-cyan-300">ที่ตั้ง:</strong> บริเวณริมอ่างเก็บน้ำหนองญาติ ตำบลหนองญาติ อำเภอเมืองนครพนม จังหวัดนครพนม (ใกล้หอเฉลิมพระเกียรติราชวงศ์จักรี)</p>
+        <p><strong class="text-cyan-300">ไฮไลต์สำคัญ:</strong> อุโมงค์ทางเดินลอดใต้ตู้ปลาขนาดใหญ่ จัดแสดงพันธุ์ปลาน้ำจืดของลุ่มแม่น้ำโขง แม่น้ำสงคราม และลำน้ำก่ำ พร้อมกิจกรรมการให้อาหารปลาและนิทรรศการระบบนิเวศ</p>
+        <p><strong class="text-cyan-300">อัตราค่าเข้าชม:</strong> ประมาณ 30 บาท/คน (ใช้เวลาเดินชมเฉลี่ย 1 – 2 ชั่วโมง)</p>
+        <p><strong class="text-cyan-300">เวลาทำการโดยทั่วไป:</strong> เปิดบริการเวลา 09:00 – 17:00 น.</p>
+      </div>
+      <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
+        <a href="https://www.wongnai.com/reviews/14f4ce21ae9342e78030df50f2f800a8" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 hover:bg-cyan-500/30">
+          ดูรีวิวบน Wongnai ↗
+        </a>
+        <button id="btnCloseModalBottom" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950 hover:bg-cyan-400">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden px-4 py-2.5 rounded-xl bg-slate-900/95 border border-cyan-400 text-xs sm:text-sm text-cyan-100 shadow-xl">
+    <span id="toastMessage">แจ้งเตือนระบบ</span>
+  </div>
+
+  <script>
+    // ==================== 1. MEKONG FISH SPECIES DATABASE ====================
+    const MEKONG_FISH_DATA = [
+      {
+        id: 'plabuk',
+        thaiName: 'ปลาบึก',
+        localName: 'ราชันย์แห่งแม่น้ำโขง / Mekong Giant Catfish',
+        sciName: 'Pangasianodon gigas',
+        category: 'giant',
+        zoneId: 'zone-tunnel',
+        zoneName: 'โซนอุโมงค์ปลาน้ำโขงยักษ์',
+        status: 'ใกล้สูญพันธุ์อย่างยิ่ง (CR)',
+        statusColor: 'rose',
+        maxLength: '3.0 เมตร',
+        maxWeight: '300 กิโลกรัม',
+        depth: '10 – 50 เมตร (ร่องน้ำลึก)',
+        diet: 'ตะไคร่น้ำและพืชใต้น้ำ (ไม่มีฟันเมื่อโตเต็มวัย)',
+        emoji: '🐋',
+        bodyScale: [2.4, 0.85, 0.72],
+        bodyColor: 0x4b6b7e,
+        bellyColor: 0xdbeafe,
+        finColor: 0x334155,
+        tailSpread: 1.1,
+        hasWhiskers: false,
+        isRay: false,
+        stripePattern: false,
+        redTail: false,
+        redEyes: false,
+        sourceUrl: 'https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B8%9A%E0%B8%B6%E0%B8%81',
+        description: 'ปลาน้ำจืดไม่มีเกล็ดที่มีขนาดใหญ่ที่สุดในโลกชนิดหนึ่ง อาศัยอยู่ในแม่น้ำโขงตั้งแต่จีน ลาว เมียนมา ไทย กัมพูชา และเวียดนาม เมื่อโตเต็มวัยจะไม่มีฟันและหนวดจะหดสั้นลง กินตะไคร่น้ำตามโขดหินใต้น้ำเป็นอาหารหลัก',
+        hotspots: [
+          { label: 'หัวและปากไร้ฟัน', detail: 'เมื่อปลาบึกโตเต็มวัย ฟันและหนวดจะฝ่อหายไป ใช้ริมฝีปากเล็มตะไคร่น้ำและสาหร่ายตามโขดหินใต้น้ำลึก' },
+          { label: 'ลำตัวไร้เกล็ดขนาดยักษ์', detail: 'ผิวหนังเรียบหนาช่วยลดแรงเสียดทานในกระแสน้ำเชี่ยวของแม่น้ำโขง ยาวได้ถึง 3 เมตร หนักกว่า 250–300 กิโลกรัม' },
+          { label: 'ครีบหางทรงพลัง', detail: 'ครีบหางเว้าลึกช่วยให้ว่ายทวนกระแสน้ำโขงเป็นระยะทางหลายพันกิโลเมตรเพื่ออพยพวางไข่' }
+        ]
+      },
+      {
+        id: 'whipray',
+        thaiName: 'ปลากระเบนเจ้าพระยา (กระเบนยักษ์น้ำโขง)',
+        localName: 'ฝาไล / Giant Freshwater Whipray',
+        sciName: 'Urogymnus polylepis',
+        category: 'giant',
+        zoneId: 'zone-tunnel',
+        zoneName: 'โซนอุโมงค์ปลาน้ำโขงยักษ์',
+        status: 'ใกล้สูญพันธุ์ (EN)',
+        statusColor: 'amber',
+        maxLength: '4.0 เมตร (รวมหาง)',
+        maxWeight: '300 กิโลกรัม',
+        depth: '5 – 40 เมตร (พื้นทรายและโคลนใต้น้ำ)',
+        diet: 'กุ้ง หอย ปู และปลาหน้าดินขนาดเล็ก',
+        emoji: '🛸',
+        bodyScale: [2.2, 0.22, 2.1],
+        bodyColor: 0x645849,
+        bellyColor: 0xfef3c7,
+        finColor: 0x4a3f35,
+        tailSpread: 0.4,
+        hasWhiskers: false,
+        isRay: true,
+        stripePattern: false,
+        redTail: false,
+        redEyes: false,
+        sourceUrl: 'https://ngthai.com/wildlife/66857/biggest-freshwater-fish/',
+        description: 'ครองสถิติปลาน้ำจืดที่มีขนาดใหญ่ที่สุดในโลกจากการสำรวจในแม่น้ำโขงเมื่อปี 2022 (พบขนาดยาว 4 เมตร หนักราว 300 กิโลกรัม) มักซ่อนตัวอยู่ตามพื้นทรายใต้น้ำโขงและใช้หางยาวคล้ายแส้ที่มีเงี่ยงพิษป้องกันตัว',
+        hotspots: [
+          { label: 'แผ่นลำตัวแบนกว้าง', detail: 'ลำตัวแบนกลมคล้ายจานบิน กว้างได้มากกว่า 2 เมตร ช่วยให้พลางตัวแนบไปกับพื้นทรายก้นแม่น้ำโขง' },
+          { label: 'หางยาวคล้ายแส้และเงี่ยงพิษ', detail: 'โคนหางมีเงี่ยงแหลมหยักเป็นฟันเลื่อยที่มีต่อมพิษใช้ป้องกันตัวจากผู้ล่า' },
+          { label: 'ช่องหายใจด้านบน (Spiracles)', detail: 'ช่วยให้ดูดน้ำเข้าสู่เหงือกได้แม้ขณะฝังตัวอยู่ใต้ผืนทรายก้นแม่น้ำ' }
+        ]
+      },
+      {
+        id: 'plathepha',
+        thaiName: 'ปลาเทพา (ปลาเลิม)',
+        localName: 'ฉลามน้ำจืดแห่งลำน้ำโขง / Chao Phraya Giant Catfish',
+        sciName: 'Pangasius sanitwongsei',
+        category: 'predator',
+        zoneId: 'zone-tunnel',
+        zoneName: 'โซนอุโมงค์ปลาน้ำโขงยักษ์',
+        status: 'ใกล้สูญพันธุ์อย่างยิ่ง (CR)',
+        statusColor: 'rose',
+        maxLength: '2.5 – 3.0 เมตร',
+        maxWeight: '200 กิโลกรัม',
+        depth: '5 – 30 เมตร (วังน้ำลึก)',
+        diet: 'ปลาขนาดเล็กและสัตว์น้ำ (ปลานักล่า)',
+        emoji: '🦈',
+        bodyScale: [2.1, 0.72, 0.6],
+        bodyColor: 0x1e293b,
+        bellyColor: 0xcbd5e1,
+        finColor: 0x0f172a,
+        tailSpread: 1.25,
+        hasWhiskers: true,
+        isRay: false,
+        stripePattern: false,
+        redTail: false,
+        redEyes: false,
+        sourceUrl: 'https://www.youtube.com/watch?v=ZBRFgPeNxhY',
+        description: 'ในภาษาอีสานเรียกว่า "ปลาเลิม" เป็นปลาสวายขนาดใหญ่ที่มีก้านครีบหลังและครีบอกยื่นยาวเป็นเส้นเรียวคล้ายครีบฉลาม มีนิสัยปราดเปรียวดุดัน พบเฉพาะในลุ่มน้ำโขงและลุ่มน้ำเจ้าพระยา',
+        hotspots: [
+          { label: 'ครีบหลังสูงคล้ายฉลาม', detail: 'ก้านครีบหลังและครีบอกต่อยาวเป็นเส้นริ้วสวยงาม ทำให้ได้รับฉายาว่าฉลามน้ำจืด' },
+          { label: 'ปากกว้างและหนวดรับสัมผัส', detail: 'มีหนวด 2 คู่ช่วยตรวจจับการสั่นสะเทือนของเหยื่อในน้ำขุ่นของแม่น้ำโขง' },
+          { label: 'กล้ามเนื้อลำตัวเพรียวลม', detail: 'ว่ายน้ำได้รวดเร็วและปราดเปรียวมากในกระแสน้ำเชี่ยว' }
+        ]
+      },
+      {
+        id: 'plaoen',
+        thaiName: 'ปลาเอินตาแดง (ปลาตะพากส้ม)',
+        localName: 'Jullien\'s Golden Carp',
+        sciName: 'Probarbus jullieni',
+        category: 'scaled',
+        zoneId: 'zone-rapids',
+        zoneName: 'โซนแก่งหินและพันธุ์ปลาเศรษฐกิจลุ่มน้ำโขง',
+        status: 'ใกล้สูญพันธุ์อย่างยิ่ง (CR)',
+        statusColor: 'rose',
+        maxLength: '1.5 เมตร',
+        maxWeight: '70 กิโลกรัม',
+        depth: '3 – 20 เมตร (โขดหินและหาดกรวด)',
+        diet: 'หอยน้ำจืด ตัวอ่อนแมลง และพืชน้ำ',
+        emoji: '🐠',
+        bodyScale: [1.75, 0.68, 0.52],
+        bodyColor: 0xd97706,
+        bellyColor: 0xfef08a,
+        finColor: 0xea580c,
+        tailSpread: 0.95,
+        hasWhiskers: true,
+        isRay: false,
+        stripePattern: true,
+        redTail: false,
+        redEyes: true,
+        sourceUrl: 'https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9E%E0%B8%9A%E0%B9%83%E0%B8%99%E0%B8%A5%E0%B8%B8%E0%B9%88%E0%B8%A1%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B9%82%E0%B8%82%E0%B8%87',
+        description: 'ปลาน้ำจืดมีเกล็ดขนาดใหญ่ที่มีความสวยงามโดดเด่น เกล็ดมีสีเหลืองทองอมชมพูและมีแถบสีดำพาดตามยาวลำตัว 5–7 แถบ ดวงตาสีแดงสด มักรวมฝูงผสมพันธุ์วางไข่บริเวณแก่งหินน้ำไหลในแม่น้ำโขงช่วงฤดูหนาว',
+        hotspots: [
+          { label: 'ดวงตาสีแดงสด', detail: 'ลักษณะเด่นเฉพาะตัวที่เป็นที่มาของชื่อ "ปลาเอินตาแดง" ในแถบลุ่มน้ำโขงนครพนม' },
+          { label: 'เกล็ดสีทองและแถบดำตามยาว', detail: 'ลำตัวมีเกล็ดขนาดใหญ่สีทองอร่ามตัดกับเส้นแถบสีเข้มตามแนวยาวลำตัว' },
+          { label: 'ปากยืดหดเก็บอาหารหน้าดิน', detail: 'ริมฝีปากหนาช่วยคุ้ยหาหอยน้ำจืดและสัตว์หน้าดินตามหาดกรวดแม่น้ำโขง' }
+        ]
+      },
+      {
+        id: 'plakang',
+        thaiName: 'ปลากดคัง (ปลาคัง)',
+        localName: 'Asian Redtail Catfish',
+        sciName: 'Hemibagrus wyckioides',
+        category: 'predator',
+        zoneId: 'zone-rapids',
+        zoneName: 'โซนแก่งหินและพันธุ์ปลาเศรษฐกิจลุ่มน้ำโขง',
+        status: 'ความเสี่ยงต่ำ (LC) / เศรษฐกิจสำคัญ',
+        statusColor: 'emerald',
+        maxLength: '1.3 เมตร',
+        maxWeight: '80 กิโลกรัม',
+        depth: '5 – 35 เมตร (โพรงหินใต้น้ำ)',
+        diet: 'ปลา กุ้ง ปู และสัตว์น้ำขนาดเล็ก',
+        emoji: '🐡',
+        bodyScale: [1.65, 0.58, 0.55],
+        bodyColor: 0x334155,
+        bellyColor: 0xf1f5f9,
+        finColor: 0xdc2626,
+        tailSpread: 0.9,
+        hasWhiskers: true,
+        isRay: false,
+        stripePattern: false,
+        redTail: true,
+        redEyes: false,
+        sourceUrl: 'https://www.youtube.com/watch?v=3OfgK3XLEEY',
+        description: 'ปลาน้ำจืดไร้เกล็ดในวงศ์ปลากดที่มีขนาดใหญ่ที่สุดในแม่น้ำโขง จุดเด่นคือครีบหางมีสีแดงสดหรือส้มอมแดง อาศัยอยู่ตามโพรงหินและวังน้ำลึกของแม่น้ำโขง เป็นปลาเศรษฐกิจขึ้นชื่อของจังหวัดนครพนม',
+        hotspots: [
+          { label: 'ครีบหางสีแดงสด', detail: 'เอกลักษณ์สำคัญที่แยกปลากดคังออกจากปลากดชนิดอื่น คือครีบหางที่มีสีแดงส้มสดใส' },
+          { label: 'หนวดยาว 4 คู่', detail: 'ใช้เป็นเรดาร์ตรวจจับเหยื่อในโพรงหินมืดใต้น้ำโขงเวลากลางคืน' },
+          { label: 'เงี่ยงครีบอกแข็งแรง', detail: 'ก้านครีบอกและครีบหลังมีเงี่ยงแข็งคมสำหรับป้องกันตัวตามซอกหิน' }
+        ]
+      },
+      {
+        id: 'plasueadao',
+        thaiName: 'ปลาเสือตอแม่น้ำโขง (ปลาลาด)',
+        localName: 'Mekong Tiger Perch',
+        sciName: 'Datnioides undecimradiatus',
+        category: 'scaled',
+        zoneId: 'zone-tributary',
+        zoneName: 'โซนป่าบุ่งป่าทาม แม่น้ำสงครามและลำน้ำก่ำ',
+        status: 'มีแนวโน้มใกล้สูญพันธุ์ (VU)',
+        statusColor: 'amber',
+        maxLength: '0.45 เมตร',
+        maxWeight: '2.5 กิโลกรัม',
+        depth: '2 – 15 เมตร (ตอไม้และโขดหินใต้น้ำ)',
+        diet: 'กุ้งฝอย ลูกปลา และแมลงน้ำ',
+        emoji: '🐯',
+        bodyScale: [1.15, 0.78, 0.35],
+        bodyColor: 0xfbbf24,
+        bellyColor: 0xfef3c7,
+        finColor: 0x1e293b,
+        tailSpread: 0.65,
+        hasWhiskers: false,
+        isRay: false,
+        stripePattern: true,
+        redTail: false,
+        redEyes: false,
+        sourceUrl: 'https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A5%E0%B8%B2%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9E%E0%B8%9A%E0%B9%83%E0%B8%99%E0%B8%A5%E0%B8%B8%E0%B9%88%E0%B8%A1%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B9%82%E0%B8%82%E0%B8%87',
+        description: 'ปลาประจำถิ่นลุ่มแม่น้ำโขงและแม่น้ำสาขาอย่างแม่น้ำสงคราม ลำตัวแบนข้างมีสีเหลืองทองคาดด้วยแถบสีดำเข้มคล้ายลายเสือ ชอบซ่อนตัวตามขอนไม้ใต้น้ำและโขดหินเพื่อดักซุ่มจับกุ้งและลูกปลา',
+        hotspots: [
+          { label: 'ลายพาดกลอนสีดำ-ทอง', detail: 'แถบสีดำ 5–6 แถบพาดขวางลำตัวสีเหลืองทอง ช่วยพรางตัวเข้ากับเงาตอไม้ใต้น้ำ' },
+          { label: 'ปากยืดฉับไวแบบท่อดูด', detail: 'สามารถยื่นปากออกไปฮุบกุ้งและลูกปลาได้ในเสี้ยววินาที' },
+          { label: 'ครีบหลังตั้งเป็นแผงเงี่ยง', detail: 'ก้านครีบแข็งแรงช่วยทรงตัวนิ่งอยู่ในกระแสน้ำไหลเอื่อยของลำน้ำสาขา' }
+        ]
+      }
+    ];
+
+    const MUSEUM_ZONES = [
+      {
+        id: 'zone-tunnel',
+        code: 'AR-MK-01',
+        title: 'โซนที่ 1: อุโมงค์ปลาน้ำจืดขนาดใหญ่ (Underwater Tunnel)',
+        desc: 'ทางเดินอุโมงค์กระจกโค้งลอดใต้ตู้ปลาขนาดใหญ่ ชมปลาบึก ปลาเทพา และปลากระเบนยักษ์แหวกว่ายอย่างใกล้ชิดเสมือนเดินอยู่ใต้น้ำโขง',
+        fishIds: ['plabuk', 'whipray', 'plathepha'],
+        defaultFish: 'plabuk'
+      },
+      {
+        id: 'zone-rapids',
+        code: 'AR-MK-02',
+        title: 'โซนที่ 2: นิเวศแก่งหินและวังน้ำลึกลำน้ำโขง',
+        desc: 'จำลองโขดหินและร่องน้ำลึกของแม่น้ำโขงแถบนครพนม จัดแสดงปลาเอินตาแดงและปลากดคังที่มีสีสันและพฤติกรรมโดดเด่น',
+        fishIds: ['plaoen', 'plakang'],
+        defaultFish: 'plaoen'
+      },
+      {
+        id: 'zone-tributary',
+        code: 'AR-MK-03',
+        title: 'โซนที่ 3: ป่าบุ่งป่าทาม แม่น้ำสงคราม และลำน้ำก่ำ',
+        desc: 'เรียนรู้แหล่งอนุบาลลูกปลาน้ำจืดที่สำคัญของจังหวัดนครพนม ชมปลาเสือตอแม่น้ำโขงและพันธุ์ปลาท้องถิ่นหายาก',
+        fishIds: ['plasueadao'],
+        defaultFish: 'plasueadao'
+      }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      {
+        q: '1. พิพิธภัณฑ์สัตว์น้ำจืด "สถานที่จัดแสดงโลกของปลาแม่น้ำโขง" ของจังหวัดนครพนม ตั้งอยู่บริเวณใด?',
+        options: [
+          'ริมอ่างเก็บน้ำหนองญาติ ต.หนองญาติ อ.เมืองนครพนม',
+          'เกาะดอนสวรรค์ บึงโขงหลง',
+          'หาดทรายทองศรีโคตรบูรณ์',
+          'แก่งกะเบา อ.หว้านใหญ่'
+        ],
+        correct: 0,
+        explanation: 'ถูกต้อง! พิพิธภัณฑ์ตั้งอยู่ริมอ่างเก็บน้ำหนองญาติ ต.หนองญาติ อ.เมืองนครพนม ใกล้หอเฉลิมพระเกียรติราชวงศ์จักรี'
+      },
+      {
+        q: '2. ปลาน้ำจืดชนิดใดในแม่น้ำโขงที่ได้รับการบันทึกสถิติโลกปี 2022 ว่าเป็นปลาน้ำจืดที่มีขนาดใหญ่ที่สุดในโลก (หนักราว 300 กก. ยาว 4 เมตร)?',
+        options: [
+          'ปลาเสือตอแม่น้ำโขง',
+          'ปลากระเบนเจ้าพระยา (กระเบนยักษ์น้ำจืด)',
+          'ปลากดคัง',
+          'ปลาเอินตาแดง'
+        ],
+        correct: 1,
+        explanation: 'ถูกต้อง! ปลากระเบนน้ำจืดยักษ์ (Urogymnus polylepis) ที่พบในแม่น้ำโขงเมื่อปี 2022 มีความยาวถึง 4 เมตร และหนักราว 300 กิโลกรัม'
+      },
+      {
+        q: '3. เมื่อ "ปลาบึก" (Pangasianodon gigas) โตเต็มวัย จะมีลักษณะเด่นและกินอาหารแบบใด?',
+        options: [
+          'มีฟันแหลมคม ล่าปลาขนาดใหญ่',
+          'ไม่มีฟันและหนวดหดสั้นลง กินตะไคร่น้ำและพืชใต้น้ำเป็นหลัก',
+          'มีเกล็ดสีทองขนาดใหญ่ กินหอยน้ำจืด',
+          'มีหางสีแดงสด ซ่อนตัวในโพรงไม้'
+        ],
+        correct: 1,
+        explanation: 'ถูกต้อง! ปลาบึกเมื่อโตเต็มวัยจะไม่มีฟันและหนวดจะฝ่อสั้นลง กินตะไคร่น้ำและสาหร่ายตามโขดหินใต้น้ำเป็นอาหาร'
+      },
+      {
+        q: '4. ปลาชนิดใดที่คนอีสานเรียกว่า "ปลาเลิม" และมีครีบหลังตั้งสูงคล้ายฉลาม?',
+        options: [
+          'ปลาเทพา (Pangasius sanitwongsei)',
+          'ปลาเอินตาแดง',
+          'ปลาเสือตอ',
+          'ปลากระเบนแม่น้ำโขง'
+        ],
+        correct: 0,
+        explanation: 'ถูกต้อง! ปลาเทพา หรือ ปลาเลิม มีก้านครีบหลังและครีบอกยื่นยาวเป็นเส้นเรียวคล้ายครีบฉลาม'
+      },
+      {
+        q: '5. ลำน้ำสาขาใดในเขตจังหวัดนครพนมที่เป็นพื้นที่ชุ่มน้ำและแหล่งอนุบาลพันธุ์ปลาแม่น้ำโขงที่สำคัญซึ่งจัดแสดงในพิพิธภัณฑ์?',
+        options: [
+          'แม่น้ำปิง และ แม่น้ำวัง',
+          'แม่น้ำสงคราม และ ลำน้ำก่ำ',
+          'แม่น้ำตาปี และ คลองพุมดวง',
+          'แม่น้ำแม่กลอง และ แม่น้ำท่าจีน'
+        ],
+        correct: 1,
+        explanation: 'ถูกต้อง! แม่น้ำสงครามและลำน้ำก่ำเป็นลำน้ำสาขาสำคัญที่เชื่อมต่อกับแม่น้ำโขงในจังหวัดนครพนม'
+      }
+    ];
+
+    // ==================== 2. APPLICATION STATE ====================
+    const state = {
+      activeTab: 'ar',
+      selectedFishId: 'plabuk',
+      swimSpeed: 1.0,
+      showHumanScale: false,
+      wireframeMode: false,
+      cameraARActive: false,
+      audioEnabled: false,
+      feedCount: 0,
+      bookmarks: new Set(['plabuk']),
+      quizAnswers: {},
+      selectedZoneId: 'zone-tunnel'
+    };
+
+    try {
+      const savedBookmarks = localStorage.getItem('mekong_ar_bookmarks');
+      if (savedBookmarks) {
+        state.bookmarks = new Set(JSON.parse(savedBookmarks));
+      }
+    } catch (e) {
+      // Ignore storage error in restricted iframe
+    }
+
+    function saveBookmarks() {
+      try {
+        localStorage.setItem('mekong_ar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      const text = document.getElementById('toastMessage');
+      text.textContent = msg;
+      banner.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3200);
+    }
+
+    // ==================== 3. SYNTHESIZED WEB AUDIO (UNDERWATER & SONAR) ====================
+    let audioCtx = null;
+    let ambientOsc = null;
+    let ambientGain = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSonarPing(freq = 880) {
+      if (!state.audioEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, audioCtx.currentTime + 0.35);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.36);
+    }
+
+    function toggleAmbientAudio() {
+      state.audioEnabled = !state.audioEnabled;
+      const icon = document.getElementById('audioIcon');
+      const label = document.getElementById('audioLabel');
+      if (state.audioEnabled) {
+        initAudio();
+        if (audioCtx && !ambientOsc) {
+          ambientOsc = audioCtx.createOscillator();
+          ambientGain = audioCtx.createGain();
+          ambientOsc.type = 'sine';
+          ambientOsc.frequency.setValueAtTime(68, audioCtx.currentTime);
+          ambientGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+          ambientOsc.connect(ambientGain);
+          ambientGain.connect(audioCtx.destination);
+          ambientOsc.start();
+        }
+        icon.textContent = '🔊';
+        label.textContent = 'เสียงใต้น้ำ: เปิด';
+        playSonarPing(1040);
+        showToast('🔊 เปิดเสียงบรรยากาศอุโมงค์ใต้น้ำโขงและเอฟเฟกต์โซนาร์แล้ว');
+      } else {
+        if (ambientOsc) {
+          try { ambientOsc.stop(); } catch (e) {}
+          ambientOsc.disconnect();
+          ambientOsc = null;
+        }
+        icon.textContent = '🔇';
+        label.textContent = 'เสียงใต้น้ำ: ปิด';
+      }
+    }
+
+    // ==================== 4. THREE.JS 3D AR FISH SCENE ====================
+    let scene, camera, renderer;
+    let fishGroup, tailPivot, dorsalFinMesh, leftPectoral, rightPectoral;
+    let humanDiverGroup, arGridHelper, bubbleSystem, foodParticles = [];
+    let isDragging = false;
+    let prevPointer = { x: 0, y: 0 };
+    let targetRotation = { x: 0.1, y: -0.5 };
+    let currentRotation = { x: 0.1, y: -0.5 };
+    let cameraZoom = 5.2;
+    let clock = new THREE.Clock();
+
+    function initThreeScene() {
+      const mount = document.getElementById('threeCanvasMount');
+      const width = mount.clientWidth || 720;
+      const height = mount.clientHeight || 460;
+
+      scene = new THREE.Scene();
+
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 0.6, cameraZoom);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      mount.innerHTML = '';
+      mount.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xbae6fd, 0.85);
+      scene.add(ambientLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 1.15);
+      dirLight1.position.set(4, 8, 5);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0xfde047, 0.55);
+      dirLight2.position.set(-5, -3, 4);
+      scene.add(dirLight2);
+
+      // AR Floor Grid & Target Ring
+      const gridGroup = new THREE.Group();
+      const grid = new THREE.GridHelper(10, 20, 0x22d3ee, 0x0369a1);
+      grid.position.y = -1.65;
+      grid.material.opacity = 0.35;
+      grid.material.transparent = true;
+      gridGroup.add(grid);
+
+      const ringGeo = new THREE.RingGeometry(1.1, 1.25, 48);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, side: THREE.DoubleSide, transparent: true, opacity: 0.65 });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = Math.PI / 2;
+      ringMesh.position.y = -1.64;
+      gridGroup.add(ringMesh);
+      arGridHelper = gridGroup;
+      scene.add(arGridHelper);
+
+      // Underwater Bubbles Particle System
+      const bubbleCount = 90;
+      const bubbleGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(bubbleCount * 3);
+      for (let i = 0; i < bubbleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 9;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 5;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 6;
+      }
+      bubbleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const bubbleMat = new THREE.PointsMaterial({ color: 0x7dd3fc, size: 0.08, transparent: true, opacity: 0.65 });
+      bubbleSystem = new THREE.Points(bubbleGeo, bubbleMat);
+      scene.add(bubbleSystem);
+
+      // Human Scale Reference Group (1.75m Diver Silhouette)
+      humanDiverGroup = new THREE.Group();
+      const diverMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.55, wireframe: false });
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), diverMat);
+      head.position.set(0, 0.72, 0);
+      const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.75, 16), diverMat);
+      torso.position.set(0, 0.2, 0);
+      const legs = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.1, 0.75, 16), diverMat);
+      legs.position.set(0, -0.55, 0);
+      humanDiverGroup.add(head, torso, legs);
+      humanDiverGroup.position.set(0, -0.2, -1.35);
+      humanDiverGroup.visible = state.showHumanScale;
+      scene.add(humanDiverGroup);
+
+      // Build initial fish
+      buildFish3DModel(getFishById(state.selectedFishId));
+
+      // Pointer & Wheel Interactions
+      const domEl = renderer.domElement;
+      domEl.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        prevPointer = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevPointer.x;
+        const dy = e.clientY - prevPointer.y;
+        targetRotation.y += dx * 0.008;
+        targetRotation.x = Math.max(-0.8, Math.min(0.8, targetRotation.x + dy * 0.006));
+        prevPointer = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('pointerup', () => { isDragging = false; });
+
+      domEl.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        cameraZoom = Math.max(2.6, Math.min(8.5, cameraZoom + e.deltaY * 0.003));
+        camera.position.z = cameraZoom;
+      }, { passive: false });
+
+      window.addEventListener('resize', handleResize);
+      animateThreeScene();
+    }
+
+    function handleResize() {
+      const mount = document.getElementById('threeCanvasMount');
+      if (!mount || !renderer || !camera) return;
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      if (w > 0 && h > 0) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      }
+    }
+
+    function buildFish3DModel(fish) {
+      if (!scene) return;
+      if (fishGroup) {
+        scene.remove(fishGroup);
+      }
+
+      fishGroup = new THREE.Group();
+      const [sx, sy, sz] = fish.bodyScale;
+
+      const mainMat = new THREE.MeshStandardMaterial({
+        color: fish.bodyColor,
+        roughness: 0.32,
+        metalness: 0.18,
+        wireframe: state.wireframeMode
+      });
+
+      const bellyMat = new THREE.MeshStandardMaterial({
+        color: fish.bellyColor,
+        roughness: 0.45,
+        metalness: 0.1,
+        wireframe: state.wireframeMode
+      });
+
+      const finMat = new THREE.MeshStandardMaterial({
+        color: fish.finColor,
+        roughness: 0.4,
+        side: THREE.DoubleSide,
+        wireframe: state.wireframeMode
+      });
+
+      if (fish.isRay) {
+        // Giant Freshwater Whipray Disc Model
+        const discGeo = new THREE.SphereGeometry(1.0, 36, 24);
+        const discMesh = new THREE.Mesh(discGeo, mainMat);
+        discMesh.scale.set(sx * 0.65, sy, sz * 0.65);
+        fishGroup.add(discMesh);
+
+        const underDisc = new THREE.Mesh(new THREE.SphereGeometry(0.96, 32, 20), bellyMat);
+        underDisc.scale.set(sx * 0.62, sy * 0.8, sz * 0.62);
+        underDisc.position.y = -0.04;
+        fishGroup.add(underDisc);
+
+        // Eyes on top
+        const eyeGeo = new THREE.SphereGeometry(0.06, 12, 12);
+        const eyeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+        const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+        leftEye.position.set(0.45, 0.16, 0.25);
+        const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+        rightEye.position.set(0.45, 0.16, -0.25);
+        fishGroup.add(leftEye, rightEye);
+
+        // Long Whip Tail
+        tailPivot = new THREE.Group();
+        tailPivot.position.set(-sx * 0.55, 0, 0);
+        const whipGeo = new THREE.CylinderGeometry(0.05, 0.008, 2.2, 12);
+        whipGeo.rotateZ(Math.PI / 2);
+        const whipMesh = new THREE.Mesh(whipGeo, finMat);
+        whipMesh.position.set(-1.05, 0, 0);
+        tailPivot.add(whipMesh);
+        fishGroup.add(tailPivot);
+      } else {
+        // Torpedo / Streamlined River Fish Body
+        const bodyGeo = new THREE.SphereGeometry(0.75, 36, 28);
+        const bodyMesh = new THREE.Mesh(bodyGeo, mainMat);
+        bodyMesh.scale.set(sx, sy, sz);
+        fishGroup.add(bodyMesh);
+
+        // Lighter Counter-shaded Belly
+        const bellyGeo = new THREE.SphereGeometry(0.71, 32, 24);
+        const bellyMesh = new THREE.Mesh(bellyGeo, bellyMat);
+        bellyMesh.scale.set(sx * 0.94, sy * 0.82, sz * 0.95);
+        bellyMesh.position.y = -0.07;
+        fishGroup.add(bellyMesh);
+
+        // Stripes for Tiger Perch / Golden Carp
+        if (fish.stripePattern) {
+          const stripeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, wireframe: state.wireframeMode });
+          for (let i = -2; i <= 2; i++) {
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.5 * sy, 0.035, 10, 28), stripeMat);
+            ring.rotation.y = Math.PI / 2;
+            ring.scale.set(sz / sy, 1.05, 1);
+            ring.position.x = i * 0.28 * sx;
+            fishGroup.add(ring);
+          }
+        }
+
+        // Eyes
+        const eyeOuterGeo = new THREE.SphereGeometry(0.085, 16, 16);
+        const eyeOuterMat = new THREE.MeshBasicMaterial({ color: fish.redEyes ? 0xef4444 : 0xfef08a });
+        const pupilGeo = new THREE.SphereGeometry(0.048, 12, 12);
+        const pupilMat = new THREE.MeshBasicMaterial({ color: 0x020617 });
+
+        const eyeX = sx * 0.52;
+        const eyeY = sy * 0.12;
+        const eyeZ = sz * 0.52;
+
+        const leftEye = new THREE.Mesh(eyeOuterGeo, eyeOuterMat);
+        leftEye.position.set(eyeX, eyeY, eyeZ);
+        const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        leftPupil.position.set(eyeX + 0.03, eyeY, eyeZ + 0.05);
+
+        const rightEye = new THREE.Mesh(eyeOuterGeo, eyeOuterMat);
+        rightEye.position.set(eyeX, eyeY, -eyeZ);
+        const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        rightPupil.position.set(eyeX + 0.03, eyeY, -eyeZ - 0.05);
+
+        fishGroup.add(leftEye, leftPupil, rightEye, rightPupil);
+
+        // Dorsal Fin
+        const dorsalHeight = fish.id === 'plathepha' ? 0.85 : 0.48;
+        const dorsalGeo = new THREE.ConeGeometry(0.32, dorsalHeight, 4);
+        dorsalFinMesh = new THREE.Mesh(dorsalGeo, finMat);
+        dorsalFinMesh.position.set(-0.05 * sx, sy * 0.72, 0);
+        dorsalFinMesh.rotation.z = 0.32;
+        dorsalFinMesh.scale.set(1.2, 1, 0.18);
+        fishGroup.add(dorsalFinMesh);
+
+        // Pectoral Fins
+        const pecGeo = new THREE.ConeGeometry(0.24, 0.52, 4);
+        leftPectoral = new THREE.Mesh(pecGeo, finMat);
+        leftPectoral.position.set(sx * 0.22, -sy * 0.35, sz * 0.55);
+        leftPectoral.rotation.set(0.7, 0, -0.5);
+        leftPectoral.scale.set(0.8, 1, 0.15);
+
+        rightPectoral = new THREE.Mesh(pecGeo, finMat);
+        rightPectoral.position.set(sx * 0.22, -sy * 0.35, -sz * 0.55);
+        rightPectoral.rotation.set(-0.7, 0, -0.5);
+        rightPectoral.scale.set(0.8, 1, 0.15);
+        fishGroup.add(leftPectoral, rightPectoral);
+
+        // Whiskers (Barbels) for Catfish / Carp
+        if (fish.hasWhiskers) {
+          const whiskerMat = new THREE.MeshBasicMaterial({ color: 0xe2e8f0 });
+          const wGeo = new THREE.CylinderGeometry(0.012, 0.003, 0.65, 8);
+          wGeo.rotateZ(Math.PI / 3);
+          const wLeft = new THREE.Mesh(wGeo, whiskerMat);
+          wLeft.position.set(sx * 0.68, -0.1, 0.28);
+          wLeft.rotation.y = 0.4;
+          const wRight = new THREE.Mesh(wGeo, whiskerMat);
+          wRight.position.set(sx * 0.68, -0.1, -0.28);
+          wRight.rotation.y = -0.4;
+          fishGroup.add(wLeft, wRight);
+        }
+
+        // Forked Caudal Tail Fin on Pivot
+        tailPivot = new THREE.Group();
+        tailPivot.position.set(-sx * 0.68, 0, 0);
+
+        const tailMat = new THREE.MeshStandardMaterial({
+          color: fish.redTail ? 0xef4444 : fish.finColor,
+          roughness: 0.35,
+          side: THREE.DoubleSide,
+          wireframe: state.wireframeMode
+        });
+
+        const upperLobe = new THREE.Mesh(new THREE.ConeGeometry(0.28, fish.tailSpread, 4), tailMat);
+        upperLobe.position.set(-0.35, 0.28, 0);
+        upperLobe.rotation.z = 1.05;
+        upperLobe.scale.set(1, 1, 0.15);
+
+        const lowerLobe = new THREE.Mesh(new THREE.ConeGeometry(0.26, fish.tailSpread * 0.92, 4), tailMat);
+        lowerLobe.position.set(-0.35, -0.26, 0);
+        lowerLobe.rotation.z = 2.08;
+        lowerLobe.scale.set(1, 1, 0.15);
+
+        tailPivot.add(upperLobe, lowerLobe);
+        fishGroup.add(tailPivot);
+      }
+
+      scene.add(fishGroup);
+    }
+
+    function spawnFoodPellets() {
+      if (!scene) return;
+      state.feedCount += 1;
+      document.getElementById('feedCounterBadge').textContent = `ให้อาหารสะสม: ${state.feedCount} ครั้ง`;
+      playSonarPing(660);
+
+      const pelletGeo = new THREE.SphereGeometry(0.065, 10, 10);
+      const pelletMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x78350f });
+
+      for (let i = 0; i < 6; i++) {
+        const pellet = new THREE.Mesh(pelletGeo, pelletMat);
+        pellet.position.set(
+          0.6 + (Math.random() - 0.5) * 1.4,
+          1.6 + Math.random() * 0.5,
+          (Math.random() - 0.5) * 1.2
+        );
+        scene.add(pellet);
+        foodParticles.push({ mesh: pellet, vy: 0.015 + Math.random() * 0.012 });
+      }
+      showToast('🍤 ปล่อยอาหารปลาลงในฉาก AR แล้ว! สังเกตปลาว่ายเข้าหาอาหาร');
+    }
+
+    function animateThreeScene() {
+      requestAnimationFrame(animateThreeScene);
+      const elapsed = clock.getElapsedTime();
+
+      if (fishGroup) {
+        // Smoothly interpolate rotation
+        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.1;
+        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
+
+        const swimWave = Math.sin(elapsed * 3.2 * state.swimSpeed) * 0.08;
+        fishGroup.rotation.y = currentRotation.y + swimWave;
+        fishGroup.rotation.x = currentRotation.x;
+        fishGroup.position.y = Math.sin(elapsed * 1.6 * state.swimSpeed) * 0.12;
+
+        if (tailPivot) {
+          tailPivot.rotation.y = Math.sin(elapsed * 5.5 * state.swimSpeed) * 0.35;
+        }
+        if (leftPectoral && rightPectoral) {
+          leftPectoral.rotation.z = -0.5 + Math.sin(elapsed * 4 * state.swimSpeed) * 0.15;
+          rightPectoral.rotation.z = -0.5 - Math.sin(elapsed * 4 * state.swimSpeed) * 0.15;
+        }
+      }
+
+      // Animate rising bubbles
+      if (bubbleSystem) {
+        const posAttr = bubbleSystem.geometry.attributes.position;
+        for (let i = 0; i < posAttr.count; i++) {
+          let y = posAttr.getY(i) + 0.012 * state.swimSpeed;
+          if (y > 2.6) y = -2.4;
+          posAttr.setY(i, y);
+        }
+        posAttr.needsUpdate = true;
+      }
+
+      // Animate falling food pellets
+      for (let i = foodParticles.length - 1; i >= 0; i--) {
+        const p = foodParticles[i];
+        p.mesh.position.y -= p.vy;
+        if (fishGroup) {
+          p.mesh.position.x += (fishGroup.position.x - p.mesh.position.x) * 0.02;
+        }
+        if (p.mesh.position.y < -0.6) {
+          scene.remove(p.mesh);
+          foodParticles.splice(i, 1);
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // ==================== 5. UI RENDERING & CONTROLLERS ====================
+    function getFishById(id) {
+      return MEKONG_FISH_DATA.find(f => f.id === id) || MEKONG_FISH_DATA[0];
+    }
+
+    function selectSpecies(fishId) {
+      state.selectedFishId = fishId;
+      const fish = getFishById(fishId);
+      playSonarPing(920);
+
+      // Update 3D Model
+      buildFish3DModel(fish);
+
+      // Update Right Telemetry Panel
+      document.getElementById('fishZoneTag').textContent = fish.zoneName;
+      document.getElementById('fishThaiName').textContent = fish.thaiName;
+      document.getElementById('fishLocalName').textContent = fish.localName;
+      document.getElementById('fishSciName').textContent = fish.sciName;
+      document.getElementById('fishLength').textContent = fish.maxLength;
+      document.getElementById('fishWeight').textContent = fish.maxWeight;
+      document.getElementById('fishDepth').textContent = fish.depth;
+      document.getElementById('fishDiet').textContent = fish.diet;
+      document.getElementById('fishDescription').textContent = fish.description;
+      document.getElementById('fishSourceLink').href = fish.sourceUrl;
+
+      const statusBadge = document.getElementById('fishStatusBadge');
+      statusBadge.textContent = fish.status;
+      statusBadge.className = `px-2.5 py-1 rounded-lg text-xs font-bold shrink-0 border ${
+        fish.statusColor === 'rose'
+          ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+          : fish.statusColor === 'amber'
+          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+      }`;
+
+      // Update Hotspot Buttons
+      const hotspotContainer = document.getElementById('hotspotButtonsContainer');
+      hotspotContainer.innerHTML = '';
+      fish.hotspots.forEach((hs, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900/85 hover:bg-cyan-500 hover:text-slate-950 text-cyan-200 border border-cyan-400/50 backdrop-blur-md transition shadow';
+        btn.textContent = `📍 จุดที่ ${idx + 1}: ${hs.label}`;
+        btn.addEventListener('click', () => {
+          playSonarPing(1120);
+          document.getElementById('arInspectTitle').textContent = `🔍 ${hs.label}`;
+          document.getElementById('arInspectDesc').textContent = hs.detail;
+          // Rotate fish slightly to highlight part
+          targetRotation.y = idx === 0 ? -0.2 : idx === 1 ? -0.6 : -1.1;
+        });
+        hotspotContainer.appendChild(btn);
+      });
+
+      // Default first hotspot text
+      if (fish.hotspots[0]) {
+        document.getElementById('arInspectTitle').textContent = `🔍 ${fish.hotspots[0].label}`;
+        document.getElementById('arInspectDesc').textContent = fish.hotspots[0].detail;
+      }
+
+      updateBookmarkButtonUI();
+      renderSpeciesQuickBar();
+    }
+
+    function updateBookmarkButtonUI() {
+      const isBookmarked = state.bookmarks.has(state.selectedFishId);
+      document.getElementById('bookmarkStar').textContent = isBookmarked ? '★' : '☆';
+      document.getElementById('bookmarkText').textContent = isBookmarked ? 'บันทึกในรายการโปรดแล้ว' : 'บันทึกปลาที่ชอบ';
+    }
+
+    function renderSpeciesQuickBar() {
+      const bar = document.getElementById('speciesQuickBar');
+      bar.innerHTML = '';
+      MEKONG_FISH_DATA.forEach(fish => {
+        const active = fish.id === state.selectedFishId;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-2.5 rounded-xl text-left transition border flex flex-col justify-between ${
+          active
+            ? 'bg-cyan-500/25 border-cyan-400 text-white shadow-md shadow-cyan-500/15'
+            : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-cyan-500/40 hover:bg-slate-800/70'
+        }`;
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full mb-1">
+            <span class="text-lg">${fish.emoji}</span>
+            ${state.bookmarks.has(fish.id) ? '<span class="text-amber-400 text-xs">★</span>' : ''}
+          </div>
+          <div class="text-xs font-bold truncate w-full">${fish.thaiName}</div>
+          <div class="text-[10px] text-cyan-300/80 truncate w-full">${fish.maxLength}</div>
+        `;
+        btn.addEventListener('click', () => selectSpecies(fish.id));
+        bar.appendChild(btn);
+      });
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalogGrid');
+      const query = (document.getElementById('catalogSearchInput').value || '').trim().toLowerCase();
+      const cat = document.getElementById('catalogFilterCategory').value;
+
+      const filtered = MEKONG_FISH_DATA.filter(fish => {
+        const matchesQuery =
+          !query ||
+          fish.thaiName.toLowerCase().includes(query) ||
+          fish.localName.toLowerCase().includes(query) ||
+          fish.sciName.toLowerCase().includes(query) ||
+          fish.description.toLowerCase().includes(query);
+
+        const matchesCat =
+          cat === 'all' ||
+          (cat === 'bookmarked' ? state.bookmarks.has(fish.id) : fish.category === cat);
+
+        return matchesQuery && matchesCat;
+      });
+
+      grid.innerHTML = '';
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full glass-panel rounded-2xl p-8 text-center space-y-2">
+            <p class="text-base font-semibold text-white">ไม่พบข้อมูลสายพันธุ์ปลาที่ตรงกับการค้นหา</p>
+            <p class="text-xs text-slate-400">ลองเปลี่ยนคำค้นหาหรือเลือกดูทุกกลุ่มสายพันธุ์</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(fish => {
+        const card = document.createElement('div');
+        card.className = 'glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-cyan-400/50 transition';
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="text-3xl">${fish.emoji}</span>
+                <div>
+                  <h3 class="text-lg font-bold text-white">${fish.thaiName}</h3>
+                  <p class="text-xs italic text-cyan-300">${fish.sciName}</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-900 text-cyan-200 border border-cyan-500/30">
+                ${fish.maxLength}
+              </span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">${fish.description}</p>
+            <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+              <div class="p-2 rounded-lg bg-slate-900/70">
+                <span class="text-[10px] text-slate-400 block">น้ำหนักสูงสุด</span>
+                <span class="font-semibold text-cyan-200">${fish.maxWeight}</span>
+              </div>
+              <div class="p-2 rounded-lg bg-slate-900/70">
+                <span class="text-[10px] text-slate-400 block">สถานะอนุรักษ์</span>
+                <span class="font-semibold text-amber-200">${fish.status}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+            <a href="${fish.sourceUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-cyan-400 hover:underline">
+              ข้อมูลอ้างอิง ↗
+            </a>
+            <button type="button" data-ar-fish="${fish.id}" class="btn-open-in-ar px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition">
+              🥽 ส่องดูใน AR 3D
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      grid.querySelectorAll('.btn-open-in-ar').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fid = btn.getAttribute('data-ar-fish');
+          selectSpecies(fid);
+          switchTab('ar');
+          showToast(`🥽 เปิดโมเดล AR 3 มิติของ "${getFishById(fid).thaiName}" แล้ว`);
+        });
+      });
+    }
+
+    function renderZones() {
+      const container = document.getElementById('zoneCardsContainer');
+      container.innerHTML = '';
+      MUSEUM_ZONES.forEach(zone => {
+        const active = zone.id === state.selectedZoneId;
+        const fishNames = zone.fishIds.map(id => getFishById(id).thaiName).join(', ');
+        const div = document.createElement('div');
+        div.className = `p-4 rounded-xl border transition cursor-pointer ${
+          active
+            ? 'bg-cyan-950/60 border-cyan-400 shadow-lg shadow-cyan-500/10'
+            : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/40'
+        }`;
+        div.innerHTML = `
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <h3 class="text-sm sm:text-base font-bold text-white">${zone.title}</h3>
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">${zone.code}</span>
+          </div>
+          <p class="text-xs text-slate-300 mb-2">${zone.desc}</p>
+          <div class="text-xs text-cyan-300 font-medium">🐟 สายพันธุ์เด่นในโซน: ${fishNames}</div>
+        `;
+        div.addEventListener('click', () => {
+          state.selectedZoneId = zone.id;
+          const firstFish = getFishById(zone.defaultFish);
+          document.getElementById('markerPreviewEmoji').textContent = firstFish.emoji;
+          document.getElementById('markerPreviewCode').textContent = zone.code;
+          document.getElementById('markerZoneTitle').textContent = zone.title;
+          document.getElementById('markerZoneDesc').textContent = zone.desc;
+          playSonarPing(980);
+          renderZones();
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+      let score = 0;
+
+      QUIZ_QUESTIONS.forEach((item, qIndex) => {
+        const userAns = state.quizAnswers[qIndex];
+        if (userAns === item.correct) score++;
+
+        const block = document.createElement('div');
+        block.className = 'p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3';
+
+        let optionsHtml = '';
+        item.options.forEach((optText, oIndex) => {
+          let btnClass = 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 border-slate-700';
+          if (userAns !== undefined) {
+            if (oIndex === item.correct) {
+              btnClass = 'bg-emerald-500/25 border-emerald-400 text-emerald-200 font-semibold';
+            } else if (oIndex === userAns && userAns !== item.correct) {
+              btnClass = 'bg-rose-500/25 border-rose-400 text-rose-200';
+            }
+          }
+          optionsHtml += `
+            <button type="button" data-q="${qIndex}" data-o="${oIndex}" class="quiz-opt-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs sm:text-sm border transition ${btnClass}">
+              ${optText}
+            </button>
+          `;
+        });
+
+        block.innerHTML = `
+          <h3 class="text-sm sm:text-base font-bold text-white">${item.q}</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${optionsHtml}
+          </div>
+          ${
+            userAns !== undefined
+              ? `<p class="text-xs ${userAns === item.correct ? 'text-emerald-300' : 'text-amber-300'} pt-1">${item.explanation}</p>`
+              : ''
+          }
+        `;
+        container.appendChild(block);
+      });
+
+      document.getElementById('quizScoreText').textContent = score;
+      const answeredCount = Object.keys(state.quizAnswers).length;
+      const label = document.getElementById('quizProgressLabel');
+      if (answeredCount === QUIZ_QUESTIONS.length) {
+        label.textContent = `🎉 คุณทำแบบทดสอบครบแล้ว! ได้คะแนน ${score}/${QUIZ_QUESTIONS.length} — นักอนุรักษ์พันธุ์ปลาแม่น้ำโขงแห่งนครพนม`;
+      } else {
+        label.textContent = `ตอบแล้ว ${answeredCount}/${QUIZ_QUESTIONS.length} ข้อ`;
+      }
+
+      container.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const q = parseInt(btn.getAttribute('data-q'), 10);
+          const o = parseInt(btn.getAttribute('data-o'), 10);
+          state.quizAnswers[q] = o;
+          playSonarPing(o === QUIZ_QUESTIONS[q].correct ? 1200 : 480);
+          renderQuiz();
+        });
+      });
+    }
+
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      ['ar', 'catalog', 'zones', 'quiz', 'ai', 'editor'].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (!view || !btn) return;
+        if (t === tabName) {
+          view.classList.remove('hidden');
+          btn.className = 'nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25';
+        } else {
+          view.classList.add('hidden');
+          btn.className = 'nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-800/80 text-cyan-100 hover:bg-slate-700/80';
+        }
+      });
+
+      if (tabName === 'ar') {
+        setTimeout(handleResize, 50);
+      } else if (tabName === 'catalog') {
+        renderCatalog();
+      } else if (tabName === 'zones') {
+        renderZones();
+      } else if (tabName === 'quiz') {
+        renderQuiz();
+      } else if (tabName === 'ai') {
+        generateMekongOfficialReport();
+      } else if (tabName === 'editor') {
+        initMekongEditorSelect();
+      }
+    }
+
+    function initMekongEditorSelect() {
+      const sel = document.getElementById('editMekongFishSelect');
+      if (!sel) return;
+      sel.innerHTML = FISH_DATABASE.map(f => `<option value="${f.id}">${f.thaiName} (${f.sciName})</option>`).join('');
+      const first = FISH_DATABASE[0];
+      if (first) {
+        document.getElementById('editMekongFishName').value = first.thaiName;
+        document.getElementById('editMekongFishSize').value = first.maxLength;
+        document.getElementById('editMekongFishWeight').value = first.maxWeight;
+      }
+      sel.onchange = () => {
+        const fish = getFishById(sel.value);
+        document.getElementById('editMekongFishName').value = fish.thaiName;
+        document.getElementById('editMekongFishSize').value = fish.maxLength;
+        document.getElementById('editMekongFishWeight').value = fish.maxWeight;
+      };
+    }
+
+    function generateMekongOfficialReport() {
+      const type = (document.getElementById('mekongReportTypeSelect') || {}).value || 'full';
+      const doc = document.getElementById('mekongOfficialReportDoc');
+      if (!doc) return;
+      const nowStr = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const endangeredCount = FISH_DATABASE.filter(f => f.statusCode === 'CR' || f.statusCode === 'EN').length;
+
+      const rows = FISH_DATABASE.map((f, idx) => `
+        <tr style="border-bottom:1px solid #cbd5e1;">
+          <td style="padding:6px 8px;text-align:center;font-weight:bold;">${idx + 1}</td>
+          <td style="padding:6px 8px;font-weight:bold;">${f.thaiName}<div style="font-size:10px;color:#475569;font-style:italic;">${f.sciName}</div></td>
+          <td style="padding:6px 8px;">${f.localName}</td>
+          <td style="padding:6px 8px;text-align:center;">${f.maxLength}</td>
+          <td style="padding:6px 8px;text-align:center;">${f.maxWeight}</td>
+          <td style="padding:6px 8px;text-align:center;font-weight:bold;color:${f.statusCode === 'CR' ? '#b91c1c' : f.statusCode === 'EN' ? '#b45309' : '#047857'};">${f.iucn}</td>
+          <td style="padding:6px 8px;">${f.zone}</td>
+        </tr>
+      `).join('');
+
+      let titleMap = {
+        full: 'รายงานสรุปฐานข้อมูลทรัพยากรพันธุ์ปลาแม่น้ำโขงและสถานะการอนุรักษ์ (ฉบับสมบูรณ์)',
+        conservation: 'รายงานวิเคราะห์สถานะความเสี่ยงต่อการสูญพันธุ์ (IUCN Red List) ลุ่มน้ำโขง จ.นครพนม',
+        zones: 'รายงานสรุปการจัดแสดงโซนนิทรรศการ AR พิพิธภัณฑ์ปลาน้ำโขงหนองญาติ'
+      };
+
+      doc.innerHTML = `
+        <div style="border-bottom:3px double #0f172a;padding-bottom:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:11px;font-weight:bold;color:#0369a1;letter-spacing:1px;">MEKONG AQUATIC MUSEUM • NAKHON PHANOM OFFICIAL REPORT</div>
+            <h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:4px 0;">${titleMap[type] || titleMap.full}</h2>
+            <p style="font-size:12px;color:#475569;margin:0;">ศูนย์วิทยาศาสตร์และพิพิธภัณฑ์สัตว์น้ำจืดหนองญาติ จังหวัดนครพนม</p>
+          </div>
+          <div style="text-align:right;font-size:11px;color:#334155;">
+            <div><strong>เลขที่เอกสาร:</strong> MK-NKP-${new Date().getFullYear()}-${String(FISH_DATABASE.length).padStart(3,'0')}</div>
+            <div><strong>วันที่ออกรายงาน:</strong> ${nowStr}</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.6;">
+          <strong>1. บทสรุปผู้บริหาร (Executive Summary):</strong>
+          จากการสำรวจและรวบรวมฐานข้อมูลพันธุ์ปลาแม่น้ำโขงในระบบนิทรรศการ WebAR จำนวนทั้งสิ้น <strong>${FISH_DATABASE.length} สายพันธุ์หลัก</strong>
+          ครอบคลุมพื้นที่จัดแสดง <strong>${MUSEUM_ZONES.length} โซนนิทรรศการ</strong> พบสายพันธุ์ที่อยู่ในภาวะวิกฤตและใกล้สูญพันธุ์ (CR/EN) จำนวน <strong>${endangeredCount} สายพันธุ์</strong>
+          ได้แก่ ปลาบึก ปลาเสือตอ ปลาฝาไล (กระเบนน้ำจืดยักษ์) และปลาเอินตาแดง ซึ่งจำเป็นต้องได้รับการคุ้มครองถิ่นอาศัยและเพาะขยายพันธุ์คืนสู่ธรรมชาติอย่างต่อเนื่อง
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:bold;color:#0f172a;margin-bottom:6px;">2. ตารางสังเคราะห์ข้อมูลสายพันธุ์ปลาแม่น้ำโขงและสถานะ IUCN</div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #cbd5e1;">
+            <thead>
+              <tr style="background:#0f172a;color:#ffffff;">
+                <th style="padding:6px 8px;">ลำดับ</th>
+                <th style="padding:6px 8px;text-align:left;">ชื่อไทย / ชื่อวิทยาศาสตร์</th>
+                <th style="padding:6px 8px;text-align:left;">ชื่อท้องถิ่นนครพนม</th>
+                <th style="padding:6px 8px;">ความยาวสูงสุด</th>
+                <th style="padding:6px 8px;">น้ำหนักสูงสุด</th>
+                <th style="padding:6px 8px;">สถานะ IUCN</th>
+                <th style="padding:6px 8px;text-align:left;">โซนจัดแสดง</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;padding-top:12px;border-top:1px solid #cbd5e1;font-size:11px;color:#475569;">
+          <div>ระบบประมวลผลอัตโนมัติ: <strong>Mekong AI Report Generator & Real-Time Web Studio</strong></div>
+          <div style="text-align:center;">
+            <div>ลงชื่อ.......................................................ผู้รับรองรายงาน</div>
+            <div>(ผู้เชี่ยวชาญพิพิธภัณฑ์สัตว์น้ำจืดหนองญาติ จ.นครพนม)</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadMekongWordReport() {
+      generateMekongOfficialReport();
+      const docEl = document.getElementById('mekongOfficialReportDoc');
+      if (!docEl) return;
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Mekong_Report</title></head><body style="font-family:'Sarabun',sans-serif;">${docEl.innerHTML}</body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Mekong_Official_Report_${new Date().toISOString().slice(0,10)}.doc`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 ดาวน์โหลดไฟล์รายงาน Word (.doc) สำเร็จแล้ว!');
+    }
+
+    function applyMekongLiveEdit() {
+      const title = (document.getElementById('editMekongTitle') || {}).value;
+      const sub = (document.getElementById('editMekongSubtitle') || {}).value;
+      const banner = (document.getElementById('editMekongBanner') || {}).value;
+
+      if (title && document.getElementById('siteMainTitleText')) {
+        document.getElementById('siteMainTitleText').textContent = title;
+        document.title = title;
+      }
+      if (sub && document.getElementById('siteSubTitleText')) {
+        document.getElementById('siteSubTitleText').textContent = sub;
+      }
+      const bannerBar = document.getElementById('liveMekongBanner');
+      const bannerText = document.getElementById('liveMekongBannerText');
+      if (bannerBar && bannerText) {
+        if (banner && banner.trim()) {
+          bannerText.textContent = banner.trim();
+          bannerBar.classList.remove('hidden');
+        } else {
+          bannerBar.classList.add('hidden');
+        }
+      }
+      showToast('⚡ อัปเดตหัวเว็บและป้ายประกาศแบบเรียลไทม์สำเร็จ!');
+    }
+
+    function applyMekongFishLiveEdit() {
+      const id = (document.getElementById('editMekongFishSelect') || {}).value;
+      const fish = getFishById(id);
+      if (!fish) return;
+      const newName = document.getElementById('editMekongFishName').value.trim();
+      const newSize = document.getElementById('editMekongFishSize').value.trim();
+      const newWeight = document.getElementById('editMekongFishWeight').value.trim();
+      if (newName) fish.thaiName = newName;
+      if (newSize) fish.maxLength = newSize;
+      if (newWeight) fish.maxWeight = newWeight;
+
+      selectSpecies(fish.id);
+      renderCatalog();
+      generateMekongOfficialReport();
+      showToast(`🐟 อัปเดตข้อมูล "${fish.thaiName}" แบบเรียลไทม์บนหน้าเว็บและในรายงานแล้ว!`);
+    }
+
+    let mekongInlineEdit = false;
+    function toggleMekongInlineEdit() {
+      mekongInlineEdit = !mekongInlineEdit;
+      const btn = document.getElementById('btnInlineEditToggle');
+      document.querySelectorAll('h1, h2, h3, p, span').forEach(el => {
+        if (mekongInlineEdit) {
+          el.setAttribute('contenteditable', 'true');
+        } else {
+          el.removeAttribute('contenteditable');
+        }
+      });
+      if (btn) {
+        btn.textContent = mekongInlineEdit ? '✅ ปิดโหมดคลิกแก้ข้อความสด' : '✏️ คลิกแก้ข้อความบนหน้าเว็บ';
+      }
+      showToast(mekongInlineEdit ? '✏️ เปิดโหมดคลิกแก้ไขข้อความบนหน้าเว็บได้ทันที!' : '🔒 บันทึกและล็อกข้อความแล้ว');
+    }
+
+    function askMekongAI(promptText) {
+      const q = (promptText || '').trim();
+      if (!q) return;
+      switchTab('ai');
+      const log = document.getElementById('mekongAiChatLog');
+      if (log) {
+        log.innerHTML += `<div class="p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-100 ml-6"><strong>คุณ:</strong> ${q}</div>`;
+      }
+
+      let reply = '';
+      if (q.includes('เปลี่ยนชื่อเว็บเป็น')) {
+        const newTitle = q.split('เปลี่ยนชื่อเว็บเป็น')[1].trim();
+        if (newTitle && document.getElementById('siteMainTitleText')) {
+          document.getElementById('siteMainTitleText').textContent = newTitle;
+          document.getElementById('editMekongTitle').value = newTitle;
+        }
+        reply = `✅ แก้ไขชื่อเว็บไซต์บนหน้าเพจแบบเรียลไทม์เป็น <strong>"${newTitle}"</strong> เรียบร้อยแล้ว!`;
+      } else if (q.includes('ขึ้นป้ายประกาศ') || q.includes('ประกาศ:')) {
+        const msg = q.replace(/ขึ้นป้ายประกาศ:?|ประกาศ:?/g, '').trim();
+        document.getElementById('editMekongBanner').value = msg;
+        applyMekongLiveEdit();
+        reply = `📢 แสดงป้ายประกาศด่วนด้านบนสุดของเว็บไซต์: <strong>"${msg}"</strong> เรียบร้อยแล้ว!`;
+      } else if (q.includes('รายงาน') || q.includes('สรุป') || q.includes('ตาราง')) {
+        generateMekongOfficialReport();
+        reply = `📄 สร้าง <strong>รายงานสรุปฐานข้อมูลพันธุ์ปลาน้ำโขง (${FISH_DATABASE.length} สายพันธุ์)</strong> พร้อมตารางวิเคราะห์สถานะ IUCN ด้านขวามือเรียบร้อยแล้ว คุณสามารถกดปุ่ม <strong>พิมพ์ / PDF</strong> หรือ <strong>Word (.doc)</strong> ได้ทันที!`;
+      } else {
+        generateMekongOfficialReport();
+        reply = `🤖 AI ประมวลผลคำสั่ง <em>"${q}"</em> สำเร็จ: ปัจจุบันพิพิธภัณฑ์จัดแสดงปลาน้ำโขง ${FISH_DATABASE.length} สายพันธุ์ (มีสายพันธุ์ใกล้สูญพันธุ์ระดับวิกฤต เช่น ปลาบึก ปลาเสือตอ ปลาฝาไล) และอัปเดตรายงานด้านขวามือให้เรียบร้อยแล้ว`;
+      }
+
+      if (log) {
+        log.innerHTML += `<div class="p-2.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-emerald-100 mr-4">${reply}</div>`;
+        log.scrollTop = log.scrollHeight;
+      }
+    }
+
+    // ==================== 6. EVENT LISTENERS & INITIALIZATION ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      initThreeScene();
+      selectSpecies('plabuk');
+      renderCatalog();
+      renderZones();
+      renderQuiz();
+      generateMekongOfficialReport();
+      initMekongEditorSelect();
+
+      const aiForm = document.getElementById('mekongAiForm');
+      if (aiForm) {
+        aiForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const inp = document.getElementById('mekongAiInput');
+          if (inp && inp.value.trim()) {
+            askMekongAI(inp.value);
+            inp.value = '';
+          }
+        });
+      }
+      const inlineBtn = document.getElementById('btnInlineEditToggle');
+      if (inlineBtn) {
+        inlineBtn.addEventListener('click', toggleMekongInlineEdit);
+      }
+
+      // Tab buttons
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+      });
+
+      // Audio Toggle
+      document.getElementById('btnToggleAudio').addEventListener('click', toggleAmbientAudio);
+
+      // Museum Modal
+      const modal = document.getElementById('museumModal');
+      document.getElementById('btnMuseumInfo').addEventListener('click', () => modal.classList.remove('hidden'));
+      document.getElementById('btnCloseModal').addEventListener('click', () => modal.classList.add('hidden'));
+      document.getElementById('btnCloseModalBottom').addEventListener('click', () => modal.classList.add('hidden'));
+
+      // Camera AR Toggle (WebRTC with graceful simulated fallback)
+      document.getElementById('btnToggleCameraAR').addEventListener('click', async () => {
+        const video = document.getElementById('arCameraVideo');
+        const btnText = document.getElementById('cameraBtnText');
+        const hudLabel = document.getElementById('hudModeLabel');
+
+        if (!state.cameraARActive) {
+          try {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+              const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+              video.srcObject = stream;
+              video.classList.remove('hidden');
+              state.cameraARActive = true;
+              btnText.textContent = 'ปิดกล้อง AR';
+              hudLabel.textContent = 'โหมดกล้อง WebAR วางปลาในสถานที่จริง';
+              showToast('📷 เปิดกล้อง WebAR สำเร็จ! หมุนดูปลาน้ำโขงในพื้นที่จริงได้เลย');
+            } else {
+              throw new Error('No mediaDevices');
+            }
+          } catch (err) {
+            // Fallback simulated AR room grid boost
+            state.cameraARActive = true;
+            btnText.textContent = 'กลับสู่อุโมงค์น้ำ';
+            hudLabel.textContent = 'โหมดจำลองห้องโถง AR พิพิธภัณฑ์หนองญาติ';
+            document.getElementById('arViewportContainer').className =
+              'relative w-full h-[430px] sm:h-[520px] rounded-2xl overflow-hidden border border-emerald-400/50 ar-hud-border bg-[radial-gradient(circle_at_center,_#0f3b5c_0%,_#020b14_100%)]';
+            showToast('🥽 เปิดโหมดจำลองพื้นที่จริง AR Studio Grid (เบราว์เซอร์ไม่ได้เปิดสิทธิ์กล้อง)');
+          }
+        } else {
+          if (video.srcObject) {
+            video.srcObject.getTracks().forEach(t => t.stop());
+            video.srcObject = null;
+          }
+          video.classList.add('hidden');
+          state.cameraARActive = false;
+          btnText.textContent = 'เปิดกล้อง AR จริง';
+          hudLabel.textContent = 'AR โหมดอุโมงค์ใต้น้ำหนองญาติ';
+          document.getElementById('arViewportContainer').className =
+            'relative w-full h-[430px] sm:h-[520px] rounded-2xl overflow-hidden border border-cyan-400/40 ar-hud-border bg-gradient-to-b from-[#072640] via-[#041728] to-[#030e1a]';
+          showToast('🌊 กลับสู่ฉากอุโมงค์ใต้น้ำพิพิธภัณฑ์ปลาแม่น้ำโขง');
+        }
+      });
+
+      // Human Scale Comparison Toggle
+      document.getElementById('btnToggleScale').addEventListener('click', () => {
+        state.showHumanScale = !state.showHumanScale;
+        if (humanDiverGroup) humanDiverGroup.visible = state.showHumanScale;
+        document.getElementById('scaleIndicatorBadge').classList.toggle('hidden', !state.showHumanScale);
+        playSonarPing(780);
+        showToast(state.showHumanScale ? '📏 แสดงหุ่นจำลองนักประดาน้ำ (1.75 ม.) เพื่อเปรียบเทียบขนาดปลา' : 'ซ่อนหุ่นเปรียบเทียบขนาดแล้ว');
+      });
+
+      // 3D Wireframe / Structure Toggle
+      document.getElementById('btnToggleXray').addEventListener('click', () => {
+        state.wireframeMode = !state.wireframeMode;
+        buildFish3DModel(getFishById(state.selectedFishId));
+        playSonarPing(1050);
+        showToast(state.wireframeMode ? '🧬 เปิดโหมดโครงข่าย 3D Mesh (X-Ray Structure)' : 'กลับสู่โหมดพื้นผิวปลาตามธรรมชาติ');
+      });
+
+      // AR Snapshot Download
+      document.getElementById('btnSnapshot').addEventListener('click', () => {
+        if (!renderer) return;
+        renderer.render(scene, camera);
+        const dataUrl = renderer.domElement.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `mekong-ar-${state.selectedFishId}.png`;
+        link.href = dataUrl;
+        link.click();
+        playSonarPing(1320);
+        showToast('📸 บันทึกภาพถ่าย AR ปลาน้ำโขงลงในอุปกรณ์เรียบร้อยแล้ว!');
+      });
+
+      // Feed Fish Button
+      document.getElementById('btnFeedFish').addEventListener('click', spawnFoodPellets);
+
+      // Scan Laser Effect
+      document.getElementById('btnScanEffect').addEventListener('click', () => {
+        const laser = document.getElementById('arScanLaser');
+        laser.classList.remove('hidden');
+        playSonarPing(1180);
+        const fish = getFishById(state.selectedFishId);
+        showToast(`📡 สแกนเสร็จสมบูรณ์: ${fish.thaiName} (${fish.sciName}) — ขนาดสูงสุด ${fish.maxLength}`);
+        setTimeout(() => laser.classList.add('hidden'), 3400);
+      });
+
+      // Reset Camera
+      document.getElementById('btnResetCamera').addEventListener('click', () => {
+        targetRotation = { x: 0.1, y: -0.5 };
+        cameraZoom = 5.2;
+        camera.position.z = cameraZoom;
+        showToast('🔄 รีเซ็ตมุมมอง 3 มิติแล้ว');
+      });
+
+      // Swim Speed Slider
+      document.getElementById('swimSpeedRange').addEventListener('input', (e) => {
+        state.swimSpeed = parseFloat(e.target.value);
+      });
+
+      // Bookmark Toggle
+      document.getElementById('btnBookmarkFish').addEventListener('click', () => {
+        if (state.bookmarks.has(state.selectedFishId)) {
+          state.bookmarks.delete(state.selectedFishId);
+          showToast('นำออกจากรายการโปรดแล้ว');
+        } else {
+          state.bookmarks.add(state.selectedFishId);
+          showToast('★ บันทึกสายพันธุ์ปลานี้ไว้ในรายการโปรดแล้ว');
+        }
+        saveBookmarks();
+        updateBookmarkButtonUI();
+        renderSpeciesQuickBar();
+      });
+
+      // Catalog Search & Filter
+      document.getElementById('catalogSearchInput').addEventListener('input', renderCatalog);
+      document.getElementById('catalogFilterCategory').addEventListener('change', renderCatalog);
+
+      // Launch Zone AR Button
+      document.getElementById('btnLaunchZoneAR').addEventListener('click', () => {
+        const zone = MUSEUM_ZONES.find(z => z.id === state.selectedZoneId) || MUSEUM_ZONES[0];
+        selectSpecies(zone.defaultFish);
+        switchTab('ar');
+        showToast(`🚀 สแกนป้าย ${zone.code} สำเร็จ! กำลังแสดงปลาใน "${zone.title}"`);
+      });
+
+      // Reset Quiz
+      document.getElementById('btnResetQuiz').addEventListener('click', () => {
+        state.quizAnswers = {};
+        renderQuiz();
+        showToast('🔄 เริ่มทำแบบทดสอบใหม่แล้ว');
+      });
+    });
+  </script>
+</body>
+</html>
