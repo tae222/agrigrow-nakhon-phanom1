@@ -81,7 +81,64 @@
             font-size: 18px;
             color: #ffffff;
         }
+        /* Top Option Tabs */
+        .top-opt-tab {
+            transition: all 0.18s ease;
+        }
+        .top-opt-tab.active {
+            background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+            color: #ffffff !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 12px var(--theme-shadow);
+        }
+        /* Dark Mode Real-Time Override */
+        body.dark-ui-mode {
+            background-color: #0b1120 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-ui-mode header.bg-white,
+        body.dark-ui-mode .bg-white {
+            background-color: #111827 !important;
+            color: #f1f5f9 !important;
+            border-color: #1e293b !important;
+        }
+        body.dark-ui-mode .bg-slate-50,
+        body.dark-ui-mode .bg-slate-50\/60,
+        body.dark-ui-mode .bg-slate-50\/40,
+        body.dark-ui-mode .bg-slate-100 {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        body.dark-ui-mode .text-slate-900,
+        body.dark-ui-mode .text-slate-800,
+        body.dark-ui-mode .text-slate-700 {
+            color: #f1f5f9 !important;
+        }
+        body.dark-ui-mode .text-slate-600,
+        body.dark-ui-mode .text-slate-500 {
+            color: #94a3b8 !important;
+        }
+        body.dark-ui-mode input,
+        body.dark-ui-mode select,
+        body.dark-ui-mode textarea {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+        /* Inline Direct Page Edit Mode */
+        body.inline-edit-active [contenteditable="true"] {
+            outline: 1.5px dashed #10b981;
+            outline-offset: 3px;
+            border-radius: 6px;
+            cursor: text;
+            transition: outline 0.15s ease, background-color 0.15s ease;
+        }
+        body.inline-edit-active [contenteditable="true"]:focus {
+            outline: 2px solid #059669;
+            background-color: rgba(16, 185, 129, 0.08);
+        }
         @media print {
             .no-print { display: none !important; }
-            body { background: #ffffff; }
+            body { background: #ffffff !important; color: #000000 !important; }
         }

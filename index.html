@@ -27,15 +27,15 @@
             <!-- Brand Header -->
             <div class="flex items-center justify-between lg:justify-start gap-3 pb-3 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-2xl shadow-inner">
+                    <div id="sidebarBrandIcon" class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-2xl shadow-inner">
                         🌱
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-400/30">AgriGrow GIS 3.0</span>
+                            <span id="sidebarBrandBadge" class="text-[10px] font-extrabold uppercase tracking-widest bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-400/30">AgriGrow GIS 4.0 AI</span>
                         </div>
-                        <h1 class="text-base font-extrabold tracking-tight mt-0.5">ระบบติดตามพืชผล จ.นครพนม</h1>
-                        <p class="text-[11px] text-slate-300">Smart Farm Nakhon Phanom GIS</p>
+                        <h1 id="sidebarBrandTitle" class="text-base font-extrabold tracking-tight mt-0.5">ระบบติดตามพืชผล จ.นครพนม</h1>
+                        <p id="sidebarBrandSubtitle" class="text-[11px] text-slate-300">Smart Farm Nakhon Phanom GIS</p>
                     </div>
                 </div>
                 <button type="button" id="btnOpenQrModal" onclick="toggleQrModal(true)" class="lg:hidden bg-emerald-500/25 hover:bg-emerald-500/40 border border-emerald-300/30 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
@@ -45,47 +45,55 @@
 
             <!-- Main Vertical Navigation Menu -->
             <div class="space-y-1.5">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2 mb-1">เมนูควบคุมฟาร์มอัจฉริยะ</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2 mb-1">แท็บตัวเลือกหลัก (Option Tabs)</div>
                 <nav class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-1 gap-1.5">
-                    <button type="button" id="tabBtnAI" onclick="switchTab('ai')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
-                        <span class="text-base">🤖</span>
-                        <span>AI สอบถาม & วิเคราะห์ฟาร์ม</span>
+                    <button type="button" id="tabBtnAI" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('chat');" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2 text-white/90 hover:bg-white/10">
+                        <span class="flex items-center gap-2.5"><span class="text-base">🤖</span><span>AI แชท & ขอรายงาน</span></span>
+                        <span class="text-[10px] bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 px-1.5 py-0.5 rounded-md">LIVE</span>
+                    </button>
+                    <button type="button" id="tabBtnAiReportQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('report');" class="tab-btn w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2.5 text-amber-200 hover:bg-white/10">
+                        <span class="text-base">📑</span>
+                        <span>ออกรายงานอัตโนมัติ (AI Report)</span>
+                    </button>
+                    <button type="button" id="tabBtnAiEditorQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('editor');" class="tab-btn w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2.5 text-sky-200 hover:bg-white/10">
+                        <span class="text-base">🛠️</span>
+                        <span>แก้ไขเว็บแบบเรียลไทม์</span>
                     </button>
                     <button type="button" id="tabBtnReport30m" onclick="switchTab('report30m')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">⏱️</span>
-                        <span>รายงานกราฟทุก 30 นาที (รวม & แยก)</span>
+                        <span>กราฟทุก 30 นาที</span>
                     </button>
                     <button type="button" id="tabBtnOverview" onclick="switchTab('overview')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🏞️</span>
-                        <span>ภาพรวมฟาร์ม & ระยะเติบโต</span>
+                        <span>ภาพรวมฟาร์ม</span>
                     </button>
                     <button type="button" id="tabBtn3D" onclick="switchTab('farm3d')" class="tab-btn active w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🧊</span>
-                        <span>ฟาร์มอัจฉริยะ 3 มิติ (3D Twin)</span>
+                        <span>ฟาร์ม 3 มิติ</span>
                     </button>
                     <button type="button" id="tabBtnBlueprint" onclick="switchTab('blueprint')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🎛️</span>
-                        <span>ผังฟาร์ม 2D & ควบคุม IoT</span>
+                        <span>ผังควบคุม IoT</span>
                     </button>
                     <button type="button" id="tabBtnKanban" onclick="switchTab('kanban')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">📋</span>
-                        <span>กระดานระยะพืช & พยากรณ์ผลผลิต</span>
+                        <span>กระดาน Kanban</span>
                     </button>
                     <button type="button" id="tabBtnMap" onclick="switchTab('map')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🗺️</span>
-                        <span>แผนที่ดาวเทียมแปลงปลูก (GIS)</span>
+                        <span>แผนที่ GIS</span>
                     </button>
                     <button type="button" id="tabBtnRecord" onclick="switchTab('record')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🌱</span>
-                        <span>บันทึกการเติบโต</span>
+                        <span>บันทึกข้อมูล</span>
                     </button>
                     <button type="button" id="tabBtnDashboard" onclick="switchTab('dashboard')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">📊</span>
-                        <span>แดชบอร์ดวิเคราะห์ผล</span>
+                        <span>สถิติและวิเคราะห์</span>
                     </button>
                     <button type="button" id="tabBtnPlots" onclick="switchTab('plots')" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 text-white/90 hover:bg-white/10">
                         <span class="text-base">🚜</span>
-                        <span>จัดการแปลงเกษตร</span>
+                        <span>จัดการแปลงปลูก</span>
                     </button>
                 </nav>
             </div>
@@ -122,10 +130,10 @@
         <!-- Bottom Sidebar Controls: Share & Theme Switcher -->
         <div class="mt-4 pt-4 border-t border-white/10 space-y-3">
             <button type="button" onclick="toggleModularModal(true)" class="w-full bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/40 text-amber-200 font-bold py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
-                <span>📂 ดูโค้ดแยกส่วน / ดาวน์โหลด (7 ไฟล์)</span>
+                <span>📂 ซอร์สโค้ด (7 ไฟล์)</span>
             </button>
             <button type="button" onclick="toggleQrModal(true)" class="w-full bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/40 text-emerald-200 font-bold py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
-                <span>📤 แชร์เว็บให้คนอื่นเข้าดูฟรี / QR Code</span>
+                <span>📤 แชร์ระบบ / QR Code</span>
             </button>
 
             <div class="flex items-center justify-between bg-black/30 px-3 py-2 rounded-xl border border-white/10">
@@ -145,32 +153,57 @@
     <div class="flex-1 flex flex-col min-w-0">
 
         <!-- Top Workspace Action Header -->
-        <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20 no-print">
+        <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20 no-print">
             <div>
-                <h2 id="pageHeaderTitle" class="text-base sm:text-lg font-extrabold text-slate-900">🏞️ โครงการติดตามการเติบโตพืชผลอัจฉริยะ จังหวัดนครพนม (Smart Farm Nakhon Phanom)</h2>
-                <p id="pageHeaderSubtitle" class="text-xs text-slate-500">ติดตามอายุพืช ความสูง จำนวนใบ ความชื้นดิน พิกัดแผนที่ดาวเทียม GPS และคำนวณวันเก็บเกี่ยวอัตโนมัติ</p>
+                <div class="flex items-center gap-2">
+                    <h2 id="pageHeaderTitle" class="text-base sm:text-lg font-extrabold text-slate-900">AgriGrow Nakhon Phanom</h2>
+                    <span id="liveEditStatusBadge" class="hidden bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full">✏️ โหมดคลิกแก้ข้อความสด</span>
+                </div>
+                <p id="pageHeaderSubtitle" class="text-xs text-slate-500">ระบบติดตามการเติบโตพืชผลและสมาร์ทฟาร์ม จ.นครพนม</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="switchTab('ai')" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    🤖 ถาม AI เกษตรอัจฉริยะ
+                <!-- Dropdown ตัวเลือกด่วน -->
+                <select id="headerQuickOptionSelect" onchange="handleQuickOptionSelect(this.value)" aria-label="เลือกโหมดการทำงานด่วน" class="rounded-xl border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-extrabold text-slate-800 focus:border-emerald-600 focus:outline-none">
+                    <option value="">⚙️ แท็บตัวเลือกด่วน (เลือกโหมด)...</option>
+                    <option value="ai-chat">🤖 1. แชท AI & สั่งงานระบบ</option>
+                    <option value="ai-report">📑 2. ขอรายงาน AI อัตโนมัติ (พิมพ์/Word)</option>
+                    <option value="ai-editor">🛠️ 3. แก้ไขหน้าเว็บแบบเรียลไทม์</option>
+                    <option value="inline-edit">✏️ 4. เปิด/ปิด คลิกแก้ข้อความบนเว็บโดยตรง</option>
+                    <option value="dark-mode">🌙 5. สลับโหมดมืด / โหมดสว่าง</option>
+                    <option value="report30m">⏱️ 6. รายงานกราฟทุก 30 นาที</option>
+                    <option value="farm3d">🧊 7. ฟาร์มอัจฉริยะ 3 มิติ (3D)</option>
+                    <option value="blueprint">🎛️ 8. ผังควบคุม IoT 2D</option>
+                    <option value="kanban">📋 9. กระดาน Kanban & คำนวณรายได้</option>
+                    <option value="map">🗺️ 10. แผนที่ดาวเทียม GIS</option>
+                    <option value="dashboard">📊 11. แดชบอร์ดสถิติวิจัย</option>
+                    <option value="plots">🚜 12. จัดการแปลงเพาะปลูก</option>
+                </select>
+                <button type="button" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm">
+                    📑 ขอรายงาน AI
                 </button>
-                <button type="button" onclick="switchTab('report30m')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    ⏱️ กราฟทุก 30 นาที (รวม & แยกต้น)
+                <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    🛠️ แก้ไขเว็บเรียลไทม์
                 </button>
-                <button type="button" onclick="toggleModularModal(true)" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    📂 โค้ดแยกส่วน (7 ไฟล์)
+                <button type="button" id="btnToggleInlineEdit" onclick="toggleInlinePageEditMode()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                    ✏️ คลิกแก้เว็บสด: ปิด
                 </button>
-                <button type="button" onclick="switchTab('map')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                    🛰️ ดูแผนที่ดาวเทียม GPS
-                </button>
-                <button type="button" onclick="exportSelfContainedHTML()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                    💾 บันทึกไฟล์เว็บส่งเข้า LINE (.html)
-                </button>
-                <button type="button" onclick="switchTab('record')" class="theme-btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                    + บันทึกการวัดต้นพืชวันนี้
+                <button type="button" id="btnToggleDarkMode" onclick="toggleDarkModeUI()" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition" title="สลับโหมดมืด/สว่าง">
+                    🌙
                 </button>
             </div>
         </header>
+
+        <!-- Live Customizable Announcement Banner (Editable in Real-Time via AI or Editor) -->
+        <div id="liveCustomBanner" class="bg-gradient-to-r from-emerald-700 via-teal-700 to-slate-900 text-white px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm no-print">
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-400 text-slate-950 font-extrabold px-2 py-0.5 rounded-md text-[10px] uppercase">LIVE AI WEB</span>
+                <span id="liveCustomBannerText" class="font-bold">✨ ระบบอัปเกรดใหม่! รองรับแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="bg-white/15 hover:bg-white/25 px-2.5 py-0.5 rounded-lg font-bold text-[11px] transition">📄 ขอรายงานทันที</button>
+                <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-amber-400 hover:bg-amber-300 text-slate-950 px-2.5 py-0.5 rounded-lg font-extrabold text-[11px] transition">🛠️ แก้ไขข้อความนี้</button>
+            </div>
+        </div>
 
         <!-- Toast Notification -->
         <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden max-w-sm theme-header text-white px-4 py-3.5 rounded-2xl shadow-2xl border border-white/20 flex items-center gap-3 transition-all no-print">
@@ -263,30 +296,30 @@
                     <div class="flex items-center gap-2.5">
                         <span class="w-10 h-10 rounded-2xl theme-badge border flex items-center justify-center text-xl">📤</span>
                         <div>
-                            <h3 class="text-base font-extrabold text-slate-900">แชร์ให้คนอื่นเข้าใช้งานฟรี 100% (ไม่เสียเงิน)</h3>
-                            <p class="text-xs text-slate-500">เลือกส่งเป็นไฟล์เว็บลง LINE หรือคัดลอกรหัสซิงค์ข้อมูลข้ามเครื่องได้ทันที</p>
+                            <h3 class="text-base font-extrabold text-slate-900">แชร์ระบบและส่งออกข้อมูล</h3>
+                            <p class="text-xs text-slate-500">บันทึกเป็นไฟล์เว็บ หรือคัดลอกรหัสซิงค์ข้อมูลข้ามเครื่อง</p>
                         </div>
                     </div>
                     <button type="button" onclick="toggleQrModal(false)" class="text-slate-400 hover:text-slate-700 text-sm font-bold px-2 py-1">✕</button>
                 </div>
 
                 <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 space-y-2.5">
-                    <div class="text-xs font-extrabold text-emerald-900">🌟 วิธีที่ 1 (ง่ายที่สุด): บันทึกไฟล์เว็บพร้อมข้อมูลที่คุณกรอกไว้ ส่งเข้า LINE</div>
-                    <p class="text-xs text-emerald-800 leading-relaxed">เมื่อกดปุ่มด้านล่าง ระบบจะดาวน์โหลดไฟล์ <b>crop_growth_shared.html</b> ที่ฝังข้อมูลแปลงเกษตร พิกัดแผนที่ และประวัติที่คุณกรอกไว้ทั้งหมดลงในไฟล์เดียว ส่งเข้าแชท LINE ให้เพื่อนหรืออาจารย์กดเปิดดูบนมือถือหรือคอมได้ทันที</p>
+                    <div class="text-xs font-bold text-emerald-900">🌟 วิธีที่ 1: บันทึกไฟล์เว็บส่งต่อ (.html)</div>
+                    <p class="text-xs text-emerald-800 leading-relaxed">ดาวน์โหลดไฟล์ <b>crop_growth_shared.html</b> ที่รวมข้อมูลแปลงและประวัติทั้งหมดไว้ในไฟล์เดียว สามารถเปิดดูบนมือถือหรือคอมพิวเตอร์ได้ทันที</p>
                     <button type="button" onclick="exportSelfContainedHTML()" class="w-full theme-btn-primary font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition">
-                        📥 ดาวน์โหลดไฟล์เว็บพร้อมข้อมูลชุดนี้ (.html)
+                        📥 ดาวน์โหลดไฟล์เว็บพร้อมข้อมูล (.html)
                     </button>
                 </div>
 
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5">
-                    <div class="text-xs font-extrabold text-slate-800">🔄 วิธีที่ 2: คัดลอกรหัสข้อมูลส่งทางแชท (สำหรับเอาข้อมูลจากมือถือเพื่อนมารวมกัน)</div>
+                    <div class="text-xs font-bold text-slate-800">🔄 วิธีที่ 2: คัดลอกรหัสซิงค์ข้อมูลข้ามเครื่อง</div>
                     <div class="flex gap-2">
                         <button type="button" onclick="copyShareCode()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-3 rounded-xl text-xs transition">
                             📋 คัดลอกรหัสข้อมูลเครื่องนี้
                         </button>
                     </div>
                     <div class="pt-1 flex gap-2">
-                        <input type="text" id="importCodeInput" placeholder="วางรหัสข้อมูลที่ได้จากเครื่องเพื่อนที่นี่..." class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-emerald-600 focus:outline-none">
+                        <input type="text" id="importCodeInput" placeholder="วางรหัสข้อมูลที่นี่..." class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-emerald-600 focus:outline-none">
                         <button type="button" onclick="importShareCode()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">
                             นำเข้าข้อมูล
                         </button>
@@ -294,7 +327,7 @@
                 </div>
 
                 <div class="text-center bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <div class="text-xs font-bold text-slate-700 mb-2">📱 QR Code ประจำแปลงเพาะปลูก (สำหรับพิมพ์ติดหน้าโรงเรือน)</div>
+                    <div class="text-xs font-bold text-slate-700 mb-2">📱 QR Code ประจำแปลงเพาะปลูก</div>
                     <svg class="w-32 h-32 mx-auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="120" height="120" rx="8" fill="white"/>
                         <path d="M12 12H44V44H12V12ZM18 18V38H38V18H18Z" fill="#0F172A"/>
@@ -323,139 +356,195 @@
 
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-            <!-- ==================== TAB 0: VISUAL FARM OVERVIEW & GROWTH TIMELINE ==================== -->
-            <!-- Mode Switcher Pills for Quick Style Switching -->
-            <div class="bg-white rounded-2xl p-2.5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-2 no-print">
-                <div class="flex items-center gap-2 px-2">
-                    <span class="text-xs font-extrabold text-slate-700">✨ เลือกรูปแบบหน้าจอ (สลับได้ 4 สไตล์):</span>
+            <!-- ==================== TOP OPTION TABS BAR (แถบแท็บตัวเลือกครบทุกโหมด) ==================== -->
+            <div id="topOptionTabsBar" class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2.5 no-print">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-extrabold text-slate-800">🎛️ แท็บตัวเลือกหลัก (Option Tabs — คลิกสลับหน้าจอ ขอรายงาน AI หรือแก้ไขเว็บแบบเรียลไทม์):</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[11px]">
+                        <button type="button" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-extrabold px-2.5 py-1 rounded-lg transition">
+                            📄 ขอรายงานด่วน
+                        </button>
+                        <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-100 hover:bg-violet-200 text-violet-900 border border-violet-300 font-extrabold px-2.5 py-1 rounded-lg transition">
+                            ⚡ แก้ไขเว็บสด
+                        </button>
+                    </div>
                 </div>
                 <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="switchTab('ai')" class="bg-violet-600 hover:bg-violet-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        🤖 ถาม AI วิเคราะห์ฟาร์ม & กราฟ
+                    <button type="button" data-top-tab="ai" onclick="switchTab('ai'); switchAiSubTab('chat');" class="top-opt-tab bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        🤖 1. แชท AI & สั่งงาน
                     </button>
-                    <button type="button" onclick="switchTab('report30m')" class="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        ⏱️ รายงานกราฟทุก 30 นาที (1 กราฟรวม & แยกกราฟรายต้น)
+                    <button type="button" data-top-tab="ai-report" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="top-opt-tab bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        📑 2. ขอรายงาน AI (5 รูปแบบ)
                     </button>
-                    <button type="button" onclick="switchTab('farm3d')" class="theme-btn-primary px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        🧊 โหมด 3 มิติ: จำลองฟาร์ม 3D หมุนได้ 360°
+                    <button type="button" data-top-tab="ai-editor" onclick="switchTab('ai'); switchAiSubTab('editor');" class="top-opt-tab bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        🛠️ 3. แก้ไขเว็บเรียลไทม์
                     </button>
-                    <button type="button" onclick="switchTab('blueprint')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🎛️ สไตล์ที่ 1: ผังสมาร์ทฟาร์ม 2D & ตู้ควบคุม IoT
+                    <button type="button" data-top-tab="report30m" onclick="switchTab('report30m')" class="top-opt-tab bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        ⏱️ 4. กราฟ 30 นาที
                     </button>
-                    <button type="button" onclick="switchTab('kanban')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        📋 สไตล์ที่ 2: กระดาน Kanban 4 ระยะ & คำนวณรายได้
+                    <button type="button" data-top-tab="farm3d" onclick="switchTab('farm3d')" class="top-opt-tab active theme-btn-primary px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        🧊 5. โมเดล 3D
                     </button>
-                    <button type="button" onclick="switchTab('overview')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🏞️ สไตล์ที่ 3: การ์ดไทม์ไลน์ 5 ระยะ
+                    <button type="button" data-top-tab="blueprint" onclick="switchTab('blueprint')" class="top-opt-tab bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🎛️ 6. ผัง IoT 2D
+                    </button>
+                    <button type="button" data-top-tab="kanban" onclick="switchTab('kanban')" class="top-opt-tab bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        📋 7. บอร์ด Kanban
+                    </button>
+                    <button type="button" data-top-tab="overview" onclick="switchTab('overview')" class="top-opt-tab bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🏞️ 8. ภาพรวมฟาร์ม
+                    </button>
+                    <button type="button" data-top-tab="map" onclick="switchTab('map')" class="top-opt-tab bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🗺️ 9. แผนที่ GIS
+                    </button>
+                    <button type="button" data-top-tab="record" onclick="switchTab('record')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🌱 10. บันทึกผล
+                    </button>
+                    <button type="button" data-top-tab="dashboard" onclick="switchTab('dashboard')" class="top-opt-tab bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        📊 11. สถิติวิจัย
+                    </button>
+                    <button type="button" data-top-tab="plots" onclick="switchTab('plots')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🚜 12. จัดการแปลง
                     </button>
                 </div>
             </div>
 
 
             <!-- ==================== Global Live 30-Minute Summary Time Notification Bar ==================== -->
-            <div id="global30MinTimeBanner" class="bg-slate-900 text-white rounded-2xl px-4 py-3 shadow-md border border-slate-800 flex flex-wrap items-center justify-between gap-3 no-print">
+            <div id="global30MinTimeBanner" class="bg-slate-900 text-white rounded-2xl px-4 py-2.5 shadow-md border border-slate-800 flex flex-wrap items-center justify-between gap-3 no-print">
                 <div class="flex flex-wrap items-center gap-2.5 text-xs">
-                    <span class="inline-flex items-center gap-1.5 bg-rose-600 text-white font-extrabold px-2.5 py-1 rounded-lg shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> 🔔 แจ้งเวลาสรุปผลทุก 30 นาที
+                    <span class="inline-flex items-center gap-1.5 bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> ⏱️ สรุปผล 30 นาที
                     </span>
-                    <span class="bg-slate-800 border border-slate-700 text-amber-300 font-mono font-bold px-2.5 py-1 rounded-lg">
-                        🕒 เวลาจริง: <span class="live-system-clock">--:--:-- น.</span>
+                    <span class="bg-slate-800 border border-slate-700 text-amber-300 font-mono font-bold px-2.5 py-0.5 rounded-lg">
+                        <span class="live-system-clock">--:--:--</span>
                     </span>
                     <span id="globalActiveSummaryTimeText" class="font-bold text-emerald-300">
-                        กำลังสรุปผลรอบเวลา 12:00 น. (คาบเวลา 30 นาที: 11:30 – 12:00 น.)
+                        สรุปผลรอบ 12:00 น.
                     </span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <span class="text-[11px] font-semibold text-sky-300 bg-sky-950/80 border border-sky-800 px-2.5 py-1 rounded-lg live-next-30m-countdown">
-                        รอบถัดไป --:-- น.
+                    <span class="text-[11px] font-semibold text-sky-300 bg-sky-950/80 border border-sky-800 px-2 py-0.5 rounded-lg live-next-30m-countdown">
+                        รอบถัดไป --:--
                     </span>
-                    <button type="button" onclick="stepNext30MinSummary(1)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-2.5 py-1 rounded-lg transition">
-                        ⏭ แจ้งสรุปรอบ +30 นาทีถัดไป
+                    <button type="button" onclick="stepNext30MinSummary(1)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-lg transition">
+                        ⏭ สรุปรอบถัดไป
                     </button>
                     <button type="button" onclick="switchTab('report30m')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg transition">
-                        📈 ดูรายงานกราฟ 30 นาที
+                        📊 ดูกราฟ
                     </button>
                 </div>
             </div>
 
             
-            <!-- ==================== NEW TAB: AI SMART FARM ADVISOR & Q&A STUDIO ==================== -->
+            <!-- ==================== NEW TAB: AI SMART FARM ADVISOR, AUTO REPORT GENERATOR & REAL-TIME WEB EDITOR STUDIO ==================== -->
             <section id="viewAI" class="hidden space-y-6">
-                <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-4">
+                <!-- Top Hero & AI Sub-Option Tabs -->
+                <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-4 no-print">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="space-y-1">
-                            <div class="inline-flex items-center gap-2 bg-violet-500/25 text-violet-200 border border-violet-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> AgriGrow AI Advisor — ระบบปัญญาประดิษฐ์ผู้ช่วยเกษตรอัจฉริยะ จ.นครพนม
+                            <div class="inline-flex items-center gap-2 bg-emerald-400/20 text-emerald-200 border border-emerald-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> AI Command, Report Generator & Real-Time Web Editor
                             </div>
-                            <h3 class="text-lg sm:text-2xl font-extrabold">🤖 สอบถาม AI วิเคราะห์การเติบโตต้นไม้ กราฟทุก 30 นาที และพิกัดแผนที่ GIS</h3>
-                            <p class="text-xs sm:text-sm text-slate-200">ถาม-ตอบข้อมูลแปลงเพาะปลูกแบบเรียลไทม์ วิเคราะห์ค่าเฉลี่ยกราฟทุก 30 นาที วินิจฉัยความชื้น/pH ดิน สั่งเพิ่มต้นไม้จำลอง หรือให้ AI ช่วยร่างบทสรุปวิจัย บทที่ 4–5</p>
+                            <h3 class="text-lg sm:text-2xl font-extrabold">🤖 ศูนย์ผู้ช่วย AI อัจฉริยะ — ขอรายงานฉบับสมบูรณ์ & แก้ไขหน้าเว็บแบบเรียลไทม์</h3>
+                            <p class="text-xs sm:text-sm text-slate-200">พิมพ์สั่งให้ AI ออกรายงานสถิติ/วิจัยพร้อมพิมพ์และดาวน์โหลด Word/CSV หรือสั่งแก้ไขชื่อเว็บ โทนสี ข้อมูลแปลงปลูก และส่วนประกอบหน้าเว็บแบบเรียลไทม์</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <button type="button" onclick="toggleAiVoiceOutput()" class="btn-ai-tts-toggle bg-white/15 hover:bg-white/25 text-white border border-white/25 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                🔈 เสียงพูด AI: ปิด
+                                🔈 เสียงพูด: ปิด
                             </button>
-                            <button type="button" onclick="copyLatestAiReply()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
-                                📋 คัดลอกคำตอบล่าสุดของ AI
+                            <button type="button" onclick="copyLatestAiReply()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-1.5 rounded-xl transition shadow">
+                                📋 คัดลอกคำตอบ
                             </button>
-                            <button type="button" onclick="clearAiChatHistory()" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                🧹 ล้างประวัติแชท
+                            <button type="button" onclick="clearAiChatHistory()" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition">
+                                🧹 ล้างประวัติ
                             </button>
                         </div>
                     </div>
+
+                    <!-- Sub-Option Tabs inside AI Studio -->
+                    <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-white/15">
+                        <span class="text-xs font-extrabold text-amber-300 mr-1">เลือกโหมด AI:</span>
+                        <button type="button" id="aiSubBtn-all" onclick="switchAiSubTab('all')" class="ai-sub-tab bg-white text-slate-900 font-extrabold px-3.5 py-2 rounded-xl text-xs transition shadow">
+                            ✨ แสดงครบทุกโหมด (แชท + รายงาน + แก้ไขเว็บ)
+                        </button>
+                        <button type="button" id="aiSubBtn-chat" onclick="switchAiSubTab('chat')" class="ai-sub-tab bg-white/15 hover:bg-white/25 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">
+                            💬 1. แชทสั่งงาน AI & ขอรายงาน
+                        </button>
+                        <button type="button" id="aiSubBtn-report" onclick="switchAiSubTab('report'); generateAiOfficialReport();" class="ai-sub-tab bg-amber-400/25 hover:bg-amber-400/40 text-amber-200 border border-amber-300/40 font-extrabold px-3.5 py-2 rounded-xl text-xs transition">
+                            📑 2. ระบบออกรายงานอัตโนมัติ (AI Report Studio)
+                        </button>
+                        <button type="button" id="aiSubBtn-editor" onclick="switchAiSubTab('editor')" class="ai-sub-tab bg-sky-400/25 hover:bg-sky-400/40 text-sky-200 border border-sky-300/40 font-extrabold px-3.5 py-2 rounded-xl text-xs transition">
+                            🛠️ 3. แก้ไขหน้าเว็บแบบเรียลไทม์ (Live Web Editor)
+                        </button>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- ==================== AI SUB-PANEL 1: INTERACTIVE AI CHAT & COMMANDS ==================== -->
+                <div id="aiSubPanelChat" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start no-print">
                     <!-- Left 8 Cols: Interactive AI Chat Studio -->
                     <div class="lg:col-span-8 bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
                         <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-2">
                                 <span class="text-lg">🤖</span>
-                                <span class="text-xs sm:text-sm font-extrabold text-slate-900">ห้องสนทนา AI ที่ปรึกษาสมาร์ทฟาร์ม (AgriGrow Chat)</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-900">แชทบอท AI สั่งงาน ขอรายงาน & แก้ไขเว็บเรียลไทม์</span>
                             </div>
                             <span id="aiEngineStatusBadge" class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full">
-                                ⚡ โหมด AI: ระบบวิเคราะห์ฐานข้อมูลฟาร์มอัจฉริยะ (ทำงานทันที ไม่ต้องใช้คีย์)
+                                ⚡ พร้อมออกรายงาน & แก้ไขเว็บสด
                             </span>
                         </div>
 
-                        <!-- Quick Prompt Buttons -->
-                        <div class="bg-slate-50/60 border-b border-slate-100 px-4 py-3 space-y-1.5">
-                            <div class="text-[11px] font-extrabold text-slate-500">💡 คำถามแนะนำยอดฮิต (คลิกเพื่อถาม AI ได้ทันที):</div>
-                            <div class="flex flex-wrap gap-1.5">
-                                <button type="button" onclick="askSmartFarmAI(null, 'สรุปผลกราฟทุก 30 นาทีรอบล่าสุดให้หน่อย ต้นไหนโตดีที่สุด?')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    ⏱️ สรุปผลกราฟทุก 30 นาทีล่าสุด
+                        <!-- Quick Prompt Buttons Categorized: Reports & Real-time Web Editing -->
+                        <div class="bg-slate-50/60 border-b border-slate-100 px-4 py-3 space-y-2">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="text-[11px] font-extrabold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">📑 สั่ง AI ออกรายงานทันที:</span>
+                                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-xl transition shadow-sm">
+                                    📄 ขอรายงานสรุปผลฉบับเต็ม
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'วิเคราะห์สุขภาพต้นไม้ ความชื้นดิน และค่า pH ของทุกแปลงให้หน่อย')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    🌿 วิเคราะห์สุขภาพต้นไม้ทุกแปลง
+                                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานกราฟและสถิติทุก 30 นาที')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    ⏱️ ขอรายงานกราฟ 30 นาที
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'ขอคำแนะนำการดูแลกล้าไม้กันเกรา ยางนา สักทอง พะยูง และประดู่ป่า จ.นครพนม')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    🌳 เทคนิคดูแลพันธุ์ไม้ จ.นครพนม
+                                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานวิจัย บทที่ 4 และบทที่ 5 พร้อมตารางสถิติ')" class="bg-violet-50 hover:bg-violet-100 text-violet-800 border border-violet-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    📚 ขอรายงานวิจัย บทที่ 4-5
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'แสดงพิกัดหมุดแผนที่ดาวเทียม GPS ของต้นไม้ทุกต้น')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    🗺️ ดูพิกัดหมุดแผนที่ทุกต้น
+                                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสุขภาพพืชและสภาพดินรายแปลง')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    🌿 ขอรายงานสุขภาพพืช
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'ช่วยร่างสรุปผลการวิจัย บทที่ 4 และอภิปรายผล บทที่ 5 พร้อมค่าสถิติ X-bar และ S.D.')" class="bg-violet-50 hover:bg-violet-100 text-violet-800 border border-violet-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    📑 ร่างสรุปผลวิจัย บทที่ 4 & 5
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="text-[11px] font-extrabold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-md">🛠️ สั่ง AI แก้ไขเว็บเรียลไทม์:</span>
+                                <button type="button" onclick="askSmartFarmAI(null, 'เปลี่ยนชื่อเว็บเป็น ศูนย์วิจัยสมาร์ทฟาร์มอัจฉริยะ จ.นครพนม 4.0')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    ✏️ เปลี่ยนชื่อเว็บสด
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'สั่งจำลองต้นไม้เพิ่มอีก 1 ต้นพร้อมปักหมุดแผนที่ให้หน่อย')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    🌱 สั่ง AI จำลองต้นไม้เพิ่ม 1 ต้น
+                                <button type="button" onclick="askSmartFarmAI(null, 'เพิ่มประกาศหน้าเว็บว่า ยินดีต้อนรับคณะกรรมการประเมินโครงการสมาร์ทฟาร์มนครพนม')" class="bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    📢 แก้แบนเนอร์ประกาศสด
                                 </button>
-                                <button type="button" onclick="askSmartFarmAI(null, 'สั่งเปิดน้ำหยดทุกแปลงให้หน่อย')" class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                    💦 สั่ง AI เปิดน้ำหยดทุกแปลง
+                                <button type="button" onclick="askSmartFarmAI(null, 'สลับโหมดมืด')" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    🌙 สั่งเปิด/ปิดโหมดมืด
+                                </button>
+                                <button type="button" onclick="askSmartFarmAI(null, 'ปรับความสูงต้นที่ 1 เป็น 65 ซม. และความชื้นเป็น 76%')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    📏 แก้ข้อมูลต้นที่ 1 สด
+                                </button>
+                                <button type="button" onclick="askSmartFarmAI(null, 'เพิ่มต้นทุเรียนหมอนทองริมโขงให้ 1 ต้น')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-xl transition">
+                                    + สั่งเพิ่มต้นไม้ใหม่
                                 </button>
                             </div>
                         </div>
 
                         <!-- Chat Messages History -->
-                        <div id="aiChatMessagesMain" class="p-4 sm:p-5 space-y-3.5 h-[420px] overflow-y-auto bg-slate-50/40"></div>
+                        <div id="aiChatMessagesMain" class="p-4 sm:p-5 space-y-3.5 h-[430px] overflow-y-auto bg-slate-50/40"></div>
 
                         <!-- Chat Input Form (รองรับทั้งพิมพ์ข้อความและพูดผ่านไมโครโฟน) -->
                         <form onsubmit="event.preventDefault(); askSmartFarmAI('aiInputMain');" class="p-3.5 bg-white border-t border-slate-200 flex gap-2">
                             <button type="button" onclick="startAiVoiceInput('aiInputMain')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition shrink-0" title="พูดถาม AI ด้วยเสียงภาษาไทย">
                                 🎤 พูด
                             </button>
-                            <input type="text" id="aiInputMain" placeholder="พิมพ์คุยโต้ตอบกับ AI เช่น ต้นที่ 2 เป็นยังไง? ใบเหลืองแก้ยังไง? หรือสั่ง เพิ่มต้นพะยอม..." class="flex-1 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-emerald-600 focus:outline-none">
+                            <input type="text" id="aiInputMain" placeholder="พิมพ์สั่ง AI เช่น 'ขอรายงานสรุปผล', 'เปลี่ยนชื่อเว็บเป็น...', 'แก้ความสูงต้นที่ 1 เป็น 60', 'เปิดโหมดมืด'..." class="flex-1 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-emerald-600 focus:outline-none">
                             <button type="submit" class="theme-btn-primary font-extrabold px-5 py-2.5 rounded-2xl text-xs sm:text-sm transition shadow flex items-center gap-1.5 shrink-0">
-                                <span>ส่งข้อความ</span>
+                                <span>ส่งคำสั่ง AI</span>
                                 <span>🚀</span>
                             </button>
                         </form>
@@ -481,7 +570,7 @@
                                 <h4 class="text-xs sm:text-sm font-extrabold">เชื่อมต่อ Gemini API Key (ทางเลือกเสริม)</h4>
                             </div>
                             <p class="text-[11px] text-slate-300 leading-relaxed">
-                                ระบบ AI ในตัวสามารถวิเคราะห์ข้อมูลฟาร์มและตอบคำถามได้ทันที 100% โดยไม่ต้องใส่คีย์ แต่หากต้องการเชื่อมต่อ Google Gemini API เพิ่มเติม สามารถวาง API Key ด้านล่างได้ครับ
+                                ระบบ AI ในตัวสามารถออกรายงานฉบับเต็มและแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที 100% โดยไม่ต้องใส่คีย์ แต่หากต้องการเชื่อมต่อ Google Gemini API เพิ่มเติม สามารถวางคีย์ด้านล่างได้ครับ
                             </p>
                             <div class="flex gap-2">
                                 <input type="password" id="inputGeminiApiKey" placeholder="AIzaSy... (เว้นว่างเพื่อใช้ AI ในตัว)" class="flex-1 rounded-xl bg-slate-800 border border-slate-700 text-white px-3 py-2 text-xs focus:outline-none focus:border-emerald-400">
@@ -489,6 +578,231 @@
                                     บันทึกคีย์
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== AI SUB-PANEL 2: AUTOMATIC OFFICIAL REPORT GENERATOR STUDIO ==================== -->
+                <div id="aiSubPanelReport" class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border-2 border-amber-200 space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4 no-print">
+                        <div>
+                            <span class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                📑 ระบบสร้างรายงานอัตโนมัติด้วย AI (AI Official Report Generator)
+                            </span>
+                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">สร้างเอกสารรายงานสรุปผล ตารางสถิติ และบทวิเคราะห์พร้อมพิมพ์/ดาวน์โหลดทันที</h4>
+                            <p class="text-xs text-slate-500">เลือกรูปแบบรายงานที่ต้องการ หรือพิมพ์บอกในแชทว่า "ขอรายงาน" ระบบจะดึงข้อมูลจริงจากทุกแปลงมาจัดทำเป็นรายงานทางการทันที</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="generateAiOfficialReport()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+                                ⚡ สร้าง/อัปเดตรายงานใหม่
+                            </button>
+                            <button type="button" onclick="printAiOfficialReport()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+                                🖨️ พิมพ์รายงาน / Save PDF
+                            </button>
+                            <button type="button" onclick="downloadAiReportWordDoc()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+                                📥 ดาวน์โหลดไฟล์ Word (.doc)
+                            </button>
+                            <button type="button" onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+                                📊 ดาวน์โหลด Excel (.csv)
+                            </button>
+                            <button type="button" onclick="copyAiOfficialReportText()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">
+                                📋 คัดลอกรายงาน
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Report Options Filter Bar -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-amber-50/60 border border-amber-200/80 p-4 rounded-2xl no-print">
+                        <div>
+                            <label for="aiReportTypeSelect" class="block text-xs font-extrabold text-slate-700 mb-1">📋 ประเภทรายงานที่ต้องการ:</label>
+                            <select id="aiReportTypeSelect" onchange="generateAiOfficialReport()" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                                <option value="executive">1. รายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม (Executive Report)</option>
+                                <option value="telemetry30m">2. รายงานกราฟและสถิติติดตามผลทุก 30 นาที (30-Min Telemetry)</option>
+                                <option value="thesis">3. รายงานผลการวิจัย บทที่ 4 และอภิปรายผล บทที่ 5 (Academic Report)</option>
+                                <option value="health">4. รายงานตรวจสอบสุขภาพพืช ความชื้นดิน และค่า pH รายแปลง</option>
+                                <option value="financial">5. รายงานพยากรณ์ผลผลิต มูลค่าเศรษฐกิจ และคาร์บอนเครดิต</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aiReportPlotSelect" class="block text-xs font-extrabold text-slate-700 mb-1">🌱 ขอบเขตแปลงเพาะปลูก:</label>
+                            <select id="aiReportPlotSelect" onchange="generateAiOfficialReport()" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                                <option value="all">ทุกแปลงเพาะปลูกในระบบ (รวมทั้งหมด)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aiReportCustomTitle" class="block text-xs font-extrabold text-slate-700 mb-1">✏️ หัวข้อเอกสารรายงาน (แก้ไขสดได้):</label>
+                            <input type="text" id="aiReportCustomTitle" oninput="generateAiOfficialReport()" value="รายงานสรุปผลการติดตามการเจริญเติบโตพืชผลและสมาร์ทฟาร์มอัจฉริยะ จ.นครพนม" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="aiReportAuthorInput" class="block text-xs font-extrabold text-slate-700 mb-1">👤 ชื่อผู้จัดทำ / คณะผู้วิจัย:</label>
+                            <input type="text" id="aiReportAuthorInput" oninput="generateAiOfficialReport()" value="คณะผู้วิจัยและพัฒนาระบบสมาร์ทฟาร์ม จ.นครพนม" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Live A4 Formatted Report Document Preview -->
+                    <div id="aiGeneratedReportDocument" class="bg-white border-2 border-slate-200 rounded-2xl p-6 sm:p-8 shadow-inner space-y-5 text-slate-900"></div>
+                </div>
+
+                <!-- ==================== AI SUB-PANEL 3: REAL-TIME LIVE WEB EDITOR STUDIO ==================== -->
+                <div id="aiSubPanelEditor" class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border-2 border-sky-200 space-y-6 no-print">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-900 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                🛠️ ระบบแก้ไขเว็บไซต์และข้อมูลแบบเรียลไทม์ (Real-Time Live Web Editor)
+                            </span>
+                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">แก้ไขชื่อเว็บ แบนเนอร์ โทนสี โหมดมืด และข้อมูลแปลงปลูก/กราฟแบบเรียลไทม์ทันที</h4>
+                            <p class="text-xs text-slate-500">ทุกการแก้ไขด้านล่างจะเปลี่ยนหน้าเว็บและกราฟทันทีแบบเรียลไทม์ (ไม่ต้องรีเฟรชหน้า) หรือเปิดโหมด "คลิกแก้ข้อความบนหน้าเว็บโดยตรง" ก็ได้</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="toggleInlinePageEditMode()" id="btnEditorInlineMode" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+                                ✏️ เปิดคลิกแก้ข้อความบนหน้าเว็บโดยตรง
+                            </button>
+                            <button type="button" onclick="resetLiveWebCustomizations()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-extrabold px-3.5 py-2 rounded-xl transition">
+                                🔄 รีเซ็ตหน้าเว็บเป็นค่าเริ่มต้น
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 1. Natural Language AI Real-Time Web Editor Bar -->
+                    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-indigo-500/30 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs sm:text-sm font-extrabold text-sky-300">⚡ พิมพ์สั่งให้ AI แก้ไขหน้าเว็บแบบเรียลไทม์ (AI Live DOM & Data Mutator):</span>
+                            <span class="text-[11px] text-slate-300">พิมพ์คำสั่งภาษาไทยแล้วกดปุ่มสั่งแก้ไขทันที</span>
+                        </div>
+                        <form onsubmit="event.preventDefault(); executeAiLiveWebEditCommand('inputAiLiveWebEditCmd');" class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="inputAiLiveWebEditCmd" placeholder="เช่น เปลี่ยนชื่อเว็บเป็น สมาร์ทฟาร์มนครพนม 2026 | เพิ่มประกาศว่า ยินดีต้อนรับ | เปิดโหมดมืด | แก้ความสูงต้นที่ 1 เป็น 70..." class="flex-1 rounded-xl bg-white text-slate-900 px-4 py-2.5 text-xs sm:text-sm font-semibold focus:outline-none">
+                            <button type="submit" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition shadow whitespace-nowrap">
+                                ⚡ สั่ง AI แก้ไขเว็บทันที
+                            </button>
+                        </form>
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            <span class="text-[11px] text-slate-400 mr-1">ตัวอย่างคำสั่งด่วน:</span>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'เปลี่ยนชื่อเว็บเป็น ศูนย์วิจัยเกษตรอัจฉริยะลุ่มน้ำโขง จ.นครพนม')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">เปลี่ยนชื่อเว็บ</button>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'เพิ่มประกาศหน้าเว็บว่า โครงการผ่านการประเมินมาตรฐานสมาร์ทฟาร์มระดับดีเยี่ยม (เกรด A+)')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">เปลี่ยนแบนเนอร์ประกาศ</button>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'เปลี่ยนธีมเป็นสีทอง')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">ธีมสีทอง</button>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'เปลี่ยนธีมเป็นสีม่วง')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">ธีมสีม่วง</button>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'สลับโหมดมืด')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">สลับโหมดมืด/สว่าง</button>
+                            <button type="button" onclick="executeAiLiveWebEditCommand(null, 'ขยายตัวอักษรใหญ่')" class="bg-white/10 hover:bg-white/20 text-xs px-2.5 py-1 rounded-lg transition">ขยายตัวอักษร</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Direct Real-Time Inputs for Website Title, Brand, Banner & Appearance -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5">
+                            <h5 class="text-xs sm:text-sm font-extrabold text-slate-900">📝 แก้ไขหัวข้อเว็บไซต์ ป้ายชื่อ และแบนเนอร์ประกาศ (พิมพ์ปุ๊บเปลี่ยนปั๊บ)</h5>
+                            <div class="space-y-2.5 text-xs">
+                                <div>
+                                    <label for="liveEditHeaderTitle" class="block font-bold text-slate-700 mb-1">1. ชื่อหัวข้อหลักบนสุดของเว็บ (Header Title):</label>
+                                    <input type="text" id="liveEditHeaderTitle" oninput="applyLiveWebConfigFromInputs()" value="AgriGrow Nakhon Phanom — ระบบสมาร์ทฟาร์มและติดตามพืชผลอัจฉริยะ" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-bold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="liveEditHeaderSubtitle" class="block font-bold text-slate-700 mb-1">2. คำอธิบายย่อยใต้หัวข้อ (Header Subtitle):</label>
+                                    <input type="text" id="liveEditHeaderSubtitle" oninput="applyLiveWebConfigFromInputs()" value="ติดตามอายุพืช ความสูง จำนวนใบ ความชื้นดิน พิกัดแผนที่ดาวเทียม GPS พร้อมระบบ AI ออกรายงานอัตโนมัติ" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:border-emerald-600 focus:outline-none">
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <div>
+                                        <label for="liveEditSidebarTitle" class="block font-bold text-slate-700 mb-1">3. ชื่อระบบในแถบเมนูซ้าย:</label>
+                                        <input type="text" id="liveEditSidebarTitle" oninput="applyLiveWebConfigFromInputs()" value="ระบบติดตามพืชผล จ.นครพนม" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-bold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="liveEditSidebarBadge" class="block font-bold text-slate-700 mb-1">4. ป้ายเวอร์ชัน (Badge):</label>
+                                        <input type="text" id="liveEditSidebarBadge" oninput="applyLiveWebConfigFromInputs()" value="AgriGrow GIS 4.0 AI" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-bold text-slate-900 focus:border-emerald-600 focus:outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label for="liveEditBannerText" class="font-bold text-slate-700">5. ข้อความแบนเนอร์ประกาศด้านบนสุด:</label>
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="liveEditBannerVisible" onchange="applyLiveWebConfigFromInputs()" checked class="accent-emerald-600">
+                                            <span class="text-[11px] font-bold text-emerald-700">แสดงแบนเนอร์</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="liveEditBannerText" oninput="applyLiveWebConfigFromInputs()" value="✨ ระบบอัปเกรดใหม่! รองรับแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:border-emerald-600 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5">
+                            <h5 class="text-xs sm:text-sm font-extrabold text-slate-900">🎨 ปรับแต่งโทนสี โหมดมืด ขนาดตัวอักษร และการแสดงผลเรียลไทม์</h5>
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <span class="block font-bold text-slate-700 mb-1.5">1. เลือกโทนสีหลักของเว็บไซต์ (5 สไตล์):</span>
+                                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                        <button type="button" onclick="setAppTheme('emerald')" class="bg-emerald-600 text-white font-bold py-2 px-2.5 rounded-xl text-[11px] shadow-sm">🌿 เขียวเกษตร</button>
+                                        <button type="button" onclick="setAppTheme('amber')" class="bg-amber-500 text-slate-950 font-bold py-2 px-2.5 rounded-xl text-[11px] shadow-sm">🌾 ทองรวงข้าว</button>
+                                        <button type="button" onclick="setAppTheme('ocean')" class="bg-sky-600 text-white font-bold py-2 px-2.5 rounded-xl text-[11px] shadow-sm">💧 ฟ้าระบบน้ำ</button>
+                                        <button type="button" onclick="setAppTheme('violet')" class="bg-violet-600 text-white font-bold py-2 px-2.5 rounded-xl text-[11px] shadow-sm">🔮 ม่วงโรงเรือน</button>
+                                        <button type="button" onclick="setAppTheme('rose')" class="bg-rose-600 text-white font-bold py-2 px-2.5 rounded-xl text-[11px] shadow-sm">🍓 ชมพูโรส</button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                                        <div>
+                                            <div class="font-extrabold text-slate-800">🌙 โหมดมืด (Dark Mode)</div>
+                                            <div class="text-[10px] text-slate-500">สลับพื้นหลังมืด-สว่างทันที</div>
+                                        </div>
+                                        <button type="button" onclick="toggleDarkModeUI()" class="bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg text-xs">สลับโหมด</button>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                                        <div>
+                                            <div class="font-extrabold text-slate-800">✏️ คลิกแก้ข้อความบนเว็บ</div>
+                                            <div class="text-[10px] text-slate-500">คลิกตรงไหนแก้ตรงนั้นได้ทันที</div>
+                                        </div>
+                                        <button type="button" onclick="toggleInlinePageEditMode()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs">เปิด/ปิด</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span class="block font-bold text-slate-700 mb-1.5">2. ปรับขนาดตัวอักษรทั้งหน้าเว็บ (Live Font Scale):</span>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" onclick="setLiveFontScale(14)" class="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">ขนาดกะทัดรัด (90%)</button>
+                                        <button type="button" onclick="setLiveFontScale(16)" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs">ขนาดมาตรฐาน (100%)</button>
+                                        <button type="button" onclick="setLiveFontScale(17.5)" class="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">ขนาดใหญ่ (110%)</button>
+                                        <button type="button" onclick="setLiveFontScale(19)" class="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">ขนาดใหญ่มาก (120%)</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span class="block font-bold text-slate-700 mb-1.5">3. สลับชุดข้อมูลแปลงเพาะปลูกสำเร็จรูป (Tree Presets):</span>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" onclick="applyLiveTreePreset('preset1')" class="bg-white hover:bg-emerald-50 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">🌳 ชุดที่ 1: ไม้ป่าเศรษฐกิจ (ยางนา/สัก/พะยูง)</button>
+                                        <button type="button" onclick="applyLiveTreePreset('preset2')" class="bg-white hover:bg-emerald-50 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">🪵 ชุดที่ 2: ไม้เนื้อแข็งพรีเมียม (ชิงชัน/มะค่า/กฤษณา)</button>
+                                        <button type="button" onclick="applyLiveTreePreset('preset3')" class="bg-white hover:bg-emerald-50 border border-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs">🥭 ชุดที่ 3: ไม้ผลเศรษฐกิจ (มะม่วง/ทุเรียน/ส้มโอ)</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Live Plot & Sensor Data Editor Table -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h5 class="text-xs sm:text-sm font-extrabold text-slate-900">🌱 ตารางแก้ไขข้อมูลแปลงเพาะปลูก ความสูง ความชื้น และค่า pH แบบเรียลไทม์</h5>
+                                <p class="text-[11px] text-slate-500">เปลี่ยนชื่อแปลง ความสูง จำนวนใบ ความชื้น หรือพิกัดในตารางนี้ กราฟทุก 30 นาที โมเดล 3D และรายงาน AI จะอัปเดตตามทันที!</p>
+                            </div>
+                            <button type="button" onclick="simulateAnotherTree30Min(false); renderLivePlotEditorTable();" class="theme-btn-primary text-xs font-extrabold px-3.5 py-1.5 rounded-xl transition">
+                                + เพิ่มแปลง/ต้นไม้ใหม่ทันที
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto bg-white rounded-xl border border-slate-200">
+                            <table class="w-full text-xs text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                        <th class="py-2.5 px-3 font-extrabold">รหัส</th>
+                                        <th class="py-2.5 px-3 font-extrabold">ชื่อแปลง / ชนิดพืช (แก้สดได้)</th>
+                                        <th class="py-2.5 px-3 font-extrabold">โซนพื้นที่</th>
+                                        <th class="py-2.5 px-2 font-extrabold text-center">อายุ (วัน)</th>
+                                        <th class="py-2.5 px-2 font-extrabold text-center">ความสูง (ซม.)</th>
+                                        <th class="py-2.5 px-2 font-extrabold text-center">จำนวนใบ</th>
+                                        <th class="py-2.5 px-2 font-extrabold text-center">ความชื้น (%)</th>
+                                        <th class="py-2.5 px-2 font-extrabold text-center">ค่า pH</th>
+                                        <th class="py-2.5 px-3 font-extrabold text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="livePlotEditorTableBody" class="divide-y divide-slate-200"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -500,24 +814,21 @@
                 <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-5">
                     <div class="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
                         <div class="space-y-1">
-                            <div class="inline-flex items-center gap-2 bg-rose-500/25 text-rose-200 border border-rose-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
-                                <span class="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span> ระบบจำลองต้นไม้ ปักหมุดแผนที่ & แจ้งเวลาสรุปผลทุก 30 นาที
-                            </div>
-                            <h3 class="text-lg sm:text-2xl font-extrabold">⏱️ รายงานจำลองต้นไม้ & กราฟทุก 30 นาที (1 กราฟรวมกัน & แยกกราฟรายต้น + แจ้งเวลาสรุปผล)</h3>
-                            <p class="text-xs sm:text-sm text-slate-200">เมื่อกดเพิ่มต้นไม้ใหม่ ระบบจะ <b>ปักหมุดพิกัด GPS ลงบนแผนที่ดาวเทียมอัตโนมัติ</b> พร้อมพล็อต <b>1 กราฟรวมกัน</b>, <b>แยกกราฟรายต้น</b> และ <b>แจ้งเตือนเวลาที่กำลังสรุปผลทุกๆ 30 นาที</b></p>
+                            <h3 class="text-lg sm:text-2xl font-extrabold">⏱️ รายงานและกราฟทุก 30 นาที</h3>
+                            <p class="text-xs sm:text-sm text-slate-200">เปรียบเทียบแนวโน้มการเติบโตแบบรวมและแยกรายต้น พร้อมพิกัดแปลงปลูก</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 no-print">
                             <button type="button" onclick="regenerate30MinSimulation()" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                                🔄 สุ่มข้อมูลรอบ 30 นาทีใหม่
+                                🔄 สุ่มข้อมูลใหม่
                             </button>
-                            <button type="button" onclick="copy30MinReportTable()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                📋 คัดลอกตารางลง Word
+                            <button type="button" onclick="copy30MinReportTable()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                                📋 คัดลอกตาราง
                             </button>
-                            <button type="button" onclick="export30MinReportCSV()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                📥 ส่งออก CSV (ทุก 30 นาที)
+                            <button type="button" onclick="export30MinReportCSV()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                                📥 ส่งออก CSV
                             </button>
-                            <button type="button" onclick="window.print()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                🖨️ พิมพ์รายงาน / PDF
+                            <button type="button" onclick="window.print()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                                🖨️ พิมพ์รายงาน
                             </button>
                         </div>
                     </div>
@@ -525,35 +836,34 @@
                     <!-- Interactive Tree Simulator + GPS Map Pinning Inputs -->
                     <div class="bg-black/30 p-4 rounded-2xl border border-white/15 space-y-3 no-print">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="text-xs font-extrabold text-emerald-300">🌱 เพิ่มต้นไม้จำลองใหม่พร้อมปักหมุดลงแผนที่ดาวเทียม (Auto-Pin to GIS Map):</span>
-                            <span class="text-[11px] text-slate-300">พิกัดจะถูกปักลงในหน้าแผนที่ดาวเทียมและสร้างกราฟทุก 30 นาทีทันที</span>
+                            <span class="text-xs font-bold text-emerald-300">🌱 เพิ่มต้นไม้จำลอง & ปักหมุดแผนที่:</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
                             <div class="md:col-span-4 space-y-1">
-                                <label for="inputSimTreeName" class="block text-[11px] font-bold text-slate-300">ชื่อต้นไม้ / พันธุ์ไม้ (เว้นว่างเพื่อสุ่มพันธุ์ไม้อัตโนมัติ):</label>
-                                <input type="text" id="inputSimTreeName" placeholder="เช่น กล้าไม้ตะเคียนทอง, ต้นพะยอม..." class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-semibold focus:outline-none">
+                                <label for="inputSimTreeName" class="block text-[11px] font-bold text-slate-300">ชื่อต้นไม้ / พันธุ์ไม้:</label>
+                                <input type="text" id="inputSimTreeName" placeholder="เช่น ต้นยางนา, ตะเคียนทอง..." class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-semibold focus:outline-none">
                             </div>
                             <div class="md:col-span-2 space-y-1">
-                                <label for="inputSimTreeLat" class="block text-[11px] font-bold text-slate-300">พิกัด Latitude (ปักหมุด):</label>
+                                <label for="inputSimTreeLat" class="block text-[11px] font-bold text-slate-300">Latitude:</label>
                                 <input type="number" step="0.0001" id="inputSimTreeLat" value="17.3962" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-mono font-bold focus:outline-none">
                             </div>
                             <div class="md:col-span-2 space-y-1">
-                                <label for="inputSimTreeLng" class="block text-[11px] font-bold text-slate-300">พิกัด Longitude (ปักหมุด):</label>
+                                <label for="inputSimTreeLng" class="block text-[11px] font-bold text-slate-300">Longitude:</label>
                                 <input type="number" step="0.0001" id="inputSimTreeLng" value="104.7708" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-mono font-bold focus:outline-none">
                             </div>
                             <div class="md:col-span-4 flex flex-wrap gap-2">
-                                <button type="button" onclick="simulateAnotherTree30Min(false)" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
-                                    + เพิ่มต้นไม้ & ปักหมุดลงแผนที่
+                                <button type="button" onclick="simulateAnotherTree30Min(false)" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
+                                    + เพิ่มต้นไม้
                                 </button>
-                                <button type="button" onclick="simulateAnotherTree30Min(true)" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
-                                    🗺️ เพิ่ม & เปิดดูหมุดบนแผนที่ทันที
+                                <button type="button" onclick="simulateAnotherTree30Min(true)" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
+                                    🗺️ ดูบนแผนที่
                                 </button>
                             </div>
                         </div>
 
                         <!-- Pinned Trees Quick Map Jump Strip -->
                         <div class="pt-2 border-t border-white/10 space-y-1.5">
-                            <div class="text-[11px] font-bold text-amber-300">📍 รายการหมุดต้นไม้ที่ปักบนแผนที่แล้ว (คลิกที่การ์ดเพื่อซูมดูหมุดบนแผนที่ดาวเทียม):</div>
+                            <div class="text-[11px] font-bold text-amber-300">📍 ต้นไม้ที่ปักหมุดแล้ว:</div>
                             <div id="pinnedTreesMapStrip" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
@@ -652,24 +962,24 @@
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border-2 border-emerald-200 space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                         <div>
-                            <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
-                                📊 ส่วนที่ 1: กราฟรวมทุกต้นใน 1 กราฟ (Combined Multi-Tree 30-Minute Chart)
+                            <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                📊 กราฟเปรียบเทียบรวมทุกต้น
                             </div>
-                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">กราฟเปรียบเทียบข้อมูลต้นไม้ทุกต้นรวมกันในกราฟเดียว (แจ้งผลทุกๆ 30 นาที)</h4>
-                            <p id="combined30MinSubtitle" class="text-xs text-slate-500">แสดงเส้นแนวโน้มของต้นไม้ทุกต้นพร้อมเส้นประค่าเฉลี่ยรวมตามเวลาสรุปผลทุก 30 นาที</p>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">แนวโน้มการเติบโตของต้นไม้ทุกต้น (ทุก 30 นาที)</h4>
+                            <p id="combined30MinSubtitle" class="text-xs text-slate-500">แสดงเส้นแนวโน้มพร้อมค่าเฉลี่ยรวม</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 no-print">
-                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-3 py-1.5 rounded-xl transition shadow-sm">
-                                ↩️ กู้คืนกราฟ & หมุดที่เพิ่งลบ
+                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm">
+                                ↩️ กู้คืนต้นที่เพิ่งลบ
                             </button>
-                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-extrabold px-3 py-1.5 rounded-xl transition">
-                                🗑️ ลบต้นไม้จำลองเพิ่มทั้งหมด
+                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                🗑️ ลบทั้งหมด
                             </button>
                         </div>
                     </div>
                     <!-- แถบจัดการลบเส้นกราฟรายต้นออกจากกราฟรวมและแผนที่ -->
                     <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 no-print">
-                        <span class="text-xs font-extrabold text-slate-600">🗑️ เลือกลบกราฟและหมุดแผนที่รายต้น:</span>
+                        <span class="text-xs font-bold text-slate-600">จัดการรายต้น:</span>
                         <div id="combinedChartTreeManager" class="flex flex-wrap items-center gap-1.5"></div>
                     </div>
 
@@ -682,14 +992,14 @@
                 <div class="space-y-4">
                     <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <div class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
-                                📈 ส่วนที่ 2: กราฟแยกเฉพาะแต่ละต้น (Individual Separate 30-Minute Charts)
+                            <div class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                📈 กราฟแยกรายต้น
                             </div>
-                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">รายงานกราฟแยกตามรายต้น (1 ต้น ต่อ 1 กราฟ วัดผลทุกๆ 30 นาที พร้อมพิกัดหมุดแผนที่)</h4>
-                            <p class="text-xs text-slate-500">แยกแสดงกราฟของต้นไม้แต่ละต้น พร้อมปุ่มกดซูมดูหมุดพิกัดของต้นนั้นบนแผนที่ดาวเทียมได้ทันที</p>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">รายงานกราฟแยกตามรายต้น</h4>
+                            <p class="text-xs text-slate-500">ติดตามข้อมูลการเติบโตและพิกัดแผนที่ของแต่ละต้น</p>
                         </div>
-                        <button type="button" onclick="simulateAnotherTree30Min(false)" class="theme-btn-primary text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-sm no-print">
-                            + เพิ่มต้นไม้ & ปักหมุดลงแผนที่ (สร้างกราฟแยกเพิ่มทันที)
+                        <button type="button" onclick="simulateAnotherTree30Min(false)" class="theme-btn-primary text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm no-print">
+                            + เพิ่มต้นไม้จำลอง
                         </button>
                     </div>
 
@@ -700,17 +1010,17 @@
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-slate-200 space-y-5">
                     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                         <div>
-                            <div class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
-                                📑 ส่วนที่ 3: ตารางแจ้งเวลาสรุปผลทุก 30 นาที (คลิกที่แถวเวลาเพื่อแจ้งเตือนสรุปผลรอบนั้นได้ทันที)
+                            <div class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                📑 ตารางสรุปข้อมูล 30 นาที
                             </div>
-                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">บทสรุปวิเคราะห์ผลและตารางสถิติแจ้งเวลาทุก 30 นาทีของต้นไม้ทุกต้น</h4>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">ตารางสถิติและผลการวัดรายรอบ</h4>
                         </div>
                         <div class="flex flex-wrap gap-2 no-print">
                             <button type="button" onclick="copy30MinReportTable()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                📋 คัดลอกตารางไปวางใน Word / บทที่ 4
+                                📋 คัดลอกตาราง
                             </button>
                             <button type="button" onclick="export30MinReportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                📥 ดาวน์โหลดไฟล์ Excel (.CSV)
+                                📥 ส่งออก Excel (CSV)
                             </button>
                         </div>
                     </div>
@@ -731,21 +1041,18 @@
                 <div class="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
                         <div>
-                            <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-0.5 rounded-full text-xs font-bold">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> 3D WebGL Smart Farm Digital Twin — จ.นครพนม
-                            </div>
-                            <h3 class="text-lg sm:text-2xl font-extrabold mt-1">🧊 แบบจำลองสมาร์ทฟาร์ม 3 มิติ (หมุนมุมกล้อง 360° & จำลองการเติบโตตามเวลา)</h3>
-                            <p class="text-xs text-slate-300">ใช้เมาส์คลิกค้างแล้วลากเพื่อหมุนดูฟาร์ม 3 มิติ เลื่อนสไลเดอร์อายุพืชเพื่อดูต้นไม้ 3 มิติโตขึ้นตามวันจริง และกดเปิดสปริงเกลอร์พ่นน้ำ 3 มิติได้ทันที</p>
+                            <h3 class="text-lg sm:text-2xl font-extrabold mt-1">🧊 แบบจำลองสมาร์ทฟาร์ม 3 มิติ</h3>
+                            <p class="text-xs text-slate-300">หมุนมุมกล้อง 360° ซูมเข้า-ออก และติดตามการเติบโตของแปลงปลูก</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <button type="button" id="btn3DGreenhouse" onclick="toggle3DGreenhouseFrame()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">
-                                🏛️ กรอบโรงเรือน: ซ่อนแล้ว (ปิด)
+                                🏛️ โครงโรงเรือน
                             </button>
                             <button type="button" id="btn3DSprinkler" onclick="toggle3DSprinklers()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow">
-                                💦 สปริงเกลอร์ 3D: เปิด (ON)
+                                💦 สปริงเกลอร์
                             </button>
                             <button type="button" id="btn3DLightMode" onclick="toggle3DLightMode()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition shadow">
-                                ☀️ แสงบรรยากาศ: กลางวัน
+                                ☀️ แสงกลางวัน
                             </button>
                             <button type="button" onclick="toggle3DAutoRotate()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition">
                                 🔄 หมุนอัตโนมัติ
@@ -825,7 +1132,7 @@
                                     + บันทึกค่าการเติบโตจริง
                                 </button>
                                 <button type="button" onclick="switchTab('dashboard')" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-3 rounded-xl transition">
-                                    📊 ดูตารางสถิติวิจัย บทที่ 4
+                                    📊 ดูตารางสถิติ
                                 </button>
                             </div>
                         </div>
@@ -838,15 +1145,12 @@
                 <div class="bg-slate-900 text-white rounded-3xl p-6 shadow-xl border border-slate-800 space-y-5">
                     <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
                         <div>
-                            <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-0.5 rounded-full text-xs font-bold">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Digital Twin & Smart IoT Farm Blueprint — จ.นครพนม
-                            </span>
-                            <h3 class="text-lg sm:text-2xl font-extrabold mt-1.5">🎛️ ผังจำลองโซนแปลงเกษตรอัจฉริยะ 2 มิติ & แผงควบคุมระบบน้ำ-ปุ๋ยอัตโนมัติ</h3>
-                            <p class="text-xs sm:text-sm text-slate-300 mt-0.5">คลิกสวิตช์เปิด-ปิดระบบน้ำหยด พัดลมระบายอากาศ หรือระบบจ่ายปุ๋ยในแต่ละโซนเพื่อจำลองการทำงานของสมาร์ทฟาร์มแบบเรียลไทม์</p>
+                            <h3 class="text-lg sm:text-2xl font-extrabold mt-1.5">🎛️ ผังควบคุมสมาร์ทฟาร์ม 2D & IoT</h3>
+                            <p class="text-xs sm:text-sm text-slate-300 mt-0.5">ควบคุมระบบน้ำ พัดลมระบายอากาศ และระบบให้ปุ๋ยในแต่ละโซน</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button type="button" onclick="triggerAllIrrigation()" class="theme-btn-primary text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
-                                💦 เปิดระบบน้ำหยดทุกแปลงพร้อมกัน
+                                💦 เปิดระบบน้ำทุกแปลง
                             </button>
                         </div>
                     </div>
@@ -862,12 +1166,11 @@
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Kanban Crop Lifecycle Board</span>
-                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">📋 กระดานติดตามสถานะพืชผลแยกตามระยะการเติบโต 4 ขั้นตอน</h3>
-                            <p class="text-xs text-slate-500">ดูว่าแปลงไหนอยู่ในระยะใด และสามารถกดปุ่มเลื่อนระยะการเติบโตไปขั้นถัดไปได้ทันที</p>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">📋 กระดานติดตามระยะการเติบโต (Kanban)</h3>
+                            <p class="text-xs text-slate-500">ติดตามสถานะพืชผลแยกตาม 4 ระยะการเจริญเติบโต</p>
                         </div>
                         <button type="button" onclick="switchTab('record')" class="theme-btn-primary text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                            + บันทึกข้อมูลการเติบโตเพิ่ม
+                            + บันทึกข้อมูล
                         </button>
                     </div>
                     <div id="kanbanBoardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -876,9 +1179,8 @@
                 <!-- Crop Yield & Economic Return Calculator -->
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4">
                     <div class="border-b border-slate-100 pb-3">
-                        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-600">Smart Harvest & Profit Estimator</span>
-                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900">💰 เครื่องคำนวณพยากรณ์ผลผลิตและรายได้สุทธิประจำฤดูกาล (จ.นครพนม)</h3>
-                        <p class="text-xs text-slate-500">ประเมินปริมาณผลผลิตคาดการณ์จากดัชนีความสมบูรณ์ของพืช คำนวณรายได้และกำไรสุทธิเพื่อประกอบการวางแผนเศรษฐกิจชุมชน</p>
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900">💰 ประมาณการผลผลิตและรายได้</h3>
+                        <p class="text-xs text-slate-500">คำนวณผลผลิตและรายได้คาดการณ์ตามพื้นที่เพาะปลูก</p>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                         <div>
@@ -927,10 +1229,10 @@
                                 <span>🌾 โครงการสมาร์ทฟาร์มและการเกษตรแม่นยำเชิงพื้นที่ จังหวัดนครพนม (Nakhon Phanom Smart Agriculture)</span>
                             </div>
                             <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
-                                ติดตามพัฒนาการพืชผลเศรษฐกิจ จ.นครพนม พร้อมพิกัดแผนที่ดาวเทียม GPS ลุ่มน้ำโขง
+                                ติดตามพัฒนาการพืชผลเศรษฐกิจ จ.นครพนม
                             </h3>
                             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                ตรวจสอบไทม์ไลน์การเจริญเติบโต 5 ระยะ วัดความสูง จำนวนใบ ความชื้นสัมพัทธ์ในดิน ค่า pH พร้อมแผนที่พิกัดแปลงเพาะปลูกแบบโต้ตอบเพื่อใช้ประกอบเล่มรายงานโปรเจคจบได้อย่างสมบูรณ์
+                                ตรวจสอบการเติบโต 5 ระยะ ความสูง จำนวนใบ ความชื้น และค่า pH พร้อมแผนที่พิกัด GIS
                             </p>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
@@ -981,8 +1283,8 @@
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <div>
-                            <h3 class="text-base font-extrabold text-slate-900">📅 ตารางเกณฑ์มาตรฐานระยะการเจริญเติบโตและแผนการดูแลรักษา</h3>
-                            <p class="text-xs text-slate-500">ใช้เป็นเกณฑ์อ้างอิงในการประเมินการเติบโตของพืชผลในเล่มโปรเจคจบ</p>
+                            <h3 class="text-base font-extrabold text-slate-900">📅 เกณฑ์มาตรฐานระยะการเจริญเติบโต</h3>
+                            <p class="text-xs text-slate-500">เกณฑ์อ้างอิงในการประเมินการเติบโตและแผนการดูแลรักษา</p>
                         </div>
                         <button type="button" onclick="switchTab('record')" class="theme-btn-primary text-xs font-bold px-3.5 py-2 rounded-xl transition">
                             + บันทึกผลการสำรวจใหม่
@@ -1039,25 +1341,24 @@
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">GIS Spatial Crop Monitoring</span>
-                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">🗺️ แผนที่พิกัดแปลงเพาะปลูกอัจฉริยะ (ภาพถ่ายดาวเทียม & แผนที่ถนน) <span id="mapPinnedCountBadge" class="ml-2 inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300">📍 ปักหมุดต้นไม้บนแผนที่แล้วทั้งหมด 5 ต้น</span></h3>
-                            <p class="text-xs text-slate-500">คลิกที่หมุดบนแผนที่เพื่อดูความสูง ความชื้นดิน และเกรดสุขภาพของแต่ละแปลง หรือคลิกพื้นที่ว่างบนแผนที่เพื่อปักหมุดพิกัดแปลงใหม่</p>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900">🗺️ แผนที่พิกัดแปลงเกษตร (GIS) <span id="mapPinnedCountBadge" class="ml-2 inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-300">📍 ปักหมุด 5 ต้น</span></h3>
+                            <p class="text-xs text-slate-500">คลิกที่หมุดบนแผนที่เพื่อดูข้อมูลการเติบโต หรือคลิกบนแผนที่เพื่อปักหมุดแปลงใหม่</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" id="btnLayerSatellite" onclick="setMapLayer('satellite')" class="theme-btn-primary text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                🛰️ ภาพถ่ายดาวเทียม (Satellite)
+                            <button type="button" id="btnLayerSatellite" onclick="setMapLayer('satellite')" class="theme-btn-primary text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                🛰️ ดาวเทียม
                             </button>
-                            <button type="button" id="btnLayerStreet" onclick="setMapLayer('street')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                🗺️ แผนที่ถนน (Street Map)
+                            <button type="button" id="btnLayerStreet" onclick="setMapLayer('street')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                🗺️ ถนน
                             </button>
-                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow-sm">
-                                ↩️ กู้คืนหมุดที่เพิ่งลบ
+                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm">
+                                ↩️ กู้คืน
                             </button>
-                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                🗑️ ลบหมุดต้นไม้จำลองเพิ่ม
+                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                🗑️ ลบหมุดจำลอง
                             </button>
-                            <button type="button" onclick="locateUserGPS()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                📍 ดึงพิกัด GPS ปัจจุบันของฉัน
+                            <button type="button" onclick="locateUserGPS()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                📍 พิกัดของฉัน
                             </button>
                         </div>
                     </div>
@@ -1283,7 +1584,7 @@
                             ⚡ จำลองข้อมูลสำรวจ +5 ครั้ง
                         </button>
                         <button type="button" onclick="copyStatsForThesis()" class="theme-btn-primary text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition">
-                            📋 คัดลอกตารางสถิติ (ใส่บทที่ 4)
+                            📋 คัดลอกตารางสถิติ
                         </button>
                         <button type="button" onclick="exportToCSV()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition shadow-sm">
                             📥 ดาวน์โหลด Excel (CSV)
@@ -1322,7 +1623,7 @@
                 <div class="theme-header text-white rounded-2xl p-5 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div class="space-y-1">
                         <div class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wider">
-                            ✨ บทสรุปผลการเติบโตพืชผลอัตโนมัติ (สำหรับคัดลอกไปใส่เล่มรายงาน บทที่ 4 และบทที่ 5)
+                            ✨ สรุปภาพรวมผลการเติบโตพืชผล
                         </div>
                         <p id="autoNarrativeSummary" class="text-xs sm:text-sm text-white/95 leading-relaxed"></p>
                     </div>
@@ -1334,7 +1635,7 @@
                 <!-- Charts Row 1 -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                        <h3 class="text-base font-bold text-slate-800 mb-3">กราฟแนวโน้มการเจริญเติบโต (ความสูงต้นพืช ซม. และจำนวนใบ ตามอายุวัน)</h3>
+                        <h3 class="text-base font-bold text-slate-800 mb-3">กราฟแนวโน้มการเจริญเติบโต</h3>
                         <div class="relative h-72">
                             <canvas id="growthLineCanvas"></canvas>
                         </div>
@@ -1350,13 +1651,13 @@
                 <!-- Charts Row 2 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                        <h3 class="text-base font-bold text-slate-800 mb-3">กราฟแท่งเปรียบเทียบคะแนนประเมินความสมบูรณ์รายด้าน (เต็ม 5.00)</h3>
+                        <h3 class="text-base font-bold text-slate-800 mb-3">คะแนนประเมินความสมบูรณ์รายด้าน</h3>
                         <div class="relative h-72">
                             <canvas id="barChartCanvas"></canvas>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                        <h3 class="text-base font-bold text-slate-800 mb-3">สัดส่วนการบันทึกข้อมูลแยกตามแปลงเพาะปลูก</h3>
+                        <h3 class="text-base font-bold text-slate-800 mb-3">สัดส่วนการบันทึกข้อมูลแยกตามแปลง</h3>
                         <div class="relative h-72">
                             <canvas id="pieChartCanvas"></canvas>
                         </div>
@@ -1367,8 +1668,8 @@
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">ตารางวิเคราะห์ค่าเฉลี่ย (X-bar) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ของการประเมินพืชผล</h3>
-                            <p class="text-xs text-slate-500">เกณฑ์การแปลผลคุณภาพการเติบโต: 4.50–5.00 = ดีเยี่ยม | 3.50–4.49 = ดี | 2.50–3.49 = ปานกลาง | 1.50–2.49 = พอใช้ | 1.00–1.49 = ควรปรับปรุง</p>
+                            <h3 class="text-base font-bold text-slate-800">ตารางสถิติและค่าเฉลี่ยการประเมินพืชผล</h3>
+                            <p class="text-xs text-slate-500">เกณฑ์การแปลผล: 4.50–5.00 = ดีเยี่ยม | 3.50–4.49 = ดี | 2.50–3.49 = ปานกลาง | 1.50–2.49 = พอใช้</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
@@ -1462,17 +1763,17 @@
     <!-- ==================== FLOATING AI ASSISTANT WIDGET (เปิดถาม AI ได้จากทุกหน้าจอ) ==================== -->
     <div class="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 no-print">
         <!-- Floating AI Chat Drawer -->
-        <div id="floatingAiDrawer" class="hidden w-[340px] sm:w-[390px] bg-white rounded-3xl shadow-2xl border-2 border-emerald-500/40 overflow-hidden flex flex-col">
+        <div id="floatingAiDrawer" class="hidden w-[350px] sm:w-[410px] bg-white rounded-3xl shadow-2xl border-2 border-emerald-500/40 overflow-hidden flex flex-col">
             <div class="theme-header text-white px-4 py-3 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">🤖</span>
                     <div>
-                        <div class="text-xs font-extrabold">AgriGrow AI สอบถามด่วน</div>
-                        <div class="text-[10px] text-emerald-200">ถามข้อมูลกราฟ 30 นาที สุขภาพพืช & แผนที่</div>
+                        <div class="text-xs font-extrabold">AgriGrow AI สั่งงาน & ขอรายงานด่วน</div>
+                        <div class="text-[10px] text-emerald-200">ขอรายงานอัตโนมัติ & แก้ไขเว็บแบบเรียลไทม์</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <button type="button" onclick=" toggleFloatingAiDrawer(false); switchTab('ai');" class="bg-white/15 hover:bg-white/25 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition">
+                    <button type="button" onclick="toggleFloatingAiDrawer(false); switchTab('ai'); switchAiSubTab('all');" class="bg-white/15 hover:bg-white/25 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition">
                         ขยายเต็มจอ ↗
                     </button>
                     <button type="button" onclick="toggleFloatingAiDrawer(false)" class="text-white/80 hover:text-white text-sm font-bold px-1.5 py-0.5">✕</button>
@@ -1480,16 +1781,17 @@
             </div>
 
             <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex flex-wrap gap-1">
-                <button type="button" onclick="askSmartFarmAI(null, 'สรุปผลกราฟทุก 30 นาทีรอบล่าสุดให้หน่อย')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-bold px-2 py-1 rounded-lg">⏱️ สรุปกราฟ 30 นาที</button>
-                <button type="button" onclick="askSmartFarmAI(null, 'วิเคราะห์สุขภาพต้นไม้ทุกแปลงให้หน่อย')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-1 rounded-lg">🌿 วิเคราะห์สุขภาพพืช</button>
-                <button type="button" onclick="askSmartFarmAI(null, 'สั่งจำลองต้นไม้เพิ่มอีก 1 ต้นพร้อมปักหมุดแผนที่')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-[10px] font-bold px-2 py-1 rounded-lg">+ สั่งเพิ่มต้นไม้</button>
+                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-2 py-1 rounded-lg">📑 ขอรายงานฉบับเต็ม</button>
+                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานกราฟและสถิติทุก 30 นาที')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-bold px-2 py-1 rounded-lg">⏱️ รายงาน 30 นาที</button>
+                <button type="button" onclick="toggleFloatingAiDrawer(false); switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-50 hover:bg-violet-100 text-violet-800 border border-violet-200 text-[10px] font-bold px-2 py-1 rounded-lg">🛠️ แก้ไขเว็บสด</button>
+                <button type="button" onclick="askSmartFarmAI(null, 'สั่งจำลองต้นไม้เพิ่มอีก 1 ต้นพร้อมปักหมุดแผนที่')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-[10px] font-bold px-2 py-1 rounded-lg">+ เพิ่มต้นไม้</button>
             </div>
 
             <div id="aiChatMessagesFloating" class="p-3.5 space-y-2.5 h-72 overflow-y-auto bg-slate-50/50"></div>
 
             <form onsubmit="event.preventDefault(); askSmartFarmAI('aiInputFloating');" class="p-2.5 bg-white border-t border-slate-200 flex gap-1.5">
                 <button type="button" onclick="startAiVoiceInput('aiInputFloating')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2.5 py-2 rounded-xl text-xs transition shrink-0" title="พูดด้วยเสียง">🎤</button>
-                <input type="text" id="aiInputFloating" placeholder="พิมพ์คุยโต้ตอบหรือสั่งงาน AI..." class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none">
+                <input type="text" id="aiInputFloating" placeholder="พิมพ์ 'ขอรายงาน', 'เปลี่ยนชื่อเว็บเป็น...', 'เปิดโหมดมืด'..." class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs focus:border-emerald-600 focus:outline-none">
                 <button type="submit" class="theme-btn-primary font-extrabold px-3.5 py-2 rounded-xl text-xs transition shrink-0">ส่ง 🚀</button>
             </form>
         </div>
@@ -1497,7 +1799,7 @@
         <!-- Floating AI Trigger Button -->
         <button type="button" id="floatingAiBtn" onclick="toggleFloatingAiDrawer()" class="theme-header hover:scale-105 text-white font-extrabold px-4 py-3 rounded-full shadow-2xl border-2 border-emerald-400/60 flex items-center gap-2 transition">
             <span class="text-xl">🤖</span>
-            <span class="text-xs sm:text-sm">ถาม AI เกษตรอัจฉริยะ</span>
+            <span class="text-xs sm:text-sm">AI ขอรายงาน & แก้ไขเว็บสด</span>
         </button>
     </div>
 
