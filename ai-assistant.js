@@ -247,13 +247,14 @@
         }
 
         // =====================================================================
-        // ตารางแก้ไขข้อมูลแปลงเพาะปลูกและเซนเซอร์แบบเรียลไทม์ (Live Plot Editor)
+        // ตารางแก้ไขข้อมูลแปลงเพาะปลูกและเซนเซอร์แบบเรียลไทม์ (Live Plot Editor & Add Tree Studio)
         // =====================================================================
         function renderLivePlotEditorTable() {
-            const tbody = document.getElementById('livePlotEditorTableBody');
-            if (!tbody) return;
+            const tbody1 = document.getElementById('livePlotEditorTableBody');
+            const tbody2 = document.getElementById('addTreeStudioTableBody');
+            if (!tbody1 && !tbody2) return;
 
-            tbody.innerHTML = plots.map(p => {
+            const rowsHtml = plots.map(p => {
                 const pLogs = logs.filter(r => r.plotId === p.id).sort((a, b) => b.ageDays - a.ageDays);
                 const latest = pLogs[0] || { ageDays: 28, heightCm: 38.5, leafCount: 15, moisture: 70, soilPh: 6.5 };
                 return `
@@ -288,6 +289,49 @@
                     </tr>
                 `;
             }).join('');
+
+            if (tbody1) tbody1.innerHTML = rowsHtml;
+            if (tbody2) tbody2.innerHTML = rowsHtml;
+        }
+
+        function addNewTreeFromStudio(goToMap) {
+            const nameInput = document.getElementById('studioInputTreeName') || document.getElementById('inputSimTreeName');
+            const zoneInput = document.getElementById('studioInputTreeZone') || document.getElementById('inputSimTreeZone');
+            const heightInput = document.getElementById('studioInputTreeHeight');
+            const latInput = document.getElementById('studioInputTreeLat') || document.getElementById('inputSimTreeLat');
+            const lngInput = document.getElementById('studioInputTreeLng') || document.getElementById('inputSimTreeLng');
+
+            const simName = document.getElementById('inputSimTreeName');
+            const simZone = document.getElementById('inputSimTreeZone');
+            const simLat = document.getElementById('inputSimTreeLat');
+            const simLng = document.getElementById('inputSimTreeLng');
+
+            if (simName && nameInput) simName.value = nameInput.value;
+            if (simZone && zoneInput) simZone.value = zoneInput.value;
+            if (simLat && latInput) simLat.value = latInput.value;
+            if (simLng && lngInput) simLng.value = lngInput.value;
+
+            const customHeight = heightInput ? parseFloat(heightInput.value) : NaN;
+            if (typeof simulateAnotherTree30Min === 'function') {
+                simulateAnotherTree30Min(goToMap);
+            }
+            if (!isNaN(customHeight) && customHeight > 0 && plots.length > 0) {
+                const newestPlot = plots[plots.length - 1];
+                updatePlotFieldLive(newestPlot.id, 'heightCm', customHeight);
+            }
+            if (nameInput) nameInput.value = '';
+            if (zoneInput) zoneInput.value = '';
+            if (heightInput) heightInput.value = '';
+            renderLivePlotEditorTable();
+            populateAiReportPlotSelector();
+        }
+
+        function quickAddSpeciesTree(speciesName, initHeight) {
+            const nameInput = document.getElementById('studioInputTreeName');
+            const heightInput = document.getElementById('studioInputTreeHeight');
+            if (nameInput) nameInput.value = speciesName;
+            if (heightInput && initHeight) heightInput.value = initHeight;
+            addNewTreeFromStudio(false);
         }
 
         function updatePlotFieldLive(plotId, field, rawVal) {
@@ -602,8 +646,8 @@
             }, 250);
         }
 
-        function downloadAiReportWordDoc() {
-            const { reportHtml, docTitle, refCode } = generateAiOfficialReport();
+        function downloadAiReportWordDoc(forcedType, forcedPlot) {
+            const { reportHtml, docTitle, refCode } = generateAiOfficialReport(forcedType, forcedPlot);
             const fullWordHtml = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
                 <head><meta charset="utf-8"><title>${escapeHtmlText(docTitle)}</title>
@@ -621,12 +665,142 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `AgriGrow_Report_${refCode}.doc`;
+            a.download = `AgriGrow_Word_Report_${refCode}.doc`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast('📥 ดาวน์โหลดไฟล์รายงาน Word (.doc) เรียบร้อยแล้ว!');
+            showToast('📘 ดาวน์โหลดไฟล์รายงาน Microsoft Word (.doc) เรียบร้อยแล้ว!');
+            return { docTitle, refCode, filename: `AgriGrow_Word_Report_${refCode}.doc` };
+        }
+
+        function exportAiExcelFile(forcedType, forcedPlot) {
+            const ctx = collectFullFarmAiContext();
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+            const refCode = 'XLS-' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + '-' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+            const targetPlots = (forcedPlot && forcedPlot !== 'all')
+                ? ctx.plotDetails.filter(d => String(d.plot.id) === String(forcedPlot))
+                : ctx.plotDetails;
+
+            const heights = targetPlots.map(d => Number(d.latest.heightCm || 0));
+            const leaves = targetPlots.map(d => Number(d.latest.leafCount || 0));
+            const moistures = targetPlots.map(d => Number(d.latest.moisture || 0));
+            const vals30m = targetPlots.map(d => Number(d.val30m || 0));
+
+            const stH = calculateStats(heights);
+            const stL = calculateStats(leaves);
+            const stM = calculateStats(moistures);
+            const st30 = calculateStats(vals30m);
+
+            const plotRowsHtml = targetPlots.map((d, idx) => `
+                <tr>
+                    <td style="text-align:center;">${idx + 1}</td>
+                    <td style="text-align:center;">#${d.plot.id}</td>
+                    <td><b>${escapeHtmlText(d.plot.name)}</b></td>
+                    <td>${escapeHtmlText(d.plot.zone)}</td>
+                    <td style="text-align:center;">${d.plot.lat}, ${d.plot.lng}</td>
+                    <td style="text-align:center;">${d.latest.ageDays}</td>
+                    <td style="text-align:right; font-weight:bold; color:#065f46;">${Number(d.latest.heightCm).toFixed(1)}</td>
+                    <td style="text-align:center;">${d.latest.leafCount}</td>
+                    <td style="text-align:center;">${d.latest.moisture}%</td>
+                    <td style="text-align:center;">${d.latest.soilPh || 6.5}</td>
+                    <td style="text-align:right; font-weight:bold; color:#0369a1;">${Number(d.val30m).toFixed(ctx.metricCfg.decimals)}</td>
+                    <td style="text-align:center;">${d.avgQ.toFixed(2)} (${d.grade})</td>
+                </tr>
+            `).join('');
+
+            const slots = (typeof TIME_SLOTS_30M !== 'undefined' && Array.isArray(TIME_SLOTS_30M)) ? TIME_SLOTS_30M.slice(0, 16) : ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'];
+            const slotHeaderCells = slots.map(s => `<th style="background:#0f172a; color:#ffffff;">${s} น.</th>`).join('');
+            const slotRowsHtml = targetPlots.map(d => {
+                const cells = slots.map(s => {
+                    const v = (typeof telemetry30MinStore !== 'undefined' && telemetry30MinStore[d.plot.id] && telemetry30MinStore[d.plot.id][ctx.metricKey])
+                        ? (telemetry30MinStore[d.plot.id][ctx.metricKey][s] ?? d.val30m)
+                        : d.val30m;
+                    return `<td style="text-align:right;">${Number(v).toFixed(ctx.metricCfg.decimals)}</td>`;
+                }).join('');
+                return `<tr><td><b>#${d.plot.id} ${escapeHtmlText(d.plot.name)}</b></td><td>${escapeHtmlText(d.plot.zone)}</td>${cells}</tr>`;
+            }).join('');
+
+            const excelHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <style>
+                        body { font-family: 'Sarabun', 'TH SarabunPSK', Tahoma, sans-serif; font-size: 11pt; }
+                        table { border-collapse: collapse; width: 100%; margin-bottom: 18px; }
+                        th, td { border: 1px solid #94a3b8; padding: 6px 8px; }
+                        th { background-color: #065f46; color: #ffffff; font-weight: bold; }
+                        .title { font-size: 15pt; font-weight: bold; color: #064e3b; }
+                        .subtitle { font-size: 11pt; color: #334155; }
+                        .summary-row td { background-color: #ecfdf5; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <div class="title">ตารางฐานข้อมูลและสถิติการเติบโตพืชผล (AgriGrow Excel Report)</div>
+                    <div class="subtitle">รหัสเอกสาร: ${refCode} | วันที่ออกไฟล์: ${dateStr} เวลา ${timeStr} | จำนวนต้นไม้: ${targetPlots.length} ต้น</div>
+                    <br/>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>รหัสแปลง</th>
+                                <th>ชื่อต้นไม้ / สายพันธุ์</th>
+                                <th>โซนเพาะปลูก</th>
+                                <th>พิกัด GPS (Lat, Lng)</th>
+                                <th>อายุพืช (วัน)</th>
+                                <th>ความสูง (ซม.)</th>
+                                <th>จำนวนใบ (ใบ)</th>
+                                <th>ความชื้นดิน (%RH)</th>
+                                <th>ค่า pH ดิน</th>
+                                <th>${escapeHtmlText(ctx.metricCfg.shortLabel)} (${ctx.slotTime} น.)</th>
+                                <th>เกรดคุณภาพ (X̄)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${plotRowsHtml}
+                            <tr class="summary-row">
+                                <td colspan="6" style="text-align:right;">ค่าเฉลี่ยรวมทุกแปลง (Mean / X̄)</td>
+                                <td style="text-align:right;">${stH.mean.toFixed(2)} ซม.</td>
+                                <td style="text-align:center;">${stL.mean.toFixed(1)} ใบ</td>
+                                <td style="text-align:center;">${stM.mean.toFixed(1)}%</td>
+                                <td style="text-align:center;">6.50</td>
+                                <td style="text-align:right;">${st30.mean.toFixed(2)} ${escapeHtmlText(ctx.metricCfg.unit)}</td>
+                                <td style="text-align:center;">S.D. = ${stH.sd.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="title">ตารางที่ 2: ข้อมูลเซนเซอร์ราย 30 นาที (${escapeHtmlText(ctx.metricCfg.label)})</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="background:#0f172a; color:#ffffff;">ชื่อต้นไม้</th>
+                                <th style="background:#0f172a; color:#ffffff;">โซน</th>
+                                ${slotHeaderCells}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${slotRowsHtml}
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            const filename = `AgriGrow_Excel_Data_${refCode}.xls`;
+            const blob = new Blob(['\ufeff', excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('📊 สร้างและดาวน์โหลดไฟล์ตาราง Microsoft Excel (.xls) เรียบร้อยแล้ว!');
+            return { refCode, filename, count: targetPlots.length, stH, stL, stM, st30, ctx };
         }
 
         function copyAiOfficialReportText() {
@@ -806,9 +980,10 @@
                         <li>⚡ <b>สั่งแก้ไขหน้าเว็บและควบคุมระบบแบบเรียลไทม์ (Agentic Live Edit):</b> พิมพ์สั่งด้วยภาษาพูดตามธรรมชาติ เช่น <i>"เปลี่ยนชื่อเว็บเป็น ติดตามการเติบโตพืชผล"</i>, <i>"เปิดโหมดมืดและเปลี่ยนธีมเป็นสีม่วง"</i>, <i>"แก้ความสูงต้นที่ 1 เป็น 72 ซม. แล้วเปิดน้ำทุกแปลง"</i> ผมจะลงมือแก้หน้าเว็บให้ทันที!</li>
                     </ul>
                     <div class="mt-2.5 flex flex-wrap gap-1.5">
-                        <button type="button" onclick="askSmartFarmAI(null, 'วิเคราะห์เชิงลึกเปรียบเทียบการเติบโตของทุกแปลงพร้อมข้อเสนอแนะทางวิชาการ')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">🧠 ทดสอบให้ AI วิเคราะห์เชิงลึก</button>
-                        <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📑 ขอรายงานฉบับเต็ม (A4/Word)</button>
-                        <button type="button" onclick="switchAiSubTab('editor')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">🛠️ เปิดแผงแก้ไขเว็บเรียลไทม์</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'ขอไฟล์ Excel สรุปข้อมูลทุกแปลงและเซนเซอร์ 30 นาที')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📊 ขอไฟล์ Excel (.xls)</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'ขอไฟล์ Word รายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📘 ขอไฟล์ Word (.doc)</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📑 ขอรายงานฉบับเต็ม (A4)</button>
+                        <button type="button" onclick="switchTab('addTree')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">🌳 เปิดเมนูเพิ่มต้นไม้</button>
                     </div>`
                 });
             }
@@ -1108,6 +1283,96 @@
             return null;
         }
 
+        // สร้างการ์ดดาวน์โหลด Excel (.xls) ทันทีเมื่อผู้ใช้ขอไฟล์ Excel
+        function buildChatExcelResponseCard(rawQuestion) {
+            const q = String(rawQuestion || '').toLowerCase();
+            const targetPlot = findTargetPlotFromQuestion(q);
+            const plotFilter = targetPlot ? String(targetPlot.id) : 'all';
+            const res = exportAiExcelFile('telemetry30m', plotFilter);
+
+            return `
+                <div class="space-y-3">
+                    <div class="bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-4 shadow-sm space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-extrabold shadow">📊</span>
+                                <div>
+                                    <div class="text-xs sm:text-sm font-extrabold text-emerald-950">สร้างและดาวน์โหลดไฟล์ Microsoft Excel (.xls) ให้เรียบร้อยแล้ว!</div>
+                                    <div class="text-[11px] text-emerald-800">ชื่อไฟล์: <b class="font-mono">${escapeHtmlText(res.filename)}</b> • ข้อมูลครบ ${res.count} แปลง + ตารางเซนเซอร์ทุก 30 นาที</div>
+                                </div>
+                            </div>
+                            <span class="bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full">AUTO-DOWNLOADED ✓</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                            <div class="bg-white border border-emerald-200 rounded-xl p-2 text-center">
+                                <div class="text-[10px] text-slate-500 font-bold">ความสูงเฉลี่ย (X̄)</div>
+                                <div class="font-extrabold text-emerald-800">${res.stH.mean.toFixed(2)} ซม.</div>
+                            </div>
+                            <div class="bg-white border border-emerald-200 rounded-xl p-2 text-center">
+                                <div class="text-[10px] text-slate-500 font-bold">จำนวนใบเฉลี่ย</div>
+                                <div class="font-extrabold text-teal-800">${res.stL.mean.toFixed(1)} ใบ</div>
+                            </div>
+                            <div class="bg-white border border-emerald-200 rounded-xl p-2 text-center">
+                                <div class="text-[10px] text-slate-500 font-bold">ความชื้นเฉลี่ย</div>
+                                <div class="font-extrabold text-sky-800">${res.stM.mean.toFixed(1)}% RH</div>
+                            </div>
+                            <div class="bg-white border border-emerald-200 rounded-xl p-2 text-center">
+                                <div class="text-[10px] text-slate-500 font-bold">รอบ 30 นาที (${res.ctx.slotTime} น.)</div>
+                                <div class="font-extrabold text-indigo-800">${res.st30.mean.toFixed(2)} ${escapeHtmlText(res.ctx.metricCfg.unit)}</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button type="button" onclick="exportAiExcelFile('telemetry30m', '${plotFilter}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-sm">📊 ดาวน์โหลดไฟล์ Excel (.xls) อีกครั้ง</button>
+                            <button type="button" onclick="export30MinReportCSV()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-3 py-2 rounded-xl">📥 โหลดไฟล์ CSV</button>
+                            <button type="button" onclick="downloadAiReportWordDoc('executive', '${plotFilter}')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-2 rounded-xl">📘 ขอไฟล์ Word (.doc) คู่กัน</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // สร้างการ์ดดาวน์โหลด Word (.doc) ทันทีเมื่อผู้ใช้ขอไฟล์ Word
+        function buildChatWordResponseCard(rawQuestion) {
+            const q = String(rawQuestion || '').toLowerCase();
+            let repType = 'executive';
+            if (q.includes('30') || q.includes('กราฟ')) repType = 'telemetry30m';
+            else if (q.includes('บทที่ 4') || q.includes('บทที่ 5') || q.includes('วิจัย') || q.includes('สถิติ')) repType = 'thesis';
+            else if (q.includes('สุขภาพ') || q.includes('ดิน') || q.includes('ความชื้น')) repType = 'health';
+            else if (q.includes('รายได้') || q.includes('กำไร') || q.includes('คาร์บอน') || q.includes('เศรษฐกิจ')) repType = 'financial';
+
+            const targetPlot = findTargetPlotFromQuestion(q);
+            const plotFilter = targetPlot ? String(targetPlot.id) : 'all';
+
+            populateAiReportPlotSelector();
+            const { reportHtml, docTitle, refCode } = generateAiOfficialReport(repType, plotFilter);
+            const wordInfo = downloadAiReportWordDoc(repType, plotFilter);
+
+            return `
+                <div class="space-y-3">
+                    <div class="bg-sky-50 border-2 border-sky-400 rounded-2xl p-4 shadow-sm space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center text-lg font-extrabold shadow">📘</span>
+                                <div>
+                                    <div class="text-xs sm:text-sm font-extrabold text-sky-950">สร้างและดาวน์โหลดไฟล์ Microsoft Word (.doc) ให้เรียบร้อยแล้ว!</div>
+                                    <div class="text-[11px] text-sky-800">ชื่อไฟล์: <b class="font-mono">${escapeHtmlText(wordInfo.filename)}</b> • เปิดแก้ไขใน MS Word ได้ทันที</div>
+                                </div>
+                            </div>
+                            <span class="bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full">AUTO-DOWNLOADED ✓</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button type="button" onclick="downloadAiReportWordDoc('${repType}', '${plotFilter}')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-sm">📘 ดาวน์โหลดไฟล์ Word (.doc) อีกครั้ง</button>
+                            <button type="button" onclick="exportAiExcelFile('${repType}', '${plotFilter}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-sm">📊 ขอไฟล์ Excel (.xls) คู่กัน</button>
+                            <button type="button" onclick="printAiOfficialReport()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl">🖨️ พิมพ์ / PDF</button>
+                        </div>
+                    </div>
+                    <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm overflow-x-auto">
+                        ${reportHtml}
+                    </div>
+                </div>
+            `;
+        }
+
         // สร้างการ์ดรายงานฉบับสมบูรณ์แสดงในกล่องแชท AI ทันทีเมื่อผู้ใช้ขอรายงาน
         function buildChatReportResponseCard(rawQuestion) {
             const q = rawQuestion.toLowerCase();
@@ -1130,9 +1395,10 @@
                             📑 จัดทำเอกสารรายงานเสร็จสมบูรณ์! (รหัส: <span class="font-mono">${refCode}</span>)
                         </div>
                         <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="exportAiExcelFile('${repType}', '${plotFilter}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📊 โหลด Excel (.xls)</button>
+                            <button type="button" onclick="downloadAiReportWordDoc('${repType}', '${plotFilter}')" class="bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📘 โหลด Word (.doc)</button>
                             <button type="button" onclick="printAiOfficialReport()" class="bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">🖨️ พิมพ์ / PDF</button>
-                            <button type="button" onclick="downloadAiReportWordDoc()" class="bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">📥 โหลด Word (.doc)</button>
-                            <button type="button" onclick="copyAiOfficialReportText()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">📋 คัดลอกรายงาน</button>
+                            <button type="button" onclick="copyAiOfficialReportText()" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">📋 คัดลอก</button>
                         </div>
                     </div>
                     <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm overflow-x-auto">
@@ -1149,6 +1415,14 @@
             const liveEditResult = tryProcessRealTimeWebEdit(rawQuestion);
             if (liveEditResult) {
                 return liveEditResult;
+            }
+
+            // 0.5 ขอ Excel ได้ Excel / ขอ Word ได้ Word ทันที
+            if (q.includes('excel') || q.includes('เอ็กเซล') || q.includes('เอกเซล') || q.includes('.xls') || q.includes('ตาราง excel')) {
+                return buildChatExcelResponseCard(rawQuestion);
+            }
+            if (q.includes('word') || q.includes('เวิร์ด') || q.includes('.doc') || q.includes('ไฟล์ word') || q.includes('รายงาน word')) {
+                return buildChatWordResponseCard(rawQuestion);
             }
 
             // 1. ตรวจสอบว่าผู้ใช้กำลัง "ขอรายงาน" หรือไม่ -> สร้างรายงานฉบับสมบูรณ์ให้ทันที!
@@ -1364,6 +1638,12 @@
                         switchTab(act.switchTab);
                         executedBadges.push(`🧭 สลับไปยังหน้า ${act.switchTab}`);
                     }
+                    if (act.exportExcel) {
+                        return buildChatExcelResponseCard(String(act.exportExcel));
+                    }
+                    if (act.exportWord) {
+                        return buildChatWordResponseCard(String(act.exportWord));
+                    }
                     if (act.generateReport) {
                         const card = buildChatReportResponseCard(String(act.generateReport));
                         executedBadges.push(`📑 สร้างเอกสารรายงานทางการ`);
@@ -1482,6 +1762,46 @@
                 return;
             }
 
+            // ขอ Excel ได้ Excel ทันที!
+            const isExcelRequest =
+                qLower.includes('excel') || qLower.includes('เอ็กเซล') ||
+                qLower.includes('เอกเซล') || qLower.includes('.xls') ||
+                qLower.includes('ตาราง excel');
+
+            if (isExcelRequest) {
+                const excelCardHtml = buildChatExcelResponseCard(question);
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'สร้างและดาวน์โหลดไฟล์ตาราง Microsoft Excel (.xls) พร้อมข้อมูลสถิติทุกแปลงให้เรียบร้อยแล้วครับ',
+                    html: excelCardHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('สร้างและดาวน์โหลดไฟล์ตาราง Excel ให้เรียบร้อยแล้วครับ');
+                return;
+            }
+
+            // ขอ Word ได้ Word ทันที!
+            const isWordRequest =
+                qLower.includes('word') || qLower.includes('เวิร์ด') ||
+                qLower.includes('.doc') || qLower.includes('ไฟล์ word') ||
+                qLower.includes('รายงาน word');
+
+            if (isWordRequest) {
+                const wordCardHtml = buildChatWordResponseCard(question);
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'สร้างและดาวน์โหลดไฟล์เอกสาร Microsoft Word (.doc) ฉบับสมบูรณ์ให้เรียบร้อยแล้วครับ',
+                    html: wordCardHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('สร้างและดาวน์โหลดไฟล์เอกสาร Word ให้เรียบร้อยแล้วครับ');
+                return;
+            }
+
             const isDirectReportRequest =
                 qLower.includes('ขอรายงาน') || qLower.includes('ออกรายงาน') ||
                 qLower.includes('สร้างรายงาน') || qLower.includes('รายงานสรุป') ||
@@ -1492,7 +1812,7 @@
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
-                    plainText: 'จัดทำเอกสารรายงานฉบับสมบูรณ์พร้อมตารางสถิติและปุ่มพิมพ์ PDF / ดาวน์โหลด Word เรียบร้อยแล้วครับ',
+                    plainText: 'จัดทำเอกสารรายงานฉบับสมบูรณ์พร้อมตารางสถิติและปุ่มพิมพ์ PDF / ดาวน์โหลด Word / Excel เรียบร้อยแล้วครับ',
                     html: reportCardHtml
                 });
                 renderAiChatMessages();

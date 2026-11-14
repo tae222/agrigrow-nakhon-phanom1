@@ -21,28 +21,28 @@
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row">
 
-    <!-- ==================== LEFT SMART FARM CONTROL SIDEBAR (GMAIL-STYLE COLLAPSIBLE RAIL) ==================== -->
+    <!-- ==================== LEFT SMART FARM CONTROL SIDEBAR (POLISHED GMAIL-STYLE COLLAPSIBLE RAIL) ==================== -->
     <aside id="mainAppSidebar" class="sidebar-rail-collapsed rail-light-surface w-full lg:w-72 lg:min-h-screen flex flex-col justify-between p-3 sm:p-4 shadow-xl z-30 no-print shrink-0">
-        <div class="space-y-4 w-full">
-            <!-- Top Hamburger (☰) + Brand Header -->
-            <div class="rail-header-wrap flex items-center justify-between lg:justify-start gap-2.5 pb-2 border-b border-slate-200/80">
-                <div class="flex items-center gap-2">
-                    <button type="button" id="btnToggleSidebarRail" onclick="toggleSidebarRail()" data-rail-tip="เปิด/ปิด แถบเมนู (Expand/Collapse)" class="w-11 h-11 rounded-full hover:bg-slate-200/80 flex items-center justify-center text-slate-700 transition focus:outline-none" title="กดเพื่อกาง/พับแถบเมนูด้านซ้าย">
+        <div class="space-y-3.5 w-full">
+            <!-- Top Hamburger (☰) + Brand Header (Centered neatly in rail mode, no overflow) -->
+            <div class="rail-header-wrap flex items-center justify-between lg:justify-start gap-2 pb-2.5 border-b border-slate-200/80">
+                <div class="rail-header-brand-row flex items-center gap-2.5">
+                    <button type="button" id="btnToggleSidebarRail" onclick="toggleSidebarRail()" data-rail-tip="กาง/พับ แถบเมนูด้านซ้าย" class="w-10 h-10 rounded-full hover:bg-slate-200/90 flex items-center justify-center text-slate-700 transition focus:outline-none shrink-0" title="กดเพื่อกาง/พับแถบเมนูด้านซ้าย">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
-                    <div id="sidebarBrandIcon" onclick="toggleSidebarRail()" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-500 via-amber-400 to-emerald-500 p-[2px] cursor-pointer shadow-sm" title="AgriGrow Nakhon Phanom">
-                        <div class="w-full h-full bg-white rounded-[10px] flex items-center justify-center text-lg font-extrabold">
+                    <div id="sidebarBrandIcon" onclick="toggleSidebarRail()" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-400 p-[2px] cursor-pointer shadow-sm shrink-0" title="ติดตามการเติบโตพืชผล">
+                        <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center text-lg font-extrabold">
                             🌱
                         </div>
                     </div>
-                    <div class="sidebar-expand-only">
+                    <div class="sidebar-expand-only min-w-0">
                         <div class="flex items-center gap-1.5">
                             <span id="sidebarBrandBadge" class="text-[10px] font-extrabold uppercase tracking-widest bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-300">AgriGrow GIS 4.0 AI</span>
                         </div>
-                        <h1 id="sidebarBrandTitle" class="text-sm font-extrabold tracking-tight text-slate-900 mt-0.5">ติดตามการเติบโตพืชผล</h1>
-                        <p id="sidebarBrandSubtitle" class="text-[11px] text-slate-500">Smart Farm Nakhon Phanom GIS</p>
+                        <h1 id="sidebarBrandTitle" class="text-sm font-extrabold tracking-tight text-slate-900 mt-0.5 truncate">ติดตามการเติบโตพืชผล</h1>
+                        <p id="sidebarBrandSubtitle" class="text-[11px] text-slate-500 truncate">Smart Farm Nakhon Phanom GIS</p>
                     </div>
                 </div>
                 <button type="button" id="btnOpenQrModal" onclick="toggleQrModal(true)" class="lg:hidden bg-sky-100 hover:bg-sky-200 text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold transition">
@@ -50,127 +50,174 @@
                 </button>
             </div>
 
-            <!-- Light-Blue Rounded Square Compose / Quick Edit Action Button (Matches Screenshot ✏️) -->
-            <div class=" flex justify-center lg:justify-start">
-                <button type="button" id="btnRailCompose" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('editor');" data-rail-tip="✏️ แก้ไขเว็บเรียลไทม์ & เขียนรายงาน AI" class="rail-compose-btn w-full py-3.5 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center gap-3">
+            <!-- Light-Blue Rounded Square Compose / Quick Action Button (✏️) -->
+            <div class="flex justify-center lg:justify-start">
+                <button type="button" id="btnRailCompose" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('chat');" data-rail-tip="✏️ สั่ง AI ขอไฟล์ Excel / Word / แก้เว็บสด" class="rail-compose-btn w-full py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center gap-3">
                     <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"></path>
                     </svg>
-                    <span class="sidebar-expand-only truncate">แก้ไขเว็บสด / ขอรายงาน AI</span>
+                    <span class="sidebar-expand-only truncate">สั่ง AI ขอ Excel / Word</span>
                 </button>
             </div>
 
-            <!-- Main Vertical Icon Rail & Navigation Menu -->
+            <!-- Main Vertical Icon Rail & Navigation Menu (Organized & Separated) -->
             <div class="space-y-1">
-                <div class="sidebar-expand-only text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">แท็บตัวเลือกหลัก (Option Tabs)</div>
-                <nav class="rail-nav-list grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-1 gap-1.5">
-                    <!-- 1. Inbox / AI Studio (with Red Notification Dot) -->
-                    <button type="button" id="tabBtnAI" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('chat');" data-rail-tip="🤖 AI แชท & ขอรายงานอัตโนมัติ" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition">
-                        <span class="flex items-center gap-3">
+                <div class="sidebar-expand-only text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">เมนูหลักจัดเรียงใหม่</div>
+                <nav class="rail-nav-list grid grid-cols-4 sm:grid-cols-7 lg:grid-cols-1 gap-1">
+                    <!-- 1. AI Brain (Ask Excel / Word / Anything) -->
+                    <button type="button" id="tabBtnAI" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('chat');" data-rail-tip="🧠 AI อัจฉริยะ (ขอไฟล์ Excel / Word / ถามได้ทุกเรื่อง)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
                             <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M19 3H4.99c-1.11 0-1.98.89-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10z"/>
                             </svg>
-                            <span class="sidebar-expand-only">AI แชท & ขอรายงาน</span>
+                            <span class="rail-mini-label">AI อัจฉริยะ</span>
+                            <span class="sidebar-expand-only">AI แชท (ขอ Excel/Word)</span>
                         </span>
                         <span class="rail-red-dot"></span>
-                        <span class="sidebar-expand-only text-[10px] bg-red-600 text-white font-extrabold px-2 py-0.5 rounded-full">ใหม่</span>
+                        <span class="sidebar-expand-only text-[10px] bg-red-600 text-white font-extrabold px-2 py-0.5 rounded-full">PRO</span>
                     </button>
 
-                    <!-- 2. Star / 3D Smart Farm -->
-                    <button type="button" id="tabBtn3D" onclick="switchTab('farm3d')" data-rail-tip="⭐ ฟาร์มอัจฉริยะ 3 มิติ (3D Twin)" class="tab-btn active relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
-                        </svg>
-                        <span class="sidebar-expand-only">ฟาร์มอัจฉริยะ 3 มิติ</span>
+                    <!-- 2. Separated Graphs Only (กราฟ 30 นาที) -->
+                    <button type="button" id="tabBtnReport30m" onclick="switchTab('report30m')" data-rail-tip="📈 กราฟการเติบโตทุก 30 นาที (กราฟรวม & แยกรายต้น)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+                            </svg>
+                            <span class="rail-mini-label">กราฟ 30น.</span>
+                            <span class="sidebar-expand-only">กราฟ 30 นาที (รวม/แยก)</span>
+                        </span>
                     </button>
 
-                    <!-- 3. Clock / 30-Minute Telemetry Report -->
-                    <button type="button" id="tabBtnReport30m" onclick="switchTab('report30m')" data-rail-tip="🕒 รายงานกราฟทุก 30 นาที" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span class="sidebar-expand-only">กราฟทุก 30 นาที</span>
+                    <!-- 3. Separated Graph Report & Statistical Tables (รายงานกราฟ) -->
+                    <button type="button" id="tabBtnGraphReport" onclick="switchTab('graphReport')" data-rail-tip="📑 รายงานกราฟ & ตารางสถิติ (โหลด Excel / Word)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
+                            </svg>
+                            <span class="rail-mini-label">รายงานกราฟ</span>
+                            <span class="sidebar-expand-only">รายงานกราฟ & ตารางสถิติ</span>
+                        </span>
+                        <span class="rail-red-dot"></span>
                     </button>
 
-                    <!-- 4. Send Paper-Plane / AI Official Report -->
-                    <button type="button" id="tabBtnAiReportQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('report'); if(typeof generateAiOfficialReport==='function') generateAiOfficialReport();" data-rail-tip="➢ ออกรายงานทางการ AI (พิมพ์/Word)" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
-                        </svg>
-                        <span class="sidebar-expand-only">ออกรายงาน AI (A4/Word)</span>
+                    <!-- 4. Dedicated New Menu: Add Tree & Pin GPS (เพิ่มต้นไม้) -->
+                    <button type="button" id="tabBtnAddTree" onclick="switchTab('addTree')" data-rail-tip="🌳 เพิ่มต้นไม้ใหม่ & ปักหมุดแผนที่" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                            </svg>
+                            <span class="rail-mini-label">เพิ่มต้นไม้</span>
+                            <span class="sidebar-expand-only">🌳 เพิ่มต้นไม้ & จัดการต้น</span>
+                        </span>
+                        <span class="rail-red-dot"></span>
                     </button>
 
-                    <!-- 5. Document with Red Dot / Real-Time Web Editor -->
-                    <button type="button" id="tabBtnAiEditorQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('editor');" data-rail-tip="📄 แก้ไขเว็บแบบเรียลไทม์ (Live Editor)" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition">
-                        <span class="flex items-center gap-3">
+                    <!-- 5. 3D Smart Farm -->
+                    <button type="button" id="tabBtn3D" onclick="switchTab('farm3d')" data-rail-tip="🧊 ฟาร์มอัจฉริยะ 3 มิติ (3D Twin)" class="tab-btn active relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/>
+                            </svg>
+                            <span class="rail-mini-label">ฟาร์ม 3D</span>
+                            <span class="sidebar-expand-only">ฟาร์มอัจฉริยะ 3 มิติ</span>
+                        </span>
+                    </button>
+
+                    <!-- 6. AI Official Report Studio (Word / Excel / PDF) -->
+                    <button type="button" id="tabBtnAiReportQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('report'); if(typeof generateAiOfficialReport==='function') generateAiOfficialReport();" data-rail-tip="➢ ออกเอกสารรายงาน AI (Word / Excel / PDF)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+                            </svg>
+                            <span class="rail-mini-label">เอกสาร AI</span>
+                            <span class="sidebar-expand-only">ออกเอกสาร Word/Excel</span>
+                        </span>
+                    </button>
+
+                    <!-- 7. Real-Time Web Editor -->
+                    <button type="button" id="tabBtnAiEditorQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('editor');" data-rail-tip="🛠️ แก้ไขเว็บแบบเรียลไทม์ (Live Editor)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                             </svg>
+                            <span class="rail-mini-label">แก้เว็บสด</span>
                             <span class="sidebar-expand-only">แก้ไขเว็บแบบเรียลไทม์</span>
                         </span>
-                        <span class="rail-red-dot"></span>
                     </button>
 
-                    <!-- 6. Shopping Bag with Red Dot / Kanban & Harvest Revenue -->
-                    <button type="button" id="tabBtnKanban" onclick="switchTab('kanban')" data-rail-tip="🛍️ กระดานระยะพืช & พยากรณ์ผลผลิต" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition">
-                        <span class="flex items-center gap-3">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
+                    <!-- 8. Chevron Down/Up (⌄) to Expand/Collapse More Tabs -->
+                    <button type="button" id="btnToggleMoreSidebarTabs" onclick="toggleMoreSidebarTabs()" data-rail-tip="⌄ เปิด/ปิด เมนูเพิ่มเติม (7 เมนู)" class="rail-action-icon-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                        <span class="flex items-center gap-2.5">
+                            <svg id="iconMoreSidebarChevron" class="w-5 h-5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
                             </svg>
-                            <span class="sidebar-expand-only">กระดานผลผลิต Kanban</span>
+                            <span class="rail-mini-label">เพิ่มเติม</span>
+                            <span id="labelMoreSidebarChevron" class="sidebar-expand-only">เมนูเพิ่มเติม (7)</span>
                         </span>
-                        <span class="rail-red-dot"></span>
-                    </button>
-
-                    <!-- 7. Chevron Down/Up (⌄) to Expand/Collapse More Tabs -->
-                    <button type="button" id="btnToggleMoreSidebarTabs" onclick="toggleMoreSidebarTabs()" data-rail-tip="⌄ เปิด/ปิด แท็บตัวเลือกเพิ่มเติม" class="rail-action-icon-btn relative w-full text-left px-3.5 py-2 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                        <svg id="iconMoreSidebarChevron" class="w-5 h-5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-                        </svg>
-                        <span id="labelMoreSidebarChevron" class="sidebar-expand-only">แสดงตัวเลือกเพิ่มเติม (5)</span>
                     </button>
 
                     <!-- Collapsible Extra Menu Items (Toggled by ⌄ Chevron) -->
-                    <div id="sidebarMoreTabsContainer" class="hidden w-full space-y-1 flex flex-col items-center lg:items-stretch col-span-full">
-                        <button type="button" id="tabBtnOverview" onclick="switchTab('overview')" data-rail-tip="🏞️ ภาพรวมฟาร์ม & ระยะเติบโต" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                            <span class="text-base shrink-0">🏞️</span>
-                            <span class="sidebar-expand-only">ภาพรวมฟาร์ม</span>
+                    <div id="sidebarMoreTabsContainer" class="hidden w-full space-y-1 flex flex-col items-center lg:items-stretch col-span-full pt-1 border-t border-slate-200/70">
+                        <button type="button" id="tabBtnOverview" onclick="switchTab('overview')" data-rail-tip="🏞️ ภาพรวมฟาร์ม & ระยะเติบโต" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">🏞️</span>
+                                <span class="rail-mini-label">ภาพรวม</span>
+                                <span class="sidebar-expand-only">ภาพรวมฟาร์ม</span>
+                            </span>
                         </button>
-                        <button type="button" id="tabBtnBlueprint" onclick="switchTab('blueprint')" data-rail-tip="🎛️ ผังฟาร์ม 2D & ควบคุม IoT" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                            <span class="text-base shrink-0">🎛️</span>
-                            <span class="sidebar-expand-only">ผังควบคุม IoT</span>
+                        <button type="button" id="tabBtnBlueprint" onclick="switchTab('blueprint')" data-rail-tip="🎛️ ผังฟาร์ม 2D & ควบคุม IoT" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">🎛️</span>
+                                <span class="rail-mini-label">ผัง IoT</span>
+                                <span class="sidebar-expand-only">ผังควบคุม IoT</span>
+                            </span>
                         </button>
-                        <button type="button" id="tabBtnMap" onclick="switchTab('map')" data-rail-tip="🗺️ แผนที่ดาวเทียม GIS" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                            <span class="text-base shrink-0">🗺️</span>
-                            <span class="sidebar-expand-only">แผนที่ GIS</span>
+                        <button type="button" id="tabBtnKanban" onclick="switchTab('kanban')" data-rail-tip="📋 กระดานระยะพืช & พยากรณ์ผลผลิต" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">📋</span>
+                                <span class="rail-mini-label">Kanban</span>
+                                <span class="sidebar-expand-only">กระดานผลผลิต Kanban</span>
+                            </span>
                         </button>
-                        <button type="button" id="tabBtnDashboard" onclick="switchTab('dashboard')" data-rail-tip="📊 แดชบอร์ดสถิติและวิเคราะห์" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                            <span class="text-base shrink-0">📊</span>
-                            <span class="sidebar-expand-only">สถิติและวิเคราะห์</span>
+                        <button type="button" id="tabBtnMap" onclick="switchTab('map')" data-rail-tip="🗺️ แผนที่ดาวเทียม GIS" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">🗺️</span>
+                                <span class="rail-mini-label">แผนที่ GIS</span>
+                                <span class="sidebar-expand-only">แผนที่ดาวเทียม GIS</span>
+                            </span>
                         </button>
-                        <button type="button" id="tabBtnPlots" onclick="switchTab('plots')" data-rail-tip="🚜 จัดการแปลงเพาะปลูก" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition">
-                            <span class="text-base shrink-0">🚜</span>
-                            <span class="sidebar-expand-only">จัดการแปลงปลูก</span>
+                        <button type="button" id="tabBtnRecord" onclick="switchTab('record')" data-rail-tip="📝 บันทึกการวัดต้นพืชวันนี้" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">📝</span>
+                                <span class="rail-mini-label">บันทึกผล</span>
+                                <span class="sidebar-expand-only">บันทึกการเติบโตวันนี้</span>
+                            </span>
+                        </button>
+                        <button type="button" id="tabBtnDashboard" onclick="switchTab('dashboard')" data-rail-tip="📊 แดชบอร์ดสถิติและวิเคราะห์" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">📊</span>
+                                <span class="rail-mini-label">สถิติวิจัย</span>
+                                <span class="sidebar-expand-only">สถิติและวิเคราะห์</span>
+                            </span>
+                        </button>
+                        <button type="button" id="tabBtnPlots" onclick="switchTab('plots')" data-rail-tip="🚜 จัดการแปลงเพาะปลูก" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-base shrink-0">🚜</span>
+                                <span class="rail-mini-label">แปลงปลูก</span>
+                                <span class="sidebar-expand-only">จัดการแปลงปลูก</span>
+                            </span>
                         </button>
                     </div>
 
-                    <!-- 8. Plus (+) Quick Action Button -->
-                    <button type="button" id="tabBtnRecord" onclick="switchTab('record')" data-rail-tip="＋ บันทึกการวัดต้นพืชวันนี้" class="tab-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-3 transition mt-2">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                        </svg>
-                        <span class="sidebar-expand-only">บันทึกการเติบโตวันนี้</span>
-                    </button>
-
-                    <!-- 9. Tag / Label Icon with Red Dot -->
-                    <button type="button" id="btnRailLabelTag" onclick="toggleModularModal(true)" data-rail-tip="🏷️ โค้ดแยกส่วน 7 ไฟล์ & ตั้งค่าระบบ" class="rail-action-icon-btn relative w-full text-left px-3.5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition">
-                        <span class="flex items-center gap-3">
+                    <!-- 9. Tag / Label Icon (Source Code & System Tools) -->
+                    <button type="button" id="btnRailLabelTag" onclick="toggleModularModal(true)" data-rail-tip="🏷️ โค้ดแยกส่วน 7 ไฟล์ & ตั้งค่าระบบ" class="rail-action-icon-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition mt-1">
+                        <span class="flex items-center gap-2.5">
                             <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
                             </svg>
+                            <span class="rail-mini-label">โค้ด 7 ไฟล์</span>
                             <span class="sidebar-expand-only">ซอร์สโค้ด (7 ไฟล์)</span>
                         </span>
-                        <span class="rail-red-dot"></span>
                     </button>
                 </nav>
             </div>
@@ -239,27 +286,34 @@
                 <!-- Dropdown ตัวเลือกด่วน -->
                 <select id="headerQuickOptionSelect" onchange="handleQuickOptionSelect(this.value)" aria-label="เลือกโหมดการทำงานด่วน" class="rounded-xl border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-extrabold text-slate-800 focus:border-emerald-600 focus:outline-none">
                     <option value="">⚙️ แท็บตัวเลือกด่วน (เลือกโหมด)...</option>
-                    <option value="ai-chat">🤖 1. แชท AI & สั่งงานระบบ</option>
-                    <option value="ai-report">📑 2. ขอรายงาน AI อัตโนมัติ (พิมพ์/Word)</option>
-                    <option value="ai-editor">🛠️ 3. แก้ไขหน้าเว็บแบบเรียลไทม์</option>
-                    <option value="inline-edit">✏️ 4. เปิด/ปิด คลิกแก้ข้อความบนเว็บโดยตรง</option>
-                    <option value="dark-mode">🌙 5. สลับโหมดมืด / โหมดสว่าง</option>
-                    <option value="report30m">⏱️ 6. รายงานกราฟทุก 30 นาที</option>
-                    <option value="farm3d">🧊 7. ฟาร์มอัจฉริยะ 3 มิติ (3D)</option>
-                    <option value="blueprint">🎛️ 8. ผังควบคุม IoT 2D</option>
-                    <option value="kanban">📋 9. กระดาน Kanban & คำนวณรายได้</option>
-                    <option value="map">🗺️ 10. แผนที่ดาวเทียม GIS</option>
-                    <option value="dashboard">📊 11. แดชบอร์ดสถิติวิจัย</option>
-                    <option value="plots">🚜 12. จัดการแปลงเพาะปลูก</option>
+                    <option value="ai-chat">🧠 1. แชท AI (ขอ Excel / Word / ถามทุกเรื่อง)</option>
+                    <option value="report30m">📈 2. กราฟการเติบโตทุก 30 นาที (รวม & แยกต้น)</option>
+                    <option value="graphReport">📑 3. รายงานกราฟ & ตารางสถิติ 30 นาที</option>
+                    <option value="addTree">🌳 4. เพิ่มต้นไม้ใหม่ & ปักหมุดแผนที่</option>
+                    <option value="ai-report">📄 5. ออกเอกสารรายงานทางการ AI (Word/Excel/PDF)</option>
+                    <option value="ai-editor">🛠️ 6. แก้ไขหน้าเว็บแบบเรียลไทม์</option>
+                    <option value="inline-edit">✏️ 7. เปิด/ปิด คลิกแก้ข้อความบนเว็บโดยตรง</option>
+                    <option value="dark-mode">🌙 8. สลับโหมดมืด / โหมดสว่าง</option>
+                    <option value="farm3d">🧊 9. ฟาร์มอัจฉริยะ 3 มิติ (3D)</option>
+                    <option value="blueprint">🎛️ 10. ผังควบคุม IoT 2D</option>
+                    <option value="kanban">📋 11. กระดาน Kanban & คำนวณรายได้</option>
+                    <option value="map">🗺️ 12. แผนที่ดาวเทียม GIS</option>
+                    <option value="dashboard">📊 13. แดชบอร์ดสถิติวิจัย</option>
                 </select>
-                <button type="button" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm">
-                    📑 ขอรายงาน AI
+                <button type="button" onclick="exportAiExcelFile('executive')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm" title="ดาวน์โหลดไฟล์ตาราง Excel ทันที">
+                    📊 ขอไฟล์ Excel
                 </button>
-                <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    🛠️ แก้ไขเว็บเรียลไทม์
+                <button type="button" onclick="downloadAiReportWordDoc()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm" title="ดาวน์โหลดไฟล์เอกสาร Word ทันที">
+                    📘 ขอไฟล์ Word
                 </button>
-                <button type="button" id="btnToggleInlineEdit" onclick="toggleInlinePageEditMode()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                    ✏️ คลิกแก้เว็บสด: ปิด
+                <button type="button" onclick="switchTab('addTree')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm">
+                    🌳 + เพิ่มต้นไม้
+                </button>
+                <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
+                    🛠️ แก้เว็บสด
+                </button>
+                <button type="button" id="btnToggleInlineEdit" onclick="toggleInlinePageEditMode()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                    ✏️ คลิกแก้เว็บ: ปิด
                 </button>
                 <button type="button" id="btnToggleDarkMode" onclick="toggleDarkModeUI()" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition" title="สลับโหมดมืด/สว่าง">
                     🌙
@@ -430,58 +484,64 @@
 
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-            <!-- ==================== TOP OPTION TABS BAR (แถบแท็บตัวเลือกครบทุกโหมด) ==================== -->
-            <div id="topOptionTabsBar" class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2.5 no-print">
+            <!-- ==================== TOP OPTION TABS BAR (แถบแท็บตัวเลือกจัดเรียงใหม่ แยกกราฟ รายงานกราฟ และเพิ่มต้นไม้) ==================== -->
+            <div id="topOptionTabsBar" class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200 space-y-2.5 no-print">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-xs font-extrabold text-slate-800">🎛️ แท็บตัวเลือกหลัก (Option Tabs — คลิกสลับหน้าจอ ขอรายงาน AI หรือแก้ไขเว็บแบบเรียลไทม์):</span>
+                        <span class="text-xs font-extrabold text-slate-800">🎛️ แท็บตัวเลือกหลัก (แยกกราฟ • รายงานกราฟ • เพิ่มต้นไม้ • สั่ง AI ขอไฟล์ Excel / Word):</span>
                     </div>
-                    <div class="flex items-center gap-1.5 text-[11px]">
-                        <button type="button" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-extrabold px-2.5 py-1 rounded-lg transition">
-                            📄 ขอรายงานด่วน
+                    <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+                        <button type="button" onclick="exportAiExcelFile('executive')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 font-extrabold px-2.5 py-1 rounded-lg transition">
+                            📊 โหลด Excel (.xls)
                         </button>
-                        <button type="button" onclick="switchTab('ai'); switchAiSubTab('editor');" class="bg-violet-100 hover:bg-violet-200 text-violet-900 border border-violet-300 font-extrabold px-2.5 py-1 rounded-lg transition">
-                            ⚡ แก้ไขเว็บสด
+                        <button type="button" onclick="downloadAiReportWordDoc()" class="bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-extrabold px-2.5 py-1 rounded-lg transition">
+                            📘 โหลด Word (.doc)
+                        </button>
+                        <button type="button" onclick="switchTab('addTree')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-extrabold px-2.5 py-1 rounded-lg transition">
+                            🌳 + เพิ่มต้นไม้ใหม่
                         </button>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1.5">
                     <button type="button" data-top-tab="ai" onclick="switchTab('ai'); switchAiSubTab('chat');" class="top-opt-tab bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        🤖 1. แชท AI & สั่งงาน
+                        🧠 1. AI อัจฉริยะ (ขอ Excel/Word)
                     </button>
-                    <button type="button" data-top-tab="ai-report" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="top-opt-tab bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
-                        📑 2. ขอรายงาน AI (5 รูปแบบ)
+                    <button type="button" data-top-tab="report30m" onclick="switchTab('report30m')" class="top-opt-tab bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        📈 2. กราฟ 30 นาที (รวม & แยกต้น)
                     </button>
-                    <button type="button" data-top-tab="ai-editor" onclick="switchTab('ai'); switchAiSubTab('editor');" class="top-opt-tab bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
-                        🛠️ 3. แก้ไขเว็บเรียลไทม์
+                    <button type="button" data-top-tab="graphReport" onclick="switchTab('graphReport')" class="top-opt-tab bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        📑 3. รายงานกราฟ & ตารางสถิติ
                     </button>
-                    <button type="button" data-top-tab="report30m" onclick="switchTab('report30m')" class="top-opt-tab bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                        ⏱️ 4. กราฟ 30 นาที
+                    <button type="button" data-top-tab="addTree" onclick="switchTab('addTree')" class="top-opt-tab bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        🌳 4. เพิ่มต้นไม้ & จัดการต้นไม้
                     </button>
                     <button type="button" data-top-tab="farm3d" onclick="switchTab('farm3d')" class="top-opt-tab active theme-btn-primary px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        🧊 5. โมเดล 3D
+                        🧊 5. ฟาร์ม 3 มิติ
                     </button>
-                    <button type="button" data-top-tab="blueprint" onclick="switchTab('blueprint')" class="top-opt-tab bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🎛️ 6. ผัง IoT 2D
+                    <button type="button" data-top-tab="ai-report" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="top-opt-tab bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        📄 6. ออกรายงานทางการ A4
                     </button>
-                    <button type="button" data-top-tab="kanban" onclick="switchTab('kanban')" class="top-opt-tab bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        📋 7. บอร์ด Kanban
+                    <button type="button" data-top-tab="ai-editor" onclick="switchTab('ai'); switchAiSubTab('editor');" class="top-opt-tab bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                        🛠️ 7. แก้ไขเว็บเรียลไทม์
                     </button>
-                    <button type="button" data-top-tab="overview" onclick="switchTab('overview')" class="top-opt-tab bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                    <button type="button" data-top-tab="overview" onclick="switchTab('overview')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
                         🏞️ 8. ภาพรวมฟาร์ม
                     </button>
-                    <button type="button" data-top-tab="map" onclick="switchTab('map')" class="top-opt-tab bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🗺️ 9. แผนที่ GIS
+                    <button type="button" data-top-tab="blueprint" onclick="switchTab('blueprint')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🎛️ 9. ผัง IoT 2D
+                    </button>
+                    <button type="button" data-top-tab="kanban" onclick="switchTab('kanban')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        📋 10. บอร์ด Kanban
+                    </button>
+                    <button type="button" data-top-tab="map" onclick="switchTab('map')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        🗺️ 11. แผนที่ GIS
                     </button>
                     <button type="button" data-top-tab="record" onclick="switchTab('record')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🌱 10. บันทึกผล
+                        📝 12. บันทึกผล
                     </button>
-                    <button type="button" data-top-tab="dashboard" onclick="switchTab('dashboard')" class="top-opt-tab bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        📊 11. สถิติวิจัย
-                    </button>
-                    <button type="button" data-top-tab="plots" onclick="switchTab('plots')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        🚜 12. จัดการแปลง
+                    <button type="button" data-top-tab="dashboard" onclick="switchTab('dashboard')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        📊 13. สถิติวิจัย
                     </button>
                 </div>
             </div>
@@ -882,63 +942,27 @@
                 </div>
             </section>
 
-            <!-- ==================== NEW TAB: 30-MINUTE TREE SIMULATION & COMBINED + SEPARATE GRAPHS REPORT ==================== -->
+            <!-- ==================== SEPARATED TAB 1: 30-MINUTE GRAPHS ONLY (COMBINED + INDIVIDUAL CHARTS) ==================== -->
             <section id="viewReport30m" class="hidden space-y-6">
-                <!-- Top Hero & Tree Simulator + Map Pinning Control Bar -->
                 <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-5">
                     <div class="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
                         <div class="space-y-1">
-                            <h3 class="text-lg sm:text-2xl font-extrabold">⏱️ รายงานและกราฟทุก 30 นาที</h3>
-                            <p class="text-xs sm:text-sm text-slate-200">เปรียบเทียบแนวโน้มการเติบโตแบบรวมและแยกรายต้น พร้อมพิกัดแปลงปลูก</p>
+                            <div class="inline-flex items-center gap-2 bg-rose-500/25 text-rose-200 border border-rose-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                📈 โหมดแสดงกราฟอย่างเดียว (แยกจากหน้ารายงานตาราง)
+                            </div>
+                            <h3 class="text-lg sm:text-2xl font-extrabold">📈 กราฟการเติบโตทุก 30 นาที (กราฟรวมทุกต้น & กราฟแยกรายต้น)</h3>
+                            <p class="text-xs sm:text-sm text-slate-200">เปรียบเทียบแนวโน้มเส้นกราฟแบบรวมทุกต้นและกราฟแยกรายต้นแบบเรียลไทม์</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 no-print">
+                            <button type="button" onclick="switchTab('graphReport')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                                📑 เปิดหน้ารายงานกราฟ & ตารางสถิติ
+                            </button>
+                            <button type="button" onclick="switchTab('addTree')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                                🌳 + ไปหน้าเพิ่มต้นไม้ใหม่
+                            </button>
                             <button type="button" onclick="regenerate30MinSimulation()" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                                🔄 สุ่มข้อมูลใหม่
+                                🔄 สุ่มข้อมูลกราฟใหม่
                             </button>
-                            <button type="button" onclick="copy30MinReportTable()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                📋 คัดลอกตาราง
-                            </button>
-                            <button type="button" onclick="export30MinReportCSV()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                📥 ส่งออก CSV
-                            </button>
-                            <button type="button" onclick="window.print()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                                🖨️ พิมพ์รายงาน
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Interactive Tree Simulator + GPS Map Pinning Inputs -->
-                    <div class="bg-black/30 p-4 rounded-2xl border border-white/15 space-y-3 no-print">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="text-xs font-bold text-emerald-300">🌱 เพิ่มต้นไม้จำลอง & ปักหมุดแผนที่:</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
-                            <div class="md:col-span-4 space-y-1">
-                                <label for="inputSimTreeName" class="block text-[11px] font-bold text-slate-300">ชื่อต้นไม้ / พันธุ์ไม้:</label>
-                                <input type="text" id="inputSimTreeName" placeholder="เช่น ต้นยางนา, ตะเคียนทอง..." class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-semibold focus:outline-none">
-                            </div>
-                            <div class="md:col-span-2 space-y-1">
-                                <label for="inputSimTreeLat" class="block text-[11px] font-bold text-slate-300">Latitude:</label>
-                                <input type="number" step="0.0001" id="inputSimTreeLat" value="17.3962" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-mono font-bold focus:outline-none">
-                            </div>
-                            <div class="md:col-span-2 space-y-1">
-                                <label for="inputSimTreeLng" class="block text-[11px] font-bold text-slate-300">Longitude:</label>
-                                <input type="number" step="0.0001" id="inputSimTreeLng" value="104.7708" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2 text-xs font-mono font-bold focus:outline-none">
-                            </div>
-                            <div class="md:col-span-4 flex flex-wrap gap-2">
-                                <button type="button" onclick="simulateAnotherTree30Min(false)" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
-                                    + เพิ่มต้นไม้
-                                </button>
-                                <button type="button" onclick="simulateAnotherTree30Min(true)" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs transition shadow-lg whitespace-nowrap">
-                                    🗺️ ดูบนแผนที่
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Pinned Trees Quick Map Jump Strip -->
-                        <div class="pt-2 border-t border-white/10 space-y-1.5">
-                            <div class="text-[11px] font-bold text-amber-300">📍 ต้นไม้ที่ปักหมุดแล้ว:</div>
-                            <div id="pinnedTreesMapStrip" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
 
@@ -956,7 +980,7 @@
                         </div>
 
                         <div class="space-y-1">
-                            <label for="select30MinWindow" class="block text-xs font-bold text-slate-300">🕒 ช่วงเวลาที่รายงาน (ทุก 30 นาที):</label>
+                            <label for="select30MinWindow" class="block text-xs font-bold text-slate-300">🕒 ช่วงเวลาที่แสดงกราฟ (ทุก 30 นาที):</label>
                             <select id="select30MinWindow" onchange="render30MinReport()" class="w-full rounded-xl bg-slate-900 text-white border border-white/20 px-3 py-2 text-xs font-bold focus:outline-none">
                                 <option value="day12h">06:00 - 18:00 น. (25 รอบเวลา ทุก 30 นาที)</option>
                                 <option value="work8h">08:00 - 16:00 น. (17 รอบเวลา ทุก 30 นาที)</option>
@@ -976,20 +1000,108 @@
                     <!-- 4 KPI Summary Cards -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                         <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-2xl border border-white/15">
-                            <div class="text-[11px] text-slate-300">🌳 จำนวนต้นไม้ที่จำลอง & ปักหมุด</div>
+                            <div class="text-[11px] text-slate-300">🌳 จำนวนต้นไม้ในกราฟ</div>
                             <div id="kpi30mTotalTrees" class="text-base sm:text-lg font-extrabold text-emerald-300 mt-0.5">5 ต้น (ปักหมุดแผนที่ครบทุกต้น)</div>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-2xl border border-white/15">
-                            <div class="text-[11px] text-slate-300">⏱️ ความถี่ในการแจ้งเวลาสรุปผล</div>
+                            <div class="text-[11px] text-slate-300">⏱️ ความถี่ในการพล็อตกราฟ</div>
                             <div id="kpi30mTotalPoints" class="text-base sm:text-lg font-extrabold text-sky-300 mt-0.5">ทุก 30 นาที (25 รอบเวลา)</div>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-2xl border border-white/15">
-                            <div class="text-[11px] text-slate-300">🏆 ต้นที่มีค่าเฉลี่ยสูงสุดในรอบ 30 นาที</div>
+                            <div class="text-[11px] text-slate-300">🏆 ต้นที่มีค่าเฉลี่ยสูงสุด</div>
                             <div id="kpi30mBestTree" class="text-sm sm:text-base font-extrabold text-amber-300 mt-0.5 truncate">ต้นที่ 5: ต้นประดู่ป่า</div>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm p-3.5 rounded-2xl border border-white/15">
                             <div class="text-[11px] text-slate-300">📐 ค่าเฉลี่ยรวมทุกต้น (X̄ ± S.D.)</div>
                             <div id="kpi30mOverallMean" class="text-base sm:text-lg font-extrabold text-rose-300 mt-0.5">21.45 ± 3.12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PART 1: 1 COMBINED GRAPH (กราฟรวมทุกต้นใน 1 กราฟเดียว ทุก 30 นาที) -->
+                <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border-2 border-emerald-200 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                📊 กราฟที่ 1: เปรียบเทียบรวมทุกต้น
+                            </div>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">แนวโน้มการเติบโตของต้นไม้ทุกต้นรวมกัน (ทุก 30 นาที)</h4>
+                            <p id="combined30MinSubtitle" class="text-xs text-slate-500">แสดงเส้นแนวโน้มพร้อมค่าเฉลี่ยรวม</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <button type="button" onclick="switchTab('addTree')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm">
+                                🌳 + เพิ่มต้นไม้เข้ากราฟ
+                            </button>
+                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm">
+                                ↩️ กู้คืนต้นที่เพิ่งลบ
+                            </button>
+                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                🗑️ ลบเหลือ 1 ต้น
+                            </button>
+                        </div>
+                    </div>
+                    <!-- แถบจัดการลบเส้นกราฟรายต้นออกจากกราฟรวมและแผนที่ -->
+                    <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 no-print">
+                        <span class="text-xs font-bold text-slate-600">คลิกเพื่อจัดการหรือลบเส้นกราฟรายต้น:</span>
+                        <div id="combinedChartTreeManager" class="flex flex-wrap items-center gap-1.5"></div>
+                    </div>
+
+                    <div class="relative h-80 sm:h-96 w-full">
+                        <canvas id="combined30MinChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- PART 2: SEPARATE GRAPHS FOR EACH TREE (แยกกราฟเฉพาะแต่ละต้น ทุก 30 นาที) -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                📈 กราฟที่ 2: แยกตามรายต้น
+                            </div>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">กราฟการเติบโตแยกเฉพาะแต่ละต้น (ทุก 30 นาที)</h4>
+                            <p class="text-xs text-slate-500">ดูกราฟแยกทีละต้นพร้อมปุ่มซูมดูพิกัดแผนที่และลบรายต้น</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 no-print">
+                            <button type="button" onclick="switchTab('graphReport')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-sm">
+                                📑 ดูรายงานสรุปกราฟ & ตารางสถิติ
+                            </button>
+                            <button type="button" onclick="switchTab('addTree')" class="theme-btn-primary text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm">
+                                🌳 + เพิ่มต้นไม้ใหม่
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="separate30MinChartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                </div>
+            </section>
+
+            <!-- ==================== SEPARATED TAB 2: GRAPH REPORT & STATISTICAL TABLES ONLY ==================== -->
+            <section id="viewGraphReport" class="hidden space-y-6">
+                <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="inline-flex items-center gap-2 bg-amber-400/25 text-amber-200 border border-amber-300/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                📑 โหมดรายงานสรุปกราฟ & ตารางสถิติ (แยกจากหน้ากราฟ)
+                            </div>
+                            <h3 class="text-lg sm:text-2xl font-extrabold">📑 รายงานสรุปกราฟ & ตารางสถิติทุก 30 นาที (พร้อมส่งออก Excel / Word)</h3>
+                            <p class="text-xs sm:text-sm text-slate-200">สรุปผลการวิเคราะห์กราฟรายคาบเวลา 30 นาที ค่าเฉลี่ย (X̄), ส่วนเบี่ยงเบนมาตรฐาน (S.D.) และส่งออกเป็นไฟล์ Excel (.xls) หรือ Word (.doc) ได้ทันที</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <button type="button" onclick="exportAiExcelFile('telemetry30m')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                                📊 ดาวน์โหลด Excel (.xls)
+                            </button>
+                            <button type="button" onclick="downloadAiReportWordDoc('telemetry30m')" class="bg-sky-400 hover:bg-sky-300 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                                📘 ดาวน์โหลด Word (.doc)
+                            </button>
+                            <button type="button" onclick="export30MinReportCSV()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow">
+                                📥 โหลด CSV
+                            </button>
+                            <button type="button" onclick="window.print()" class="bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5">
+                                🖨️ พิมพ์ / PDF
+                            </button>
+                            <button type="button" onclick="switchTab('report30m')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition">
+                                📈 สลับไปดูหน้ากราฟ
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1001,8 +1113,8 @@
                             <div class="inline-flex items-center gap-1.5 bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
                                 🔔 ระบบแจ้งเวลาสรุปผลทุก 30 นาที (30-Minute Summary Time Announcer)
                             </div>
-                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">แจ้งเตือนเวลาที่กำลังสรุปผลข้อมูลต้นไม้แต่ละรอบ 30 นาที</h4>
-                            <p class="text-xs text-slate-500">เลือกเวลาหรือกดปุ่มจำลองวิ่งสรุปผลทีละ 30 นาที เพื่อดูค่าสรุปของต้นไม้ทุกต้น ณ เวลานั้นๆ พร้อมประวัติการแจ้งเวลา</p>
+                            <h4 class="text-base sm:text-xl font-extrabold text-slate-900 mt-1">สรุปค่าการเติบโตของต้นไม้ทุกต้นแยกตามรอบเวลา 30 นาที</h4>
+                            <p class="text-xs text-slate-500">เลือกเวลาหรือกดปุ่มจำลองวิ่งสรุปผลทีละ 30 นาที เพื่อดูค่าสรุปของต้นไม้ทุกต้น ณ เวลานั้นๆ</p>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2 no-print">
@@ -1032,69 +1144,24 @@
                     </div>
                 </div>
 
-                <!-- PART 1: 1 COMBINED GRAPH (กราฟรวมทุกต้นใน 1 กราฟเดียว ทุก 30 นาที) -->
-                <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border-2 border-emerald-200 space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                        <div>
-                            <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                                📊 กราฟเปรียบเทียบรวมทุกต้น
-                            </div>
-                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">แนวโน้มการเติบโตของต้นไม้ทุกต้น (ทุก 30 นาที)</h4>
-                            <p id="combined30MinSubtitle" class="text-xs text-slate-500">แสดงเส้นแนวโน้มพร้อมค่าเฉลี่ยรวม</p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <button type="button" onclick="undoDeleteTree()" class="btn-undo-delete-tree hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm">
-                                ↩️ กู้คืนต้นที่เพิ่งลบ
-                            </button>
-                            <button type="button" onclick="deleteAllSimulatedTrees()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                                🗑️ ลบทั้งหมด
-                            </button>
-                        </div>
-                    </div>
-                    <!-- แถบจัดการลบเส้นกราฟรายต้นออกจากกราฟรวมและแผนที่ -->
-                    <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 no-print">
-                        <span class="text-xs font-bold text-slate-600">จัดการรายต้น:</span>
-                        <div id="combinedChartTreeManager" class="flex flex-wrap items-center gap-1.5"></div>
-                    </div>
-
-                    <div class="relative h-80 sm:h-96 w-full">
-                        <canvas id="combined30MinChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- PART 2: SEPARATE GRAPHS FOR EACH TREE (แยกกราฟเฉพาะแต่ละต้น ทุก 30 นาที) -->
-                <div class="space-y-4">
-                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <div class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                                📈 กราฟแยกรายต้น
-                            </div>
-                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">รายงานกราฟแยกตามรายต้น</h4>
-                            <p class="text-xs text-slate-500">ติดตามข้อมูลการเติบโตและพิกัดแผนที่ของแต่ละต้น</p>
-                        </div>
-                        <button type="button" onclick="simulateAnotherTree30Min(false)" class="theme-btn-primary text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm no-print">
-                            + เพิ่มต้นไม้จำลอง
-                        </button>
-                    </div>
-
-                    <div id="separate30MinChartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-                </div>
-
-                <!-- PART 3: AUTOMATED EXECUTIVE NARRATIVE & 30-MINUTE INTERVAL REPORT TABLE -->
+                <!-- AUTOMATED EXECUTIVE NARRATIVE & 30-MINUTE INTERVAL REPORT TABLE -->
                 <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-slate-200 space-y-5">
                     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                         <div>
                             <div class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                                📑 ตารางสรุปข้อมูล 30 นาที
+                                📑 ตารางรายงานสถิติ 30 นาทีฉบับสมบูรณ์
                             </div>
-                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">ตารางสถิติและผลการวัดรายรอบ</h4>
+                            <h4 class="text-base sm:text-lg font-bold text-slate-900 mt-1">บทสรุปผู้บริหารและตารางสถิติผลการวัดรายรอบ 30 นาที (X̄, S.D.)</h4>
                         </div>
                         <div class="flex flex-wrap gap-2 no-print">
                             <button type="button" onclick="copy30MinReportTable()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
                                 📋 คัดลอกตาราง
                             </button>
-                            <button type="button" onclick="export30MinReportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                                📥 ส่งออก Excel (CSV)
+                            <button type="button" onclick="exportAiExcelFile('telemetry30m')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📊 ดาวน์โหลด Excel (.xls)
+                            </button>
+                            <button type="button" onclick="downloadAiReportWordDoc('telemetry30m')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📘 ดาวน์โหลด Word (.doc)
                             </button>
                         </div>
                     </div>
@@ -1105,6 +1172,160 @@
                         <table class="w-full border-collapse">
                             <thead id="table30MinReportHead"></thead>
                             <tbody id="table30MinReportBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SEPARATED TAB 3: DEDICATED ADD TREE & SPECIES STUDIO ==================== -->
+            <section id="viewAddTree" class="hidden space-y-6">
+                <div class="theme-header text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-white/15 space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+                        <div class="space-y-1">
+                            <div class="inline-flex items-center gap-2 bg-emerald-400/25 text-emerald-200 border border-emerald-300/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                                🌳 เมนูใหม่: ศูนย์เพิ่มต้นไม้ & ปักหมุดแผนที่อัจฉริยะ
+                            </div>
+                            <h3 class="text-lg sm:text-2xl font-extrabold">🌳 เพิ่มต้นไม้ใหม่เข้าสู่ระบบ กราฟ 30 นาที และแผนที่ดาวเทียม</h3>
+                            <p class="text-xs sm:text-sm text-slate-200">เลือกพันธุ์ไม้สำเร็จรูปด้วยคลิกเดียว หรือกรอกชื่อพันธุ์ไม้ ความสูง ความชื้น และพิกัด GPS เพื่อสร้างกราฟและรายงานทันที</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="switchTab('report30m')" class="bg-rose-500 hover:bg-rose-400 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📈 ดูกราฟต้นไม้ทั้งหมด
+                            </button>
+                            <button type="button" onclick="switchTab('graphReport')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📑 ดูรายงานตารางสถิติ
+                            </button>
+                            <button type="button" onclick="switchTab('map')" class="bg-sky-400 hover:bg-sky-300 text-slate-950 text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                🗺️ ดูหมุดบนแผนที่ GIS
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Add Tree Form + GPS Pinning -->
+                    <div class="bg-black/30 p-4 sm:p-5 rounded-2xl border border-white/15 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs sm:text-sm font-extrabold text-emerald-300">✍️ กรอกข้อมูลเพื่อเพิ่มต้นไม้ใหม่ (หรือคลิกเลือกพันธุ์ไม้ด่วนด้านล่าง):</span>
+                            <span class="text-[11px] text-slate-300">เพิ่มปุ๊บ สร้างเส้นกราฟ 30 นาที + ปักหมุดแผนที่ + อัปเดตรายงาน Excel/Word ทันที</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                            <div class="md:col-span-4 space-y-1">
+                                <label for="inputSimTreeName" class="block text-xs font-bold text-slate-200">1. ชื่อต้นไม้ / พันธุ์ไม้ที่ต้องการเพิ่ม:</label>
+                                <input type="text" id="inputSimTreeName" placeholder="เช่น ต้นยางนา, ต้นพะยูง, ทุเรียนหมอนทอง..." class="w-full rounded-xl bg-white text-slate-900 px-3.5 py-2.5 text-xs sm:text-sm font-bold focus:outline-none">
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <label for="inputSimTreeHeight" class="block text-xs font-bold text-slate-200">2. ความสูงเริ่มต้น (ซม.):</label>
+                                <input type="number" id="inputSimTreeHeight" value="45" min="5" max="500" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2.5 text-xs sm:text-sm font-bold focus:outline-none">
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <label for="inputSimTreeLat" class="block text-xs font-bold text-slate-200">3. พิกัด Latitude:</label>
+                                <input type="number" step="0.0001" id="inputSimTreeLat" value="17.3962" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2.5 text-xs font-mono font-bold focus:outline-none">
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <label for="inputSimTreeLng" class="block text-xs font-bold text-slate-200">4. พิกัด Longitude:</label>
+                                <input type="number" step="0.0001" id="inputSimTreeLng" value="104.7708" class="w-full rounded-xl bg-white text-slate-900 px-3 py-2.5 text-xs font-mono font-bold focus:outline-none">
+                            </div>
+                            <div class="md:col-span-2 flex flex-col gap-1.5">
+                                <button type="button" onclick="addNewTreeFromStudio(false)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-3 py-2.5 rounded-xl text-xs sm:text-sm transition shadow-lg whitespace-nowrap">
+                                    🌳 + เพิ่มต้นไม้ทันที
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick 1-Click Species Cards -->
+                        <div class="pt-3 border-t border-white/10 space-y-2">
+                            <div class="text-xs font-extrabold text-amber-300">⚡ คลิกปุ่มเดียวเพื่อเพิ่มพันธุ์ไม้เศรษฐกิจยอดนิยมลงในระบบทันที:</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้ยางนา (Dipterocarpus)', 48)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🌳 ยางนา</div>
+                                    <div class="text-[10px] text-slate-300">ไม้ป่าเศรษฐกิจ • สูง 48 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้สักทอง (Tectona grandis)', 52)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🌲 สักทอง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้เนื้อแข็ง • สูง 52 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้พะยูง (Dalbergia)', 42)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🌳 พะยูง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้มีค่าสูง • สูง 42 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้กันเกรา (Fagraea)', 44)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🌿 กันเกรา</div>
+                                    <div class="text-[10px] text-slate-300">ไม้มงคลนครพนม • สูง 44 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้ประดู่ป่า (Pterocarpus)', 50)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🍂 ประดู่ป่า</div>
+                                    <div class="text-[10px] text-slate-300">โตไวทนแล้ง • สูง 50 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้ตะเคียนทอง (Hopea)', 46)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🌲 ตะเคียนทอง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้ป่าริมโขง • สูง 46 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้มะค่าโมง (Afzelia)', 45)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🪵 มะค่าโมง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้เนื้อแข็ง • สูง 45 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('กล้าไม้กฤษณา (Aquilaria)', 39)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">✨ กฤษณา</div>
+                                    <div class="text-[10px] text-slate-300">ไม้หอมเศรษฐกิจ • สูง 39 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('ทุเรียนหมอนทองลุ่มน้ำโขง', 55)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🍈 ทุเรียนหมอนทอง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้ผลรายได้สูง • สูง 55 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('ส้มโอทับทิมสยามนครพนม', 49)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🍊 ส้มโอทับทิม</div>
+                                    <div class="text-[10px] text-slate-300">พืช GI ยอดฮิต • สูง 49 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('มะม่วงน้ำดอกไม้สีทอง', 53)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🥭 มะม่วงสีทอง</div>
+                                    <div class="text-[10px] text-slate-300">ไม้ผลส่งออก • สูง 53 ซม.</div>
+                                </button>
+                                <button type="button" onclick="quickAddSpeciesTree('มะพร้าวน้ำหอมอินทรีย์', 60)" class="bg-white/10 hover:bg-emerald-500/30 border border-white/15 rounded-xl p-2.5 text-left transition">
+                                    <div class="text-base">🥥 มะพร้าวน้ำหอม</div>
+                                    <div class="text-[10px] text-slate-300">ไม้ผลเศรษฐกิจ • สูง 60 ซม.</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pinned Trees Quick Map Jump Strip -->
+                        <div class="pt-3 border-t border-white/10 space-y-1.5">
+                            <div class="text-[11px] font-bold text-amber-300">📍 ต้นไม้ทั้งหมดที่ปักหมุดในระบบแล้ว (คลิกเพื่อซูมดูบนแผนที่หรือลบรายต้น):</div>
+                            <div id="pinnedTreesMapStrip" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Tree Roster & Quick Edit Table inside Add Tree View -->
+                <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-slate-200 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                        <div>
+                            <h4 class="text-base sm:text-lg font-extrabold text-slate-900">🌱 รายชื่อต้นไม้ทั้งหมดในระบบ (แก้ไขชื่อ ความสูง ความชื้น หรือลบได้ทันที)</h4>
+                            <p class="text-xs text-slate-500">ทุกต้นในตารางนี้จะแสดงอยู่ในหน้ากราฟ 30 นาที, หน้ารายงานกราฟ และไฟล์ Excel / Word อัตโนมัติ</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="exportAiExcelFile('executive')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📊 ส่งออกรายชื่อต้นไม้เป็น Excel (.xls)
+                            </button>
+                            <button type="button" onclick="downloadAiReportWordDoc()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow">
+                                📘 ส่งออกรายงานเป็น Word (.doc)
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 text-white">
+                                    <th class="py-2.5 px-3 font-extrabold">ลำดับ</th>
+                                    <th class="py-2.5 px-3 font-extrabold">ชื่อต้นไม้ / พันธุ์ไม้ (พิมพ์แก้สดได้)</th>
+                                    <th class="py-2.5 px-3 font-extrabold">โซนพื้นที่</th>
+                                    <th class="py-2.5 px-2 font-extrabold text-center">อายุ (วัน)</th>
+                                    <th class="py-2.5 px-2 font-extrabold text-center">ความสูง (ซม.)</th>
+                                    <th class="py-2.5 px-2 font-extrabold text-center">จำนวนใบ</th>
+                                    <th class="py-2.5 px-2 font-extrabold text-center">ความชื้น (%)</th>
+                                    <th class="py-2.5 px-2 font-extrabold text-center">ค่า pH</th>
+                                    <th class="py-2.5 px-3 font-extrabold text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="addTreeStudioTableBody" class="divide-y divide-slate-200"></tbody>
                         </table>
                     </div>
                 </div>

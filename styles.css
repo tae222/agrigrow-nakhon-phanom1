@@ -93,27 +93,35 @@
         }
 
         /* ==========================================================================
-           Gmail-Style Collapsible Left Sidebar Rail (#mainAppSidebar)
+           Gmail-Style Collapsible Left Sidebar Rail (#mainAppSidebar) — Polished UI
            ========================================================================== */
         #mainAppSidebar {
             transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease, background 0.25s ease;
         }
-        /* Collapsed Rail Mode (matches the uploaded Gmail-style screenshot) */
+        /* Collapsed Rail Mode (Polished Gmail/Workspace Rail with Mini Labels) */
         @media (min-width: 1024px) {
             #mainAppSidebar.sidebar-rail-collapsed {
-                width: 84px !important;
-                padding-left: 10px !important;
-                padding-right: 10px !important;
+                width: 92px !important;
+                padding-left: 8px !important;
+                padding-right: 8px !important;
                 align-items: center;
             }
             #mainAppSidebar.sidebar-rail-collapsed .sidebar-expand-only {
                 display: none !important;
             }
             #mainAppSidebar.sidebar-rail-collapsed .rail-header-wrap {
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 8px !important;
+                width: 100%;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-header-brand-row {
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 6px !important;
+                width: 100%;
             }
             #mainAppSidebar.sidebar-rail-collapsed .rail-compose-btn {
                 width: 56px !important;
@@ -128,16 +136,45 @@
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                gap: 6px !important;
+                gap: 4px !important;
+                width: 100%;
             }
             #mainAppSidebar.sidebar-rail-collapsed .tab-btn,
             #mainAppSidebar.sidebar-rail-collapsed .rail-action-icon-btn {
-                width: 46px !important;
-                height: 46px !important;
-                padding: 0 !important;
-                border-radius: 9999px !important;
+                width: 74px !important;
+                min-height: 54px !important;
+                padding: 6px 4px !important;
+                border-radius: 16px !important;
+                flex-direction: column !important;
                 justify-content: center !important;
+                align-items: center !important;
+                gap: 3px !important;
                 position: relative;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .tab-btn > span:first-child,
+            #mainAppSidebar.sidebar-rail-collapsed .rail-action-icon-btn > span:first-child {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 2px !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-mini-label {
+                display: block !important;
+                font-size: 10px !important;
+                line-height: 1.15 !important;
+                font-weight: 700 !important;
+                text-align: center !important;
+                max-width: 70px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            #mainAppSidebar:not(.sidebar-rail-collapsed) .rail-mini-label {
+                display: none !important;
+            }
+        }
+        @media (max-width: 1023px) {
+            .rail-mini-label {
+                display: none !important;
             }
         }
         /* Light-Mode Gmail Rail Styling Option */
@@ -157,23 +194,23 @@
         #mainAppSidebar.rail-light-surface .tab-btn.active {
             background: #d3e3fd !important;
             color: #041e49 !important;
-            box-shadow: none !important;
+            box-shadow: 0 2px 6px rgba(4, 30, 73, 0.1) !important;
         }
         .rail-compose-btn {
-            background: #c2e7ff;
+            background: linear-gradient(135deg, #c2e7ff 0%, #a8dbff 100%);
             color: #001d35;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 3px 10px rgba(0, 29, 53, 0.14);
         }
         .rail-compose-btn:hover {
-            background: #b3dffc;
-            box-shadow: 0 4px 12px rgba(0, 29, 53, 0.22);
+            background: linear-gradient(135deg, #b3dffc 0%, #93d2ff 100%);
+            box-shadow: 0 6px 14px rgba(0, 29, 53, 0.22);
             transform: translateY(-1px);
         }
         .rail-red-dot {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 5px;
+            right: 12px;
             width: 9px;
             height: 9px;
             background-color: #d93025;

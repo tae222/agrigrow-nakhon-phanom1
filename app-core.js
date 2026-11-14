@@ -41,7 +41,7 @@
                 chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
             }
             if (label) {
-                label.textContent = isHidden ? 'แสดงตัวเลือกเพิ่มเติม (5)' : 'ย่อตัวเลือกเพิ่มเติม';
+                label.textContent = isHidden ? 'เมนูเพิ่มเติม (7)' : 'ย่อเมนูเพิ่มเติม';
             }
         }
 
@@ -49,6 +49,8 @@
             const views = {
                 ai: document.getElementById('viewAI'),
                 report30m: document.getElementById('viewReport30m'),
+                graphReport: document.getElementById('viewGraphReport'),
+                addTree: document.getElementById('viewAddTree'),
                 farm3d: document.getElementById('view3D'),
                 overview: document.getElementById('viewOverview'),
                 blueprint: document.getElementById('viewBlueprint'),
@@ -61,6 +63,8 @@
             const btns = {
                 ai: document.getElementById('tabBtnAI'),
                 report30m: document.getElementById('tabBtnReport30m'),
+                graphReport: document.getElementById('tabBtnGraphReport'),
+                addTree: document.getElementById('tabBtnAddTree'),
                 farm3d: document.getElementById('view3D') ? document.getElementById('tabBtn3D') : null,
                 overview: document.getElementById('tabBtnOverview'),
                 blueprint: document.getElementById('tabBtnBlueprint'),
@@ -71,8 +75,10 @@
                 plots: document.getElementById('tabBtnPlots')
             };
             const titles = {
-                ai: ['🤖 ผู้ช่วย AI เกษตรอัจฉริยะ', 'วิเคราะห์ข้อมูลแปลงปลูก กราฟการเติบโต และตอบคำถามอัตโนมัติ'],
-                report30m: ['⏱️ รายงานและกราฟทุก 30 นาที', 'ติดตามแนวโน้มการเติบโตและสถิติภาพรวมทุก 30 นาที'],
+                ai: ['🧠 Antigravity AI อัจฉริยะ', 'สั่งขอไฟล์ Excel (.xls), Word (.doc), รายงาน A4 หรือแก้ไขหน้าเว็บแบบเรียลไทม์'],
+                report30m: ['📈 กราฟการเติบโตทุก 30 นาที', 'เปรียบเทียบกราฟรวมทุกต้นและกราฟแยกรายต้น (แยกจากหน้ารายงานตาราง)'],
+                graphReport: ['📑 รายงานสรุปกราฟ & ตารางสถิติ 30 นาที', 'ตารางสถิติผลการวัดรายรอบ 30 นาที (X̄, S.D.) พร้อมส่งออกไฟล์ Excel และ Word'],
+                addTree: ['🌳 เพิ่มต้นไม้ใหม่ & ปักหมุดแผนที่', 'เลือกพันธุ์ไม้เศรษฐกิจด้วยคลิกเดียว หรือกรอกชื่อและพิกัดเพื่อเพิ่มเข้าสู่ระบบทันที'],
                 farm3d: ['🧊 แบบจำลองสมาร์ทฟาร์ม 3 มิติ', 'หมุนมุมกล้อง 360° และติดตามการเติบโตของแปลงปลูก'],
                 overview: ['🏞️ ภาพรวมฟาร์มและระยะการเติบโต', 'ติดตามพัฒนาการพืชผลเศรษฐกิจ จ.นครพนม และแผนที่ GIS'],
                 blueprint: ['🎛️ ผังควบคุมสมาร์ทฟาร์ม 2D & IoT', 'ควบคุมระบบน้ำ พัดลมระบายอากาศ และระบบให้ปุ๋ย'],
@@ -115,8 +121,11 @@
             if (tabName === 'ai') {
                 if (typeof initAiAssistant === 'function') initAiAssistant();
                 if (typeof renderAiLiveDiagnostics === 'function') renderAiLiveDiagnostics();
-            } else if (tabName === 'report30m') {
+            } else if (tabName === 'report30m' || tabName === 'graphReport') {
                 if (typeof render30MinReport === 'function') render30MinReport();
+            } else if (tabName === 'addTree') {
+                if (typeof render30MinReport === 'function') render30MinReport();
+                if (typeof renderLivePlotEditorTable === 'function') renderLivePlotEditorTable();
             } else if (tabName === 'farm3d') {
                 initOrResize3DFarm();
             } else if (tabName === 'overview') {
