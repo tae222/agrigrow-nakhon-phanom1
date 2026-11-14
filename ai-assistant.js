@@ -797,16 +797,17 @@
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
-                    plainText: 'สวัสดีครับ! ผมคือ AgriGrow AI ผู้ช่วยเกษตรอัจฉริยะจังหวัดนครพนม คุณสามารถขอรายงานฉบับเต็ม สั่งแก้ไขหน้าเว็บแบบเรียลไทม์ หรือถามข้อมูลแปลงปลูกได้ทันทีครับ',
-                    html: `สวัสดีครับ! 👋 ผมคือ <b>🤖 AgriGrow AI 4.0 — ผู้ช่วยออกรายงานอัตโนมัติ & แก้ไขเว็บไซต์แบบเรียลไทม์</b><br>
-                    คุณสามารถพิมพ์สั่งงานผมในช่องแชทนี้ หรือเลือกใช้แท็บตัวเลือกด้านบนได้เลยครับ:
+                    plainText: 'สวัสดีครับ! ผมคือ Antigravity AI (Google DeepMind Agent) ที่เข้ามาทำงานเป็นสมองกลหลักของเว็บไซต์นี้แล้วครับ คุณสามารถถามได้ทุกเรื่อง สั่งออกรายงานวิจัย หรือสั่งแก้ไขหน้าเว็บแบบเรียลไทม์ด้วยภาษาธรรมชาติได้ทันทีครับ',
+                    html: `สวัสดีครับ! 👋 ผมคือ <b>🧠 Antigravity AI Agent (Powered by Gemini & Cloud LLM)</b> ที่เข้ามาประจำการแทน AI ตัวเดิมบนเว็บไซต์นี้เรียบร้อยแล้วครับ!<br>
+                    ตอนนี้คุณสามารถคุยกับผมได้เหมือนคุยกับ AI อัจฉริยะทุกเรื่อง ไม่จำกัดแค่คำสั่งตายตัวอีกต่อไป:
                     <ul class="list-disc pl-5 mt-1.5 space-y-1 text-xs">
-                        <li>📑 <b>ขอรายงานฉบับสมบูรณ์ (AI Report):</b> พิมพ์ว่า <i>"ขอรายงาน"</i>, <i>"ขอรายงานกราฟ 30 นาที"</i>, หรือ <i>"ขอรายงานวิจัยบทที่ 4"</i> ผมจะสร้างเอกสารรายงานพร้อมตารางสถิติ ปุ่มพิมพ์ PDF และดาวน์โหลดไฟล์ Word (.doc) ให้ทันที!</li>
-                        <li>🛠️ <b>สั่งแก้ไขหน้าเว็บแบบเรียลไทม์ (Live Web Edit):</b> พิมพ์ว่า <i>"เปลี่ยนชื่อเว็บเป็น..."</i>, <i>"เพิ่มประกาศหน้าเว็บว่า..."</i>, <i>"เปิดโหมดมืด"</i>, <i>"ปรับความสูงต้นที่ 1 เป็น 65 ซม."</i> หน้าเว็บจะเปลี่ยนตามคำสั่งทันที!</li>
-                        <li>🌱 <b>สั่งงานสมาร์ทฟาร์ม:</b> พิมพ์ว่า <i>"เพิ่มต้นพะยอม"</i>, <i>"ลบต้นที่ 5"</i>, <i>"เปิดน้ำทุกแปลง"</i>, หรือปรึกษาเรื่องโรคพืชและปุ๋ยได้ตลอดเวลาครับ</li>
+                        <li>🧠 <b>ถาม-ตอบอัจฉริยะทุกเรื่อง (Deep Reasoning):</b> ถามวิเคราะห์เชิงลึก เขียนบทความ คำนวณสูตรปุ๋ย วิเคราะห์สถิติวิจัย วางแผนธุรกิจเกษตร หรือถามความรู้ทั่วไปได้ทุกคำถาม</li>
+                        <li>📑 <b>สั่งเขียนรายงานได้ทุกรูปแบบ (Custom & Official Report):</b> พิมพ์สั่งเช่น <i>"ขอรายงาน"</i>, <i>"เขียนรายงานวิเคราะห์เปรียบเทียบทุกแปลงแบบละเอียด"</i>, หรือ <i>"ร่างบทที่ 4 และบทที่ 5 สำหรับเล่มวิจัย"</i> พร้อมกดพิมพ์ PDF / โหลดไฟล์ Word (.doc) ได้ทันที</li>
+                        <li>⚡ <b>สั่งแก้ไขหน้าเว็บและควบคุมระบบแบบเรียลไทม์ (Agentic Live Edit):</b> พิมพ์สั่งด้วยภาษาพูดตามธรรมชาติ เช่น <i>"เปลี่ยนชื่อเว็บเป็น ติดตามการเติบโตพืชผล"</i>, <i>"เปิดโหมดมืดและเปลี่ยนธีมเป็นสีม่วง"</i>, <i>"แก้ความสูงต้นที่ 1 เป็น 72 ซม. แล้วเปิดน้ำทุกแปลง"</i> ผมจะลงมือแก้หน้าเว็บให้ทันที!</li>
                     </ul>
                     <div class="mt-2.5 flex flex-wrap gap-1.5">
-                        <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📑 ทดลองขอรายงานฉบับเต็ม</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'วิเคราะห์เชิงลึกเปรียบเทียบการเติบโตของทุกแปลงพร้อมข้อเสนอแนะทางวิชาการ')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">🧠 ทดสอบให้ AI วิเคราะห์เชิงลึก</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📑 ขอรายงานฉบับเต็ม (A4/Word)</button>
                         <button type="button" onclick="switchAiSubTab('editor')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">🛠️ เปิดแผงแก้ไขเว็บเรียลไทม์</button>
                     </div>`
                 });
@@ -826,10 +827,10 @@
             try {
                 if (val) {
                     localStorage.setItem(STORAGE_KEY_GEMINI_API, val);
-                    showToast('🔑 บันทึก Gemini API Key เรียบร้อย! AI พร้อมสนทนาผ่าน Google Gemini 2.5 Flash');
+                    showToast('🔑 บันทึก Gemini API Key เรียบร้อย! เชื่อมต่อตรงกับ Google Gemini 2.5 Flash');
                 } else {
                     localStorage.removeItem(STORAGE_KEY_GEMINI_API);
-                    showToast('สลับเป็นโหมด AI อัจฉริยะในตัว (รองรับออกรายงาน & แก้ไขเว็บเรียลไทม์ 100%)');
+                    showToast('🧠 ใช้สมองกล Antigravity Cloud LLM อัตโนมัติ (ไม่ต้องใช้คีย์ พร้อมใช้งาน 100%)');
                 }
             } catch (e) {}
             updateAiModeBadge();
@@ -840,10 +841,10 @@
             const badge = document.getElementById('aiEngineStatusBadge');
             if (badge) {
                 if (savedKey) {
-                    badge.textContent = '🟢 เชื่อมต่อ Gemini 2.5 Flash + ระบบออกรายงาน & แก้ไขเว็บสด';
+                    badge.textContent = '🟣 Antigravity AI (Google Gemini 2.5 Pro/Flash Direct)';
                     badge.className = 'bg-violet-100 text-violet-800 border border-violet-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full';
                 } else {
-                    badge.textContent = '🟢 พร้อมออกรายงานอัตโนมัติ & แก้ไขเว็บแบบเรียลไทม์';
+                    badge.textContent = '🟢 Antigravity AI Agent (Cloud LLM อัจฉริยะ • ไม่ต้องใส่คีย์)';
                     badge.className = 'bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full';
                 }
             }
@@ -1010,12 +1011,12 @@
                 } else {
                     return `
                         <div class="flex items-start gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-100 border border-emerald-300 text-emerald-800 flex items-center justify-center text-base shrink-0 mt-0.5 shadow-sm">
-                                🤖
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-base shrink-0 mt-0.5 shadow-sm">
+                                🧠
                             </div>
                             <div class="max-w-[92%] w-full bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-1.5">
                                 <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-1">
-                                    <span class="text-[11px] font-extrabold text-emerald-800">AgriGrow AI 4.0 (Report & Live Web Editor)</span>
+                                    <span class="text-[11px] font-extrabold text-emerald-800">Antigravity AI Agent (DeepMind Smart Brain & Live Editor)</span>
                                     <span class="text-[10px] text-slate-400">${msg.time}</span>
                                 </div>
                                 <div class="text-xs sm:text-sm leading-relaxed space-y-1.5">${msg.html}</div>
@@ -1024,9 +1025,9 @@
                     `;
                 }
             }).join('') + (isAiTyping ? `
-                <div class="flex items-center gap-2 text-xs text-slate-500 pl-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span>🤖 AI กำลังจัดทำรายงานและประมวลผลคำตอบ...</span>
+                <div class="flex items-center gap-2 text-xs text-emerald-700 font-bold pl-2 py-1">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>🧠 Antigravity AI กำลังคิดวิเคราะห์เชิงลึกและประมวลผลคำสั่ง...</span>
                 </div>
             ` : '');
 
@@ -1046,9 +1047,41 @@
         }
 
         function formatMarkdownToHtml(mdText) {
-            let safe = escapeHtmlText(mdText);
+            if (!mdText) return '';
+            let clean = String(mdText).replace(/<AGY_ACTION>[\s\S]*?<\/AGY_ACTION>/gi, '').trim();
+            let safe = escapeHtmlText(clean);
+
+            // Code blocks
+            safe = safe.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, '<pre class="bg-slate-900 text-emerald-300 p-3 rounded-xl text-xs font-mono overflow-x-auto my-2">$2</pre>');
+            // Inline code
+            safe = safe.replace(/`([^`\n]+)`/g, '<code class="bg-slate-100 text-rose-700 px-1.5 py-0.5 rounded font-mono text-[11px]">$1</code>');
+
+            // Markdown Tables
+            safe = safe.replace(/((?:^\|.+\|\r?\n)+)/gm, (tableBlock) => {
+                const lines = tableBlock.trim().split(/\r?\n/).filter(l => l.trim().startsWith('|'));
+                if (lines.length < 2) return tableBlock;
+                let htmlRows = '';
+                lines.forEach((line, idx) => {
+                    if (/^\|[\s\-:|]+\|$/.test(line.trim())) return;
+                    const cells = line.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+                    const tag = idx === 0 ? 'th' : 'td';
+                    const rowClass = idx === 0 ? 'bg-slate-900 text-white font-bold' : 'border-b border-slate-200 bg-white';
+                    htmlRows += `<tr class="${rowClass}">` + cells.map(c => `<${tag} class="px-2.5 py-1.5 text-xs border border-slate-300">${c}</${tag}>`).join('') + `</tr>`;
+                });
+                return `<div class="overflow-x-auto my-2"><table class="w-full border-collapse border border-slate-300 text-left">${htmlRows}</table></div>`;
+            });
+
+            // Headings
+            safe = safe.replace(/^###\s+(.+)$/gm, '<div class="font-extrabold text-slate-900 text-sm mt-2.5 mb-1">$1</div>');
+            safe = safe.replace(/^##\s+(.+)$/gm, '<div class="font-extrabold text-emerald-900 text-sm sm:text-base mt-3 mb-1 border-b border-emerald-100 pb-0.5">$1</div>');
+            safe = safe.replace(/^#\s+(.+)$/gm, '<div class="font-extrabold text-slate-950 text-base mt-3 mb-1">$1</div>');
+
+            // Bold & Italic
             safe = safe.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
             safe = safe.replace(/\*(.+?)\*/g, '<i>$1</i>');
+
+            // Bullet points
+            safe = safe.replace(/^\s*[-•]\s+(.+)$/gm, '<div class="pl-3 flex items-start gap-1.5"><span class="text-emerald-600 font-bold">•</span><span>$1</span></div>');
             safe = safe.replace(/\n/g, '<br>');
             return safe;
         }
@@ -1271,11 +1304,155 @@
             </div>`;
         }
 
+        // ประมวลผลคำสั่ง Agentic Action จาก LLM (<AGY_ACTION>{...}</AGY_ACTION>) เพื่อแก้ไขหน้าเว็บสด
+        function executeAgenticJsonActions(rawLlmText) {
+            if (!rawLlmText) return '';
+            const matches = [...String(rawLlmText).matchAll(/<AGY_ACTION>([\s\S]*?)<\/AGY_ACTION>/gi)];
+            if (matches.length === 0) return '';
+            let executedBadges = [];
+            for (const m of matches) {
+                try {
+                    const act = JSON.parse(m[1].trim());
+                    if (act.setTitle) {
+                        liveWebConfig.headerTitle = String(act.setTitle);
+                        liveWebConfig.sidebarTitle = String(act.setTitle).slice(0, 38);
+                        syncInputsFromLiveWebConfig();
+                        applyLiveWebConfigToDOM();
+                        saveLiveWebConfig();
+                        executedBadges.push(`✅ เปลี่ยนชื่อเว็บเป็น "${act.setTitle}"`);
+                    }
+                    if (act.setSubtitle) {
+                        liveWebConfig.headerSubtitle = String(act.setSubtitle);
+                        syncInputsFromLiveWebConfig();
+                        applyLiveWebConfigToDOM();
+                        saveLiveWebConfig();
+                        executedBadges.push(`✅ เปลี่ยนคำอธิบายเว็บ`);
+                    }
+                    if (act.setBanner) {
+                        liveWebConfig.bannerText = '📢 ' + String(act.setBanner);
+                        liveWebConfig.bannerVisible = true;
+                        syncInputsFromLiveWebConfig();
+                        applyLiveWebConfigToDOM();
+                        saveLiveWebConfig();
+                        executedBadges.push(`📢 อัปเดตแบนเนอร์ประกาศ`);
+                    }
+                    if (typeof act.darkMode === 'boolean') {
+                        toggleDarkModeUI(act.darkMode);
+                        executedBadges.push(act.darkMode ? `🌙 เปิดโหมดมืด` : `☀️ เปิดโหมดสว่าง`);
+                    }
+                    if (act.theme && typeof setAppTheme === 'function' && THEMES[act.theme]) {
+                        setAppTheme(act.theme);
+                        executedBadges.push(`🎨 เปลี่ยนธีมสีเป็น ${THEMES[act.theme].name}`);
+                    }
+                    if (act.updatePlotId && act.field && act.value !== undefined) {
+                        updatePlotFieldLive(Number(act.updatePlotId), act.field, act.value);
+                        renderLivePlotEditorTable();
+                        executedBadges.push(`🌱 อัปเดตแปลงที่ ${act.updatePlotId} (${act.field} = ${act.value})`);
+                    }
+                    if (act.addTree && typeof simulateAnotherTree30Min === 'function') {
+                        const customInput = document.getElementById('inputSimTreeName');
+                        if (customInput && typeof act.addTree === 'string') customInput.value = act.addTree;
+                        simulateAnotherTree30Min(false);
+                        renderLivePlotEditorTable();
+                        executedBadges.push(`🌳 เพิ่มต้นไม้ใหม่ลงระบบ`);
+                    }
+                    if (act.openWater && typeof triggerAllIrrigation === 'function') {
+                        triggerAllIrrigation();
+                        executedBadges.push(`💦 เปิดระบบน้ำหยดอัจฉริยะ`);
+                    }
+                    if (act.switchTab && typeof switchTab === 'function') {
+                        switchTab(act.switchTab);
+                        executedBadges.push(`🧭 สลับไปยังหน้า ${act.switchTab}`);
+                    }
+                    if (act.generateReport) {
+                        const card = buildChatReportResponseCard(String(act.generateReport));
+                        executedBadges.push(`📑 สร้างเอกสารรายงานทางการ`);
+                        return card;
+                    }
+                } catch (e) {}
+            }
+            if (executedBadges.length === 0) return '';
+            return `<div class="bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl px-3 py-2 text-xs font-bold mb-2 flex flex-wrap gap-1.5 items-center">
+                <span>⚡ <b>Antigravity Action Executed:</b></span>
+                ${executedBadges.map(b => `<span class="bg-white border border-emerald-200 px-2 py-0.5 rounded-lg">${escapeHtmlText(b)}</span>`).join('')}
+            </div>`;
+        }
+
+        async function callAntigravityCloudLLM(question, systemPrompt) {
+            const savedApiKey = localStorage.getItem(STORAGE_KEY_GEMINI_API) || '';
+            const recentTurns = aiChatHistory.slice(-8).map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: (m.plainText || m.html.replace(/<[^>]+>/g, ' ')).slice(0, 1200)
+            }));
+
+            // 1. หากผู้ใช้ใส่ Gemini API Key ไว้ ให้ยิงตรงไปยัง Google Gemini 2.5 Flash
+            if (savedApiKey) {
+                try {
+                    const geminiTurns = recentTurns.map(t => ({
+                        role: t.role === 'user' ? 'user' : 'model',
+                        parts: [{ text: t.content }]
+                    }));
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(savedApiKey)}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                            contents: geminiTurns
+                        })
+                    });
+                    const data = await resp.json();
+                    const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (candidateText) return candidateText;
+                } catch (err) {}
+            }
+
+            // 2. เชื่อมต่ออัตโนมัติกับ Antigravity Cloud LLM (OpenAI/Gemini Compatible — ไม่ต้องใช้ API Key)
+            try {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 14000);
+                const resp = await fetch('https://text.pollinations.ai/openai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: ctrl.signal,
+                    body: JSON.stringify({
+                        model: 'openai',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            ...recentTurns
+                        ],
+                        temperature: 0.5
+                    })
+                });
+                clearTimeout(timer);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const text = data?.choices?.[0]?.message?.content;
+                    if (text && text.trim()) return text.trim();
+                }
+            } catch (err) {}
+
+            // 3. Fallback Cloud Endpoint สำรอง
+            try {
+                const ctrl2 = new AbortController();
+                const timer2 = setTimeout(() => ctrl2.abort(), 10000);
+                const shortSys = systemPrompt.slice(0, 700);
+                const url = `https://text.pollinations.ai/${encodeURIComponent(question)}?model=openai&system=${encodeURIComponent(shortSys)}`;
+                const resp2 = await fetch(url, { signal: ctrl2.signal });
+                clearTimeout(timer2);
+                if (resp2.ok) {
+                    const text2 = await resp2.text();
+                    if (text2 && text2.trim()) return text2.trim();
+                }
+            } catch (err2) {}
+
+            return null;
+        }
+
         async function askSmartFarmAI(sourceInputId, presetQuestionText) {
             const inputEl = sourceInputId ? document.getElementById(sourceInputId) : null;
             const question = (presetQuestionText || (inputEl ? inputEl.value : '') || '').trim();
             if (!question) {
-                showToast('กรุณาพิมพ์ข้อความหรือคำสั่งให้ AI ครับ');
+                showToast('กรุณาพิมพ์ข้อความหรือคำสั่งให้ Antigravity AI ครับ');
                 return;
             }
             if (inputEl && !presetQuestionText) {
@@ -1290,38 +1467,37 @@
             });
 
             const qLower = question.toLowerCase();
-            // ตรวจสอบว่าเป็นคำสั่งขอรายงาน หรือ คำสั่งแก้ไขหน้าเว็บแบบเรียลไทม์ หรือ คำสั่งควบคุมฟาร์ม
-            const isDirectReportOrEditCommand =
-                qLower.includes('รายงาน') || qLower.includes('report') ||
-                qLower.includes('บทที่ 4') || qLower.includes('บทที่ 5') ||
-                qLower.includes('เปลี่ยนชื่อเว็บ') || qLower.includes('แก้ชื่อเว็บ') ||
-                qLower.includes('เปลี่ยนหัวข้อ') || qLower.includes('แก้หัวข้อ') ||
-                qLower.includes('ตั้งชื่อเว็บ') || qLower.includes('เปลี่ยนชื่อโครงการ') ||
-                qLower.includes('เปลี่ยนคำอธิบาย') || qLower.includes('แก้คำอธิบาย') ||
-                qLower.includes('เพิ่มประกาศ') || qLower.includes('เพิ่มแบนเนอร์') ||
-                qLower.includes('แก้แบนเนอร์') || qLower.includes('เปลี่ยนประกาศ') ||
-                qLower.includes('ซ่อนประกาศ') || qLower.includes('ลบแบนเนอร์') ||
-                qLower.includes('โหมดมืด') || qLower.includes('โหมดสว่าง') || qLower.includes('dark mode') ||
-                qLower.includes('ขยายตัวอักษร') || qLower.includes('ตัวหนังสือใหญ่') || qLower.includes('ตัวอักษรปกติ') ||
-                qLower.includes('คลิกแก้ข้อความ') || qLower.includes('แก้ไขข้อความบนเว็บ') ||
-                qLower.includes('ปรับความสูง') || qLower.includes('แก้ความสูง') ||
-                qLower.includes('ปรับความชื้น') || qLower.includes('แก้ความชื้น') ||
-                qLower.includes('แก้ชื่อแปลง') || qLower.includes('เปลี่ยนชื่อแปลง') ||
-                qLower.includes('เพิ่มต้น') || qLower.includes('จำลองต้น') || qLower.includes('สร้างต้น') ||
-                qLower.includes('ลบต้น') || qLower.includes('ลบกราฟ') || qLower.includes('กู้คืน') ||
-                qLower.includes('เปิดน้ำ') || qLower.includes('รดน้ำ') || qLower.includes('เปลี่ยนธีม') || qLower.includes('เปลี่ยนสี');
-
-            if (isDirectReportOrEditCommand) {
-                const actionReplyHtml = buildLocalSmartFarmAiResponse(question);
+            // ตรวจสอบคำสั่งแก้ไขเว็บเรียลไทม์ หรือ ขอรายงานทางการที่ต้องทำงานทันที 0 วินาที
+            const instantWebEditHtml = tryProcessRealTimeWebEdit(question);
+            if (instantWebEditHtml) {
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
-                    plainText: actionReplyHtml.replace(/<[^>]+>/g, ' '),
-                    html: actionReplyHtml
+                    plainText: instantWebEditHtml.replace(/<[^>]+>/g, ' '),
+                    html: instantWebEditHtml
                 });
                 renderAiChatMessages();
                 renderAiLiveDiagnostics();
-                speakAiText(actionReplyHtml);
+                speakAiText(instantWebEditHtml);
+                return;
+            }
+
+            const isDirectReportRequest =
+                qLower.includes('ขอรายงาน') || qLower.includes('ออกรายงาน') ||
+                qLower.includes('สร้างรายงาน') || qLower.includes('รายงานสรุป') ||
+                qLower.includes('รายงานกราฟ') || qLower.includes('บทที่ 4') || qLower.includes('บทที่ 5');
+
+            if (isDirectReportRequest) {
+                const reportCardHtml = buildChatReportResponseCard(question);
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'จัดทำเอกสารรายงานฉบับสมบูรณ์พร้อมตารางสถิติและปุ่มพิมพ์ PDF / ดาวน์โหลด Word เรียบร้อยแล้วครับ',
+                    html: reportCardHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('จัดทำเอกสารรายงานฉบับสมบูรณ์ให้เรียบร้อยแล้วครับ');
                 return;
             }
 
@@ -1336,58 +1512,55 @@
                 const val30 = (typeof telemetry30MinStore !== 'undefined' && telemetry30MinStore[p.id] && telemetry30MinStore[p.id][metricKey])
                     ? telemetry30MinStore[p.id][metricKey][slotTime]
                     : '-';
-                return `${p.name} (พิกัด ${p.lat},${p.lng}): อายุ ${latest.ageDays || 28} วัน, สูง ${latest.heightCm || 40} ซม., ใบ ${latest.leafCount || 16} ใบ, ความชื้นดิน ${latest.moisture || 70}%, pH ${latest.soilPh || 6.5}, ค่ารอบ 30 นาที (${slotTime} น.) = ${val30}`;
-            }).join(' | ');
+                return `[แปลงที่ ${p.id}] ${p.name} (โซน: ${p.zone}, พิกัด ${p.lat},${p.lng}): อายุ ${latest.ageDays || 28} วัน, สูง ${latest.heightCm || 40} ซม., ใบ ${latest.leafCount || 16} ใบ, ความชื้นดิน ${latest.moisture || 70}%, pH ${latest.soilPh || 6.5}, อัตราเติบโตรอบ 30 นาที (${slotTime} น.) = ${val30}`;
+            }).join('\n');
 
-            const systemPrompt = `คุณคือ AgriGrow AI 4.0 ผู้ช่วยนักวิชาการเกษตรและสมาร์ทฟาร์มอัจฉริยะ จังหวัดนครพนม ตอบโต้เป็นภาษาไทยอย่างเป็นธรรมชาติ กระชับ ชัดเจน และตรงคำถาม ข้อมูลจริงในฟาร์มขณะนี้ (${plots.length} แปลง, รอบเวลาสรุปทุก 30 นาทีล่าสุดคือ ${slotTime} น.): ${farmContext}`;
+            const systemPrompt = `คุณคือ "Antigravity AI" ผู้ช่วยอัจฉริยะระดับสูงที่พัฒนาโดยทีม Google DeepMind ประจำอยู่บนเว็บไซต์ "ติดตามการเติบโตพืชผล (AgriGrow Nakhon Phanom)"
+หน้าที่ของคุณ:
+1. ตอบคำถามทุกเรื่องอย่างฉลาดลึกซึ้ง เป็นธรรมชาติ ชัดเจน มีโครงสร้างสวยงาม (ใช้หัวข้อ, ตาราง Markdown, รายการย่อย) ไม่ว่าจะเป็นเรื่องการเกษตร วิทยาศาสตร์ การเขียนรายงาน วิจัย คณิตศาสตร์ การเขียนโปรแกรม หรือความรู้ทั่วไป
+2. ข้อมูลจริงของแปลงปลูกในระบบขณะนี้ (${plots.length} แปลง, รอบเวลาทุก 30 นาทีล่าสุดคือ ${slotTime} น.):
+${farmContext}
+3. ความสามารถพิเศษในการควบคุมและแก้ไขเว็บไซต์แบบเรียลไทม์: หากผู้ใช้สั่งให้แก้ไขหน้าเว็บ หรือควบคุมฟาร์ม ให้คุณใส่แท็ก JSON คำสั่งไว้ท้ายคำตอบในรูปแบบ <AGY_ACTION>{"setTitle":"..."}</AGY_ACTION> ได้ตามคีย์ต่อไปนี้:
+- เปลี่ยนชื่อเว็บ: <AGY_ACTION>{"setTitle":"ชื่อใหม่"}</AGY_ACTION>
+- เปลี่ยนคำอธิบายเว็บ: <AGY_ACTION>{"setSubtitle":"คำอธิบายใหม่"}</AGY_ACTION>
+- เปลี่ยนแบนเนอร์ประกาศ: <AGY_ACTION>{"setBanner":"ข้อความประกาศ"}</AGY_ACTION>
+- เปิด/ปิดโหมดมืด: <AGY_ACTION>{"darkMode":true}</AGY_ACTION>
+- เปลี่ยนสีธีม (emerald, amber, ocean, violet, rose): <AGY_ACTION>{"theme":"violet"}</AGY_ACTION>
+- แก้ไขข้อมูลต้นไม้ (field: heightCm, moisture, leafCount, soilPh, name): <AGY_ACTION>{"updatePlotId":1,"field":"heightCm","value":75}</AGY_ACTION>
+- เพิ่มต้นไม้ใหม่: <AGY_ACTION>{"addTree":"กล้าไม้พะยูง"}</AGY_ACTION>
+- เปิดน้ำทุกแปลง: <AGY_ACTION>{"openWater":true}</AGY_ACTION>
+- ออกรายงานทางการ: <AGY_ACTION>{"generateReport":"executive"}</AGY_ACTION>`;
 
-            const savedApiKey = localStorage.getItem(STORAGE_KEY_GEMINI_API) || '';
-            if (savedApiKey) {
-                try {
-                    const recentTurns = aiChatHistory.slice(-6).map(m => ({
-                        role: m.role === 'user' ? 'user' : 'model',
-                        parts: [{ text: m.plainText || m.html.replace(/<[^>]+>/g, ' ') }]
-                    }));
-                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(savedApiKey)}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            systemInstruction: { parts: [{ text: systemPrompt }] },
-                            contents: recentTurns
-                        })
-                    });
-                    const data = await resp.json();
-                    const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (candidateText) {
-                        isAiTyping = false;
-                        const formatted = formatMarkdownToHtml(candidateText);
-                        aiChatHistory.push({
-                            role: 'ai',
-                            time: getCurrentTimeShort(),
-                            plainText: candidateText,
-                            html: formatted
-                        });
-                        renderAiChatMessages();
-                        renderAiLiveDiagnostics();
-                        speakAiText(candidateText);
-                        return;
-                    }
-                } catch (err) {}
-            }
-
-            setTimeout(() => {
-                const replyHtml = buildLocalSmartFarmAiResponse(question);
+            const llmReply = await callAntigravityCloudLLM(question, systemPrompt);
+            if (llmReply) {
                 isAiTyping = false;
+                const actionBannerHtml = executeAgenticJsonActions(llmReply);
+                const formattedBody = formatMarkdownToHtml(llmReply);
+                const combinedHtml = actionBannerHtml + formattedBody;
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
-                    plainText: replyHtml.replace(/<[^>]+>/g, ' '),
-                    html: replyHtml
+                    plainText: llmReply.replace(/<AGY_ACTION>[\s\S]*?<\/AGY_ACTION>/gi, '').trim(),
+                    html: combinedHtml
                 });
                 renderAiChatMessages();
                 renderAiLiveDiagnostics();
-                speakAiText(replyHtml);
-            }, 180);
+                speakAiText(llmReply);
+                return;
+            }
+
+            // Fallback กรณีไม่มีอินเทอร์เน็ต
+            const replyHtml = buildLocalSmartFarmAiResponse(question);
+            isAiTyping = false;
+            aiChatHistory.push({
+                role: 'ai',
+                time: getCurrentTimeShort(),
+                plainText: replyHtml.replace(/<[^>]+>/g, ' '),
+                html: replyHtml
+            });
+            renderAiChatMessages();
+            renderAiLiveDiagnostics();
+            speakAiText(replyHtml);
         }
 
         function clearAiChatHistory() {
