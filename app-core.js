@@ -103,9 +103,9 @@
             });
 
             if (titles[tabName]) {
-                const defaultSiteTitle = 'AgriGrow Nakhon Phanom — ระบบสมาร์ทฟาร์มและติดตามพืชผลอัจฉริยะ';
+                const defaultSiteTitle = 'ติดตามการเติบโตพืชผล';
                 const customTitleActive = typeof liveWebConfig !== 'undefined' && liveWebConfig.headerTitle && liveWebConfig.headerTitle !== defaultSiteTitle;
-                document.getElementById('pageHeaderTitle').textContent = customTitleActive ? liveWebConfig.headerTitle : titles[tabName][0];
+                document.getElementById('pageHeaderTitle').textContent = customTitleActive ? liveWebConfig.headerTitle : 'ติดตามการเติบโตพืชผล';
                 document.getElementById('pageHeaderSubtitle').textContent = titles[tabName][1];
             }
 

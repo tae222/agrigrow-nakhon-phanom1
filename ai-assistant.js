@@ -17,9 +17,9 @@
         const STORAGE_KEY_LIVE_WEB_CFG = 'dbt_crop_live_web_cfg_v1';
 
         let liveWebConfig = {
-            headerTitle: 'AgriGrow Nakhon Phanom — ระบบสมาร์ทฟาร์มและติดตามพืชผลอัจฉริยะ',
+            headerTitle: 'ติดตามการเติบโตพืชผล',
             headerSubtitle: 'ติดตามอายุพืช ความสูง จำนวนใบ ความชื้นดิน พิกัดแผนที่ดาวเทียม GPS พร้อมระบบ AI ออกรายงานอัตโนมัติ',
-            sidebarTitle: 'ระบบติดตามพืชผล จ.นครพนม',
+            sidebarTitle: 'ติดตามการเติบโตพืชผล',
             sidebarBadge: 'AgriGrow GIS 4.0 AI',
             bannerText: '✨ ระบบอัปเกรดใหม่! รองรับแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที',
             bannerVisible: true,
@@ -32,7 +32,14 @@
                 const raw = localStorage.getItem(STORAGE_KEY_LIVE_WEB_CFG);
                 if (raw) {
                     const parsed = JSON.parse(raw);
+                    if (parsed.headerTitle && (parsed.headerTitle.includes('ศูนย์วิจัยเกษตรอัจฉริยะ') || parsed.headerTitle.includes('AgriGrow Nakhon Phanom —'))) {
+                        parsed.headerTitle = 'ติดตามการเติบโตพืชผล';
+                    }
+                    if (parsed.sidebarTitle && (parsed.sidebarTitle.includes('ศูนย์วิจัยเกษตรอัจฉริยะ') || parsed.sidebarTitle.includes('ระบบติดตามพืชผล'))) {
+                        parsed.sidebarTitle = 'ติดตามการเติบโตพืชผล';
+                    }
                     liveWebConfig = { ...liveWebConfig, ...parsed };
+                    saveLiveWebConfig();
                 }
             } catch (e) {}
             syncInputsFromLiveWebConfig();
@@ -170,9 +177,9 @@
 
         function resetLiveWebCustomizations() {
             liveWebConfig = {
-                headerTitle: 'AgriGrow Nakhon Phanom — ระบบสมาร์ทฟาร์มและติดตามพืชผลอัจฉริยะ',
+                headerTitle: 'ติดตามการเติบโตพืชผล',
                 headerSubtitle: 'ติดตามอายุพืช ความสูง จำนวนใบ ความชื้นดิน พิกัดแผนที่ดาวเทียม GPS พร้อมระบบ AI ออกรายงานอัตโนมัติ',
-                sidebarTitle: 'ระบบติดตามพืชผล จ.นครพนม',
+                sidebarTitle: 'ติดตามการเติบโตพืชผล',
                 sidebarBadge: 'AgriGrow GIS 4.0 AI',
                 bannerText: '✨ ระบบอัปเกรดใหม่! รองรับแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที',
                 bannerVisible: true,
