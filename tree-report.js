@@ -471,15 +471,18 @@
                     const lng = Number(s.plot.lng || 104.7692).toFixed(4);
                     return `
                         <div class="bg-white/10 border border-white/20 rounded-xl px-2.5 py-1.5 flex items-center gap-2">
-                            <button type="button" onclick="jumpToPlotOnMap(${s.plot.id})" class="text-left hover:opacity-85 transition flex items-center gap-1.5">
+                            <button type="button" onclick="startPinningTreeOnMap(${s.plot.id})" class="text-left hover:opacity-85 transition flex items-center gap-1.5" title="คลิกเพื่อไปปักหมุดหรือย้ายจุดต้นนี้บนแผนที่">
                                 <span class="text-sm">${s.plot.icon || '🌳'}</span>
                                 <div>
                                     <div class="text-[11px] font-extrabold text-white">${s.shortTitle}</div>
                                     <div class="text-[10px] text-emerald-300 font-mono">📍 ${lat}, ${lng}</div>
                                 </div>
                             </button>
-                            <button type="button" onclick="deleteTreeAndGraph(${s.plot.id})" class="bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg transition ml-1" title="ลบกราฟและหมุดแผนที่ของต้นนี้">
-                                🗑️ ลบ
+                            <button type="button" onclick="startPinningTreeOnMap(${s.plot.id})" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-extrabold px-2 py-1 rounded-lg transition ml-1" title="คลิกเพื่อเลือกจุดปักหมุดบนแผนที่">
+                                📍 ปักหมุด
+                            </button>
+                            <button type="button" onclick="deleteTreeAndGraph(${s.plot.id})" class="bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg transition" title="ลบกราฟและหมุดแผนที่ของต้นนี้">
+                                🗑️
                             </button>
                         </div>
                     `;
@@ -796,17 +799,21 @@
 
         function simulateAnotherTree30Min(openMapAfter) {
             const customInput = document.getElementById('inputSimTreeName');
+            const zoneInput = document.getElementById('inputSimTreeZone');
+            const heightInput = document.getElementById('inputSimTreeHeight');
             const latInput = document.getElementById('inputSimTreeLat');
             const lngInput = document.getElementById('inputSimTreeLng');
 
             const customName = (customInput?.value || '').trim();
+            const customZone = (zoneInput?.value || '').trim();
+            const customHeight = Number(heightInput?.value || 45);
             const nextId = plots.length > 0 ? Math.max(...plots.map(p => p.id)) + 1 : 1;
             const presetTemplate = EXTRA_SIM_SPECIES[(nextId - 5 + EXTRA_SIM_SPECIES.length) % EXTRA_SIM_SPECIES.length];
 
             const finalSpeciesName = customName || presetTemplate.name;
             const shortName = customName ? customName.split('(')[0].trim() : presetTemplate.shortName;
 
-            // คำนวณพิกัด GPS ให้กระจายตัวสวยงามในพื้นที่ฟาร์ม จ.นครพนม หรือใช้ค่าที่ผู้ใช้กรอก
+            // คำนวณพิกัดเริ่มต้นให้อัตโนมัติ (ไม่ต้องกรอกพิกัดก่อนเพิ่มต้นไม้)
             const angle = (nextId * 1.15);
             const defaultLat = Number((17.3945 + Math.sin(angle) * 0.0022).toFixed(4));
             const defaultLng = Number((104.7692 + Math.cos(angle) * 0.0024).toFixed(4));
@@ -816,7 +823,7 @@
             const newPlot = {
                 id: nextId,
                 name: `แปลงที่ ${nextId}: ${finalSpeciesName}`,
-                zone: `${presetTemplate.zone} (พิกัด ${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+                zone: `${customZone || presetTemplate.zone} (พิกัด ${lat.toFixed(4)}, ${lng.toFixed(4)})`,
                 harvestDays: presetTemplate.harvestDays,
                 icon: presetTemplate.icon,
                 lat: lat,
@@ -837,7 +844,7 @@
                 plotId: nextId,
                 stage: 'ระยะเจริญเติบโตทางใบ (16-35 วัน)',
                 ageDays: 32,
-                heightCm: 44.5,
+                heightCm: isFinite(customHeight) && customHeight > 0 ? customHeight : 44.5,
                 leafCount: 19,
                 moisture: 71,
                 soilPh: 6.5,
@@ -851,6 +858,7 @@
 
             saveData();
             if (customInput) customInput.value = '';
+            if (zoneInput) zoneInput.value = '';
 
             // อัปเดตพิกัดถัดไปเตรียมไว้สำหรับต้นต่อไป
             const nextAngle = ((nextId + 1) * 1.15);
@@ -866,23 +874,25 @@
             renderPlotsTable();
             renderMapMarkers();
             render30MinReport();
+            if (typeof renderLivePlotEditorTable === 'function') renderLivePlotEditorTable();
 
-            // ตั้งค่าให้แผนที่ซูมไปยังหมุดของต้นไม้ที่เพิ่งเพิ่มใหม่ทันที
+            // ตั้งค่าให้แผนที่เข้าสู่โหมดปักหมุดของต้นไม้ที่เพิ่งเพิ่มใหม่ทันที
             if (typeof pendingFocusPlotId !== 'undefined') {
                 pendingFocusPlotId = nextId;
             }
-            if (openMapAfter) {
-                switchTab('map');
-                setTimeout(() => {
-                    focusPlotOnMap(nextId);
-                }, 220);
-                showToast(`📍 ปักหมุด "${newPlot.name}" ลงบนแผนที่ดาวเทียม (${lat.toFixed(4)}, ${lng.toFixed(4)}) และซูมไปยังหมุดเรียบร้อย!`);
+            if (openMapAfter !== false && typeof startPinningTreeOnMap === 'function') {
+                startPinningTreeOnMap(nextId);
+                showToast(`🌱 เพิ่ม "${newPlot.name}" สำเร็จ! คลิกจุดที่ต้องการบนแผนที่เพื่อปักหมุดได้เลย`);
             } else {
+                if (typeof activePinningPlotId !== 'undefined') {
+                    activePinningPlotId = nextId;
+                }
                 if (leafletMap) {
                     focusPlotOnMap(nextId);
                 }
-                showToast(`📍 เพิ่ม "${newPlot.name}" ปักหมุดพิกัด (${lat.toFixed(4)}, ${lng.toFixed(4)}) ลงแผนที่ และอัปเดตกราฟทุก 30 นาทีเรียบร้อย!`);
+                showToast(`📍 เพิ่ม "${newPlot.name}" พร้อมปักหมุดอัตโนมัติ (${lat.toFixed(4)}, ${lng.toFixed(4)}) เรียบร้อย!`);
             }
+            return newPlot;
         }
 
         function regenerate30MinSimulation() {

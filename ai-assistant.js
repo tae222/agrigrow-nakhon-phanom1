@@ -281,10 +281,15 @@
                         <td class="py-2 px-2 text-center">
                             <input type="number" step="0.1" min="3.0" max="9.5" value="${latest.soilPh || 6.5}" oninput="updatePlotFieldLive(${p.id}, 'soilPh', this.value)" class="w-16 text-center rounded-lg border border-slate-300 px-1.5 py-1 text-xs font-bold text-slate-900">
                         </td>
-                        <td class="py-2 px-3 text-center">
-                            <button type="button" onclick="if(typeof deleteTreeAndGraph==='function'){deleteTreeAndGraph(${p.id}); renderLivePlotEditorTable(); generateAiOfficialReport();}" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">
-                                ลบ
-                            </button>
+                        <td class="py-2 px-3 text-center whitespace-nowrap">
+                            <div class="inline-flex items-center gap-1">
+                                <button type="button" onclick="if(typeof startPinningTreeOnMap==='function'){startPinningTreeOnMap(${p.id});}" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2 py-1 rounded-lg text-[11px] font-extrabold" title="ไปปักหมุดหรือย้ายจุดต้นนี้บนแผนที่">
+                                    📍 ปักหมุด
+                                </button>
+                                <button type="button" onclick="if(typeof deleteTreeAndGraph==='function'){deleteTreeAndGraph(${p.id}); renderLivePlotEditorTable(); generateAiOfficialReport();}" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg text-[11px] font-bold">
+                                    ลบ
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -297,23 +302,22 @@
         function addNewTreeFromStudio(goToMap) {
             const nameInput = document.getElementById('studioInputTreeName') || document.getElementById('inputSimTreeName');
             const zoneInput = document.getElementById('studioInputTreeZone') || document.getElementById('inputSimTreeZone');
-            const heightInput = document.getElementById('studioInputTreeHeight');
-            const latInput = document.getElementById('studioInputTreeLat') || document.getElementById('inputSimTreeLat');
-            const lngInput = document.getElementById('studioInputTreeLng') || document.getElementById('inputSimTreeLng');
+            const heightInput = document.getElementById('studioInputTreeHeight') || document.getElementById('inputSimTreeHeight');
 
             const simName = document.getElementById('inputSimTreeName');
             const simZone = document.getElementById('inputSimTreeZone');
-            const simLat = document.getElementById('inputSimTreeLat');
-            const simLng = document.getElementById('inputSimTreeLng');
+            const simHeight = document.getElementById('inputSimTreeHeight');
 
             if (simName && nameInput) simName.value = nameInput.value;
             if (simZone && zoneInput) simZone.value = zoneInput.value;
-            if (simLat && latInput) simLat.value = latInput.value;
-            if (simLng && lngInput) simLng.value = lngInput.value;
+            if (simHeight && heightInput) simHeight.value = heightInput.value;
+
+            const autoPinCheck = document.getElementById('autoGoToPinMapAfterAdd');
+            const shouldGoToMap = (typeof goToMap === 'boolean') ? goToMap : (autoPinCheck ? autoPinCheck.checked : true);
 
             const customHeight = heightInput ? parseFloat(heightInput.value) : NaN;
             if (typeof simulateAnotherTree30Min === 'function') {
-                simulateAnotherTree30Min(goToMap);
+                simulateAnotherTree30Min(shouldGoToMap);
             }
             if (!isNaN(customHeight) && customHeight > 0 && plots.length > 0) {
                 const newestPlot = plots[plots.length - 1];
@@ -321,17 +325,18 @@
             }
             if (nameInput) nameInput.value = '';
             if (zoneInput) zoneInput.value = '';
-            if (heightInput) heightInput.value = '';
             renderLivePlotEditorTable();
             populateAiReportPlotSelector();
         }
 
-        function quickAddSpeciesTree(speciesName, initHeight) {
-            const nameInput = document.getElementById('studioInputTreeName');
-            const heightInput = document.getElementById('studioInputTreeHeight');
+        function quickAddSpeciesTree(speciesName, initHeight, forceGoToMap) {
+            const nameInput = document.getElementById('studioInputTreeName') || document.getElementById('inputSimTreeName');
+            const heightInput = document.getElementById('studioInputTreeHeight') || document.getElementById('inputSimTreeHeight');
             if (nameInput) nameInput.value = speciesName;
             if (heightInput && initHeight) heightInput.value = initHeight;
-            addNewTreeFromStudio(false);
+            const autoPinCheck = document.getElementById('autoGoToPinMapAfterAdd');
+            const shouldGoToMap = (typeof forceGoToMap === 'boolean') ? forceGoToMap : (autoPinCheck ? autoPinCheck.checked : true);
+            addNewTreeFromStudio(shouldGoToMap);
         }
 
         function updatePlotFieldLive(plotId, field, rawVal) {

@@ -1200,8 +1200,12 @@
             renderDashboard();
             renderMapMarkers();
             if (typeof render30MinReport === 'function') render30MinReport();
-            if (leafletMap) focusPlotOnMap(nextId);
-            showToast(`📍 เพิ่ม "${name}" พร้อมปักหมุดลงแผนที่ (${lat}, ${lng}) และซิงค์กราฟทุก 30 นาทีเรียบร้อย!`);
+            if (typeof startPinningTreeOnMap === 'function') {
+                startPinningTreeOnMap(nextId);
+            } else if (leafletMap) {
+                focusPlotOnMap(nextId);
+            }
+            showToast(`🌱 เพิ่ม "${name}" สำเร็จ! คลิกจุดที่ต้องการบนแผนที่เพื่อปักหมุดตำแหน่งได้เลย`);
         });
 
         // =====================================================================
