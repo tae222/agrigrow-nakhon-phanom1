@@ -26,8 +26,8 @@
         <div class="space-y-3.5 w-full">
             <!-- Top Hamburger (☰) + Brand Header (Centered neatly in rail mode, no overflow) -->
             <div class="rail-header-wrap flex items-center justify-between lg:justify-start gap-2 pb-2.5 border-b border-slate-200/80">
-                <div class="rail-header-brand-row flex items-center gap-2.5">
-                    <button type="button" id="btnToggleSidebarRail" onclick="toggleSidebarRail()" data-rail-tip="กาง/พับ แถบเมนูด้านซ้าย" class="w-10 h-10 rounded-full hover:bg-slate-200/90 flex items-center justify-center text-slate-700 transition focus:outline-none shrink-0" title="กดเพื่อกาง/พับแถบเมนูด้านซ้าย">
+                <div class="rail-header-brand-row flex items-center gap-2.5 min-w-0">
+                    <button type="button" id="btnToggleSidebarRail" onclick="toggleSidebarRail()" data-rail-tip="กาง/พับ แถบเมนูด้านซ้าย" class="w-10 h-10 rounded-full bg-slate-200/70 hover:bg-slate-300/90 flex items-center justify-center text-slate-800 transition focus:outline-none shrink-0" title="กดเพื่อกาง/พับแถบเมนู">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -37,6 +37,11 @@
                             🌱
                         </div>
                     </div>
+                    <!-- Compact brand title shown on mobile when rail is collapsed -->
+                    <div id="mobileBrandCompactTitle" class="hidden lg:hidden min-w-0">
+                        <div class="text-xs font-extrabold text-slate-900 truncate">ติดตามการเติบโตพืชผล</div>
+                        <div class="text-[10px] text-emerald-700 font-bold truncate">กด ☰ เพื่อกาง/ย่อเมนูทั้งหมด</div>
+                    </div>
                     <div class="sidebar-expand-only min-w-0">
                         <div class="flex items-center gap-1.5">
                             <span id="sidebarBrandBadge" class="text-[10px] font-extrabold uppercase tracking-widest bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-300">AgriGrow GIS 4.0 AI</span>
@@ -45,14 +50,19 @@
                         <p id="sidebarBrandSubtitle" class="text-[11px] text-slate-500 truncate">Smart Farm Nakhon Phanom GIS</p>
                     </div>
                 </div>
-                <button type="button" id="btnOpenQrModal" onclick="toggleQrModal(true)" class="lg:hidden bg-sky-100 hover:bg-sky-200 text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                    📱 QR แปลงปลูก
-                </button>
+                <div class="flex items-center gap-1.5 lg:hidden shrink-0">
+                    <button type="button" id="btnMobileRailToggle" onclick="toggleSidebarRail()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold transition shadow-sm">
+                        📂 กางเมนู
+                    </button>
+                    <button type="button" id="btnOpenQrModal" onclick="toggleQrModal(true)" class="bg-sky-100 hover:bg-sky-200 text-slate-900 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition">
+                        📱 QR
+                    </button>
+                </div>
             </div>
 
             <!-- Light-Blue Rounded Square Compose / Quick Action Button (✏️) -->
-            <div class="flex justify-center lg:justify-start">
-                <button type="button" id="btnRailCompose" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('chat');" data-rail-tip="✏️ สั่ง AI ขอไฟล์ Excel / Word / แก้เว็บสด" class="rail-compose-btn w-full py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center gap-3">
+            <div class="rail-compose-wrap flex justify-center lg:justify-start">
+                <button type="button" id="btnRailCompose" onclick="switchTab('ai')" data-rail-tip="✏️ สั่ง AI ขอไฟล์ Excel / Word / แก้เว็บสด" class="rail-compose-btn w-full py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center gap-3">
                     <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"></path>
                     </svg>
@@ -124,7 +134,7 @@
                     </button>
 
                     <!-- 6. AI Official Report Studio (Word / Excel / PDF) -->
-                    <button type="button" id="tabBtnAiReportQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('report'); if(typeof generateAiOfficialReport==='function') generateAiOfficialReport();" data-rail-tip="➢ ออกเอกสารรายงาน AI (Word / Excel / PDF)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
+                    <button type="button" id="tabBtnAiReportQuick" onclick="switchTab('ai-report')" data-rail-tip="➢ ออกเอกสารรายงาน AI (Word / Excel / PDF)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition">
                         <span class="flex items-center gap-2.5">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
@@ -135,7 +145,7 @@
                     </button>
 
                     <!-- 7. Real-Time Web Editor -->
-                    <button type="button" id="tabBtnAiEditorQuick" onclick="switchTab('ai'); if(typeof switchAiSubTab==='function') switchAiSubTab('editor');" data-rail-tip="🛠️ แก้ไขเว็บแบบเรียลไทม์ (Live Editor)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
+                    <button type="button" id="tabBtnAiEditorQuick" onclick="switchTab('ai-editor')" data-rail-tip="🛠️ แก้ไขเว็บแบบเรียลไทม์ (Live Editor)" class="tab-btn relative w-full text-left px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between gap-2.5 transition">
                         <span class="flex items-center gap-2.5">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
@@ -504,14 +514,14 @@
             </div>
         </div>
 
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <main id="mainWorkspaceContent" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5">
 
             <!-- ==================== TOP OPTION TABS BAR (แถบแท็บตัวเลือกจัดเรียงใหม่ แยกกราฟ รายงานกราฟ และเพิ่มต้นไม้) ==================== -->
-            <div id="topOptionTabsBar" class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200 space-y-2.5 no-print">
+            <div id="topOptionTabsBar" class="bg-white rounded-2xl p-3 sm:p-3.5 shadow-sm border border-slate-200 space-y-2 no-print">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-xs font-extrabold text-slate-800">🎛️ แท็บตัวเลือกหลัก (แยกกราฟ • รายงานกราฟ • เพิ่มต้นไม้ • สั่ง AI ขอไฟล์ Excel / Word):</span>
+                        <span class="text-xs font-extrabold text-slate-800">🎛️ แท็บตัวเลือกหลัก (เปิดได้ทั้งในคอมและมือถือ):</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
                         <button type="button" onclick="exportAiExcelFile('executive')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 font-extrabold px-2.5 py-1 rounded-lg transition">
@@ -525,8 +535,8 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                    <button type="button" data-top-tab="ai" onclick="switchTab('ai'); switchAiSubTab('chat');" class="top-opt-tab bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <div class="top-opt-tabs-row flex flex-wrap gap-1.5">
+                    <button type="button" data-top-tab="ai" onclick="switchTab('ai')" class="top-opt-tab bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
                         🧠 1. AI อัจฉริยะ (ขอ Excel/Word)
                     </button>
                     <button type="button" data-top-tab="report30m" onclick="switchTab('report30m')" class="top-opt-tab bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
@@ -541,10 +551,10 @@
                     <button type="button" data-top-tab="farm3d" onclick="switchTab('farm3d')" class="top-opt-tab active theme-btn-primary px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
                         🧊 5. ฟาร์ม 3 มิติ
                     </button>
-                    <button type="button" data-top-tab="ai-report" onclick="switchTab('ai'); switchAiSubTab('report'); generateAiOfficialReport();" class="top-opt-tab bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                    <button type="button" data-top-tab="ai-report" onclick="switchTab('ai-report')" class="top-opt-tab bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
                         📄 6. ออกรายงานทางการ A4
                     </button>
-                    <button type="button" data-top-tab="ai-editor" onclick="switchTab('ai'); switchAiSubTab('editor');" class="top-opt-tab bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
+                    <button type="button" data-top-tab="ai-editor" onclick="switchTab('ai-editor')" class="top-opt-tab bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300 px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5">
                         🛠️ 7. แก้ไขเว็บเรียลไทม์
                     </button>
                     <button type="button" data-top-tab="overview" onclick="switchTab('overview')" class="top-opt-tab bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">

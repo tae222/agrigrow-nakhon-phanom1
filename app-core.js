@@ -13,20 +13,36 @@
             5: { water: true, fan: true, light: true, fert: true }
         };
 
-        function toggleSidebarRail() {
+        function syncMobileRailButtonUI() {
+            const sidebar = document.getElementById('mainAppSidebar');
+            const mobBtn = document.getElementById('btnMobileRailToggle');
+            if (!sidebar || !mobBtn) return;
+            const isCollapsed = sidebar.classList.contains('sidebar-rail-collapsed');
+            mobBtn.textContent = isCollapsed ? '📂 กางเมนู' : '📌 ย่อเมนู';
+            mobBtn.className = isCollapsed
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold transition shadow-sm'
+                : 'bg-amber-500 hover:bg-amber-400 text-slate-950 px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold transition shadow-sm';
+        }
+
+        function toggleSidebarRail(forceCollapse) {
             const sidebar = document.getElementById('mainAppSidebar');
             if (!sidebar) return;
-            sidebar.classList.toggle('sidebar-rail-collapsed');
+            if (typeof forceCollapse === 'boolean') {
+                sidebar.classList.toggle('sidebar-rail-collapsed', forceCollapse);
+            } else {
+                sidebar.classList.toggle('sidebar-rail-collapsed');
+            }
             const isCollapsed = sidebar.classList.contains('sidebar-rail-collapsed');
-            if (typeof showToast === 'function') {
-                showToast(isCollapsed ? '📌 ย่อแถบเมนูด้านซ้ายเป็นไอคอน (สไตล์ Gmail)' : '📂 กางแถบเมนูด้านซ้ายแบบเต็มแล้ว');
+            syncMobileRailButtonUI();
+            if (typeof showToast === 'function' && typeof forceCollapse !== 'boolean') {
+                showToast(isCollapsed ? '📌 ย่อแถบเมนูเป็นไอคอนเรียบร้อยแล้ว' : '📂 กางแถบเมนูทั้งหมดออกเรียบร้อยแล้ว');
             }
             setTimeout(() => {
                 if (typeof initOrResize3DFarm === 'function' && !document.getElementById('view3D')?.classList.contains('hidden')) {
                     initOrResize3DFarm();
                 }
-                if (typeof mapInstance !== 'undefined' && mapInstance) {
-                    mapInstance.invalidateSize();
+                if (typeof leafletMap !== 'undefined' && leafletMap) {
+                    leafletMap.invalidateSize({ animate: false });
                 }
             }, 260);
         }
@@ -35,7 +51,13 @@
             const moreBox = document.getElementById('sidebarMoreTabsContainer');
             const chevron = document.getElementById('iconMoreSidebarChevron');
             const label = document.getElementById('labelMoreSidebarChevron');
+            const sidebar = document.getElementById('mainAppSidebar');
             if (!moreBox) return;
+            // On mobile, if the rail is collapsed and user taps 'เพิ่มเติม', expand the sidebar so they can see the 7 extra tabs clearly
+            if (window.innerWidth < 1024 && sidebar && sidebar.classList.contains('sidebar-rail-collapsed')) {
+                sidebar.classList.remove('sidebar-rail-collapsed');
+                syncMobileRailButtonUI();
+            }
             const isHidden = moreBox.classList.toggle('hidden');
             if (chevron) {
                 chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
@@ -45,7 +67,19 @@
             }
         }
 
-        function switchTab(tabName) {
+        function switchTab(rawTabName) {
+            let tabName = rawTabName || 'farm3d';
+            let aiSubMode = null;
+            if (tabName === 'ai-report') {
+                tabName = 'ai';
+                aiSubMode = 'report';
+            } else if (tabName === 'ai-editor') {
+                tabName = 'ai';
+                aiSubMode = 'editor';
+            } else if (tabName === 'ai') {
+                aiSubMode = 'chat';
+            }
+
             const views = {
                 ai: document.getElementById('viewAI'),
                 report30m: document.getElementById('viewReport30m'),
@@ -62,6 +96,8 @@
             };
             const btns = {
                 ai: document.getElementById('tabBtnAI'),
+                'ai-report': document.getElementById('tabBtnAiReportQuick'),
+                'ai-editor': document.getElementById('tabBtnAiEditorQuick'),
                 report30m: document.getElementById('tabBtnReport30m'),
                 graphReport: document.getElementById('tabBtnGraphReport'),
                 addTree: document.getElementById('tabBtnAddTree'),
@@ -78,12 +114,12 @@
                 ai: ['🧠 Antigravity AI อัจฉริยะ', 'สั่งขอไฟล์ Excel (.xls), Word (.doc), รายงาน A4 หรือแก้ไขหน้าเว็บแบบเรียลไทม์'],
                 report30m: ['📈 กราฟการเติบโตทุก 30 นาที', 'เปรียบเทียบกราฟรวมทุกต้นและกราฟแยกรายต้น (แยกจากหน้ารายงานตาราง)'],
                 graphReport: ['📑 รายงานสรุปกราฟ & ตารางสถิติ 30 นาที', 'ตารางสถิติผลการวัดรายรอบ 30 นาที (X̄, S.D.) พร้อมส่งออกไฟล์ Excel และ Word'],
-                addTree: ['🌳 เพิ่มต้นไม้ใหม่ & ปักหมุดแผนที่', 'เลือกพันธุ์ไม้เศรษฐกิจด้วยคลิกเดียว หรือกรอกชื่อและพิกัดเพื่อเพิ่มเข้าสู่ระบบทันที'],
+                addTree: ['🌳 เพิ่มต้นไม้ใหม่ & ปักหมุดแผนที่', 'เลือกพันธุ์ไม้เศรษฐกิจด้วยคลิกเดียว เพิ่มเสร็จปั๊บพาไปปักหมุดบนแผนที่ทันที'],
                 farm3d: ['🧊 แบบจำลองสมาร์ทฟาร์ม 3 มิติ', 'หมุนมุมกล้อง 360° และติดตามการเติบโตของแปลงปลูก'],
                 overview: ['🏞️ ภาพรวมฟาร์มและระยะการเติบโต', 'ติดตามพัฒนาการพืชผลเศรษฐกิจ จ.นครพนม และแผนที่ GIS'],
                 blueprint: ['🎛️ ผังควบคุมสมาร์ทฟาร์ม 2D & IoT', 'ควบคุมระบบน้ำ พัดลมระบายอากาศ และระบบให้ปุ๋ย'],
                 kanban: ['📋 กระดานติดตามสถานะพืชผล (Kanban)', 'ติดตามระยะการเจริญเติบโตและประมาณการรายได้'],
-                map: ['🗺️ แผนที่แปลงเพาะปลูก (GIS Map)', 'พิกัดแปลงเกษตรและภาพถ่ายดาวเทียม จ.นครพนม'],
+                map: ['🗺️ แผนที่แปลงเพาะปลูก (GIS Map)', 'คลิกจุดไหนก็ได้บนแผนที่เพื่อปักหมุดหรือย้ายตำแหน่งต้นไม้'],
                 record: ['📝 บันทึกข้อมูลการเจริญเติบโต', 'บันทึกความสูง จำนวนใบ ความชื้น และค่า pH ดิน'],
                 dashboard: ['📊 สถิติและวิเคราะห์ผลการประเมิน', 'ภาพรวมสถิติ กราฟแนวโน้ม และดัชนีสุขภาพพืช'],
                 plots: ['🌱 จัดการแปลงเพาะปลูก', 'เพิ่ม แก้ไข หรือลบแปลงเกษตรและชนิดพืช']
@@ -92,16 +128,24 @@
             Object.keys(views).forEach(k => {
                 if (k === tabName) {
                     if (views[k]) views[k].classList.remove('hidden');
-                    if (btns[k]) btns[k].classList.add('active');
                 } else {
                     if (views[k]) views[k].classList.add('hidden');
-                    if (btns[k]) btns[k].classList.remove('active');
+                }
+            });
+
+            const activeBtnKey = rawTabName && btns[rawTabName] ? rawTabName : tabName;
+            Object.keys(btns).forEach(k => {
+                if (!btns[k]) return;
+                if (k === activeBtnKey) {
+                    btns[k].classList.add('active');
+                } else {
+                    btns[k].classList.remove('active');
                 }
             });
 
             document.querySelectorAll('.top-opt-tab').forEach(btn => {
                 const tKey = btn.getAttribute('data-top-tab');
-                if (tKey === tabName) {
+                if (tKey === activeBtnKey || (tKey === tabName && !['ai-report', 'ai-editor'].includes(activeBtnKey))) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
@@ -121,6 +165,9 @@
             if (tabName === 'ai') {
                 if (typeof initAiAssistant === 'function') initAiAssistant();
                 if (typeof renderAiLiveDiagnostics === 'function') renderAiLiveDiagnostics();
+                if (aiSubMode && typeof switchAiSubTab === 'function') {
+                    switchAiSubTab(aiSubMode);
+                }
             } else if (tabName === 'report30m' || tabName === 'graphReport') {
                 if (typeof render30MinReport === 'function') render30MinReport();
             } else if (tabName === 'addTree') {
@@ -143,6 +190,21 @@
                 renderDashboard();
             } else if (tabName === 'plots') {
                 renderPlotsTable();
+            }
+
+            // บนโทรศัพท์มือถือ: เมื่อกดเลือกแท็บเมนูแล้ว ให้ย่อแถบเมนูอัตโนมัติและเลื่อนหน้าจอไปยังเนื้อหาของแท็บนั้นทันที
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('mainAppSidebar');
+                if (sidebar && !sidebar.classList.contains('sidebar-rail-collapsed')) {
+                    sidebar.classList.add('sidebar-rail-collapsed');
+                    syncMobileRailButtonUI();
+                }
+                const targetSection = views[tabName];
+                if (targetSection) {
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 90);
+                }
             }
         }
 

@@ -173,8 +173,80 @@
             }
         }
         @media (max-width: 1023px) {
-            .rail-mini-label {
+            /* Mobile Collapsed Rail Mode: Sleek Compact Bar + Horizontal Icon Rail */
+            #mainAppSidebar.sidebar-rail-collapsed {
+                padding: 10px 12px !important;
+                gap: 8px !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .sidebar-expand-only {
                 display: none !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed #mobileBrandCompactTitle {
+                display: block !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-compose-wrap {
+                display: none !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-nav-list {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                gap: 6px !important;
+                padding: 4px 2px !important;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-nav-list::-webkit-scrollbar {
+                display: none;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .tab-btn,
+            #mainAppSidebar.sidebar-rail-collapsed .rail-action-icon-btn {
+                width: auto !important;
+                min-width: 68px !important;
+                min-height: 52px !important;
+                padding: 6px 8px !important;
+                border-radius: 14px !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 2px !important;
+                flex-shrink: 0 !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .tab-btn > span:first-child,
+            #mainAppSidebar.sidebar-rail-collapsed .rail-action-icon-btn > span:first-child {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 2px !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-mini-label {
+                display: block !important;
+                font-size: 10px !important;
+                line-height: 1.15 !important;
+                font-weight: 700 !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+            }
+            /* Mobile Expanded Mode (when user taps ☰ on phone) */
+            #mainAppSidebar:not(.sidebar-rail-collapsed) .rail-mini-label {
+                display: none !important;
+            }
+            #mainAppSidebar:not(.sidebar-rail-collapsed) .rail-nav-list {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 6px !important;
+            }
+            /* Keep Top Option Tabs horizontal-scrollable on mobile so content is immediately visible */
+            #topOptionTabsBar .top-opt-tabs-row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            #topOptionTabsBar .top-opt-tab {
+                flex-shrink: 0 !important;
+                white-space: nowrap !important;
             }
         }
         /* Light-Mode Gmail Rail Styling Option */
