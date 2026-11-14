@@ -13,6 +13,38 @@
             5: { water: true, fan: true, light: true, fert: true }
         };
 
+        function toggleSidebarRail() {
+            const sidebar = document.getElementById('mainAppSidebar');
+            if (!sidebar) return;
+            sidebar.classList.toggle('sidebar-rail-collapsed');
+            const isCollapsed = sidebar.classList.contains('sidebar-rail-collapsed');
+            if (typeof showToast === 'function') {
+                showToast(isCollapsed ? '📌 ย่อแถบเมนูด้านซ้ายเป็นไอคอน (สไตล์ Gmail)' : '📂 กางแถบเมนูด้านซ้ายแบบเต็มแล้ว');
+            }
+            setTimeout(() => {
+                if (typeof initOrResize3DFarm === 'function' && !document.getElementById('view3D')?.classList.contains('hidden')) {
+                    initOrResize3DFarm();
+                }
+                if (typeof mapInstance !== 'undefined' && mapInstance) {
+                    mapInstance.invalidateSize();
+                }
+            }, 260);
+        }
+
+        function toggleMoreSidebarTabs() {
+            const moreBox = document.getElementById('sidebarMoreTabsContainer');
+            const chevron = document.getElementById('iconMoreSidebarChevron');
+            const label = document.getElementById('labelMoreSidebarChevron');
+            if (!moreBox) return;
+            const isHidden = moreBox.classList.toggle('hidden');
+            if (chevron) {
+                chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+            if (label) {
+                label.textContent = isHidden ? 'แสดงตัวเลือกเพิ่มเติม (5)' : 'ย่อตัวเลือกเพิ่มเติม';
+            }
+        }
+
         function switchTab(tabName) {
             const views = {
                 ai: document.getElementById('viewAI'),

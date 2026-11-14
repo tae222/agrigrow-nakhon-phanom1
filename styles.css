@@ -91,6 +91,116 @@
             border-color: transparent !important;
             box-shadow: 0 4px 12px var(--theme-shadow);
         }
+
+        /* ==========================================================================
+           Gmail-Style Collapsible Left Sidebar Rail (#mainAppSidebar)
+           ========================================================================== */
+        #mainAppSidebar {
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease, background 0.25s ease;
+        }
+        /* Collapsed Rail Mode (matches the uploaded Gmail-style screenshot) */
+        @media (min-width: 1024px) {
+            #mainAppSidebar.sidebar-rail-collapsed {
+                width: 84px !important;
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+                align-items: center;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .sidebar-expand-only {
+                display: none !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-header-wrap {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-compose-btn {
+                width: 56px !important;
+                height: 56px !important;
+                padding: 0 !important;
+                border-radius: 18px !important;
+                justify-content: center !important;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .rail-nav-list {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 6px !important;
+            }
+            #mainAppSidebar.sidebar-rail-collapsed .tab-btn,
+            #mainAppSidebar.sidebar-rail-collapsed .rail-action-icon-btn {
+                width: 46px !important;
+                height: 46px !important;
+                padding: 0 !important;
+                border-radius: 9999px !important;
+                justify-content: center !important;
+                position: relative;
+            }
+        }
+        /* Light-Mode Gmail Rail Styling Option */
+        #mainAppSidebar.rail-light-surface {
+            background: #f8fafd !important;
+            color: #1f1f1f !important;
+            border-right: 1px solid #e2e8f0;
+        }
+        #mainAppSidebar.rail-light-surface .tab-btn,
+        #mainAppSidebar.rail-light-surface .rail-action-icon-btn {
+            color: #444746 !important;
+        }
+        #mainAppSidebar.rail-light-surface .tab-btn:hover,
+        #mainAppSidebar.rail-light-surface .rail-action-icon-btn:hover {
+            background: rgba(31, 31, 31, 0.08) !important;
+        }
+        #mainAppSidebar.rail-light-surface .tab-btn.active {
+            background: #d3e3fd !important;
+            color: #041e49 !important;
+            box-shadow: none !important;
+        }
+        .rail-compose-btn {
+            background: #c2e7ff;
+            color: #001d35;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+        .rail-compose-btn:hover {
+            background: #b3dffc;
+            box-shadow: 0 4px 12px rgba(0, 29, 53, 0.22);
+            transform: translateY(-1px);
+        }
+        .rail-red-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 9px;
+            height: 9px;
+            background-color: #d93025;
+            border: 2px solid #f8fafd;
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+        /* Hover Tooltip when Sidebar is Collapsed */
+        @media (min-width: 1024px) {
+            #mainAppSidebar.sidebar-rail-collapsed [data-rail-tip]:hover::after {
+                content: attr(data-rail-tip);
+                position: absolute;
+                left: calc(100% + 12px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: #1e293b;
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 5px 10px;
+                border-radius: 8px;
+                white-space: nowrap;
+                z-index: 999;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+                pointer-events: none;
+            }
+        }
         /* Dark Mode Real-Time Override */
         body.dark-ui-mode {
             background-color: #0b1120 !important;
