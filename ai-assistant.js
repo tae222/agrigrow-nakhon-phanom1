@@ -175,6 +175,26 @@
                 : '🔒 ปิดโหมดคลิกแก้ไขข้อความบนหน้าเว็บแล้ว');
         }
 
+        let websiteClosedState = false;
+
+        function toggleWebsitePowerStatus(forceClosed) {
+            websiteClosedState = (typeof forceClosed === 'boolean') ? forceClosed : !websiteClosedState;
+            const overlay = document.getElementById('websitePowerOffOverlay');
+            const btn = document.getElementById('btnToggleWebsitePower');
+            if (overlay) {
+                overlay.classList.toggle('hidden', !websiteClosedState);
+            }
+            if (btn) {
+                btn.textContent = websiteClosedState ? '🔴 สถานะเว็บ: ปิดชั่วคราว (กดเพื่อเปิด)' : '🟢 สถานะเว็บ: เปิด (กดเพื่อปิดเว็บ)';
+                btn.className = websiteClosedState
+                    ? 'bg-rose-600 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm'
+                    : 'bg-emerald-600 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm';
+            }
+            showToast(websiteClosedState
+                ? '🔴 ปิดการแสดงผลเว็บไซต์ชั่วคราวแล้ว (กดปุ่มสีเขียวเพื่อเปิดกลับมาได้ทันที)'
+                : '🟢 เปิดใช้งานเว็บไซต์ตามปกติเรียบร้อยแล้ว!');
+        }
+
         function resetLiveWebCustomizations() {
             liveWebConfig = {
                 headerTitle: 'ติดตามการเติบโตพืชผล',

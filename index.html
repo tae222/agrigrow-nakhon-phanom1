@@ -315,11 +315,33 @@
                 <button type="button" id="btnToggleInlineEdit" onclick="toggleInlinePageEditMode()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
                     ✏️ คลิกแก้เว็บ: ปิด
                 </button>
+                <button type="button" id="btnToggleWebsitePower" onclick="toggleWebsitePowerStatus()" class="bg-emerald-600 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm" title="คลิกเพื่อเปิด/ปิดการเข้าใช้งานหน้าเว็บชั่วคราว">
+                    🟢 สถานะเว็บ: เปิด (กดเพื่อปิดเว็บ)
+                </button>
                 <button type="button" id="btnToggleDarkMode" onclick="toggleDarkModeUI()" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition" title="สลับโหมดมืด/สว่าง">
                     🌙
                 </button>
             </div>
         </header>
+
+        <!-- Full-Screen Website Power OFF / Maintenance Mode Overlay -->
+        <div id="websitePowerOffOverlay" class="fixed inset-0 z-[9999] hidden bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 text-white">
+            <div class="max-w-md w-full bg-slate-900 border-2 border-rose-500/60 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5">
+                <div class="w-20 h-20 mx-auto rounded-3xl bg-rose-500/20 border-2 border-rose-400/50 flex items-center justify-center text-4xl shadow-lg">
+                    🔒
+                </div>
+                <div class="space-y-2">
+                    <span class="inline-block bg-rose-600 text-white text-xs font-extrabold px-3 py-1 rounded-full">🔴 WEBSITE OFFLINE / ปิดปรับปรุงชั่วคราว</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-white">ขณะนี้ปิดการแสดงผลเว็บไซต์ชั่วคราว</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">ระบบติดตามการเติบโตพืชผลถูกตั้งค่าเป็นโหมดพักหน้าจอ/ปิดชั่วคราวโดยผู้ดูแลระบบ กดปุ่มสีเขียวด้านล่างเพื่อเปิดใช้งานเว็บไซต์ตามปกติได้ทันที</p>
+                </div>
+                <div class="pt-2 space-y-2.5">
+                    <button type="button" onclick="toggleWebsitePowerStatus(false)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3 px-5 rounded-2xl text-sm sm:text-base transition shadow-lg flex items-center justify-center gap-2">
+                        <span>🟢 กดเพื่อเปิดใช้งานเว็บไซต์ (Turn Website ON)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Live Customizable Announcement Banner (Editable in Real-Time via AI or Editor) -->
         <div id="liveCustomBanner" class="bg-gradient-to-r from-emerald-700 via-teal-700 to-slate-900 text-white px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm no-print">
