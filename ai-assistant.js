@@ -140,59 +140,13 @@
             showToast(`🔤 ปรับขนาดตัวอักษรทั้งหน้าเว็บเป็น ${liveWebConfig.fontScale}px แบบเรียลไทม์แล้ว`);
         }
 
-        function toggleInlinePageEditMode(forceState) {
-            inlineEditModeActive = typeof forceState === 'boolean' ? forceState : !inlineEditModeActive;
-            document.body.classList.toggle('inline-edit-active', inlineEditModeActive);
-
-            const editableSelectors = 'h1, h2, h3, h4, h5, #pageHeaderSubtitle, #liveCustomBannerText, #autoNarrativeSummary, #narrative30MinSummary';
-            document.querySelectorAll(editableSelectors).forEach(el => {
-                if (inlineEditModeActive) {
-                    el.setAttribute('contenteditable', 'true');
-                } else {
-                    el.removeAttribute('contenteditable');
-                }
-            });
-
-            const badge = document.getElementById('liveEditStatusBadge');
-            const btnTop = document.getElementById('btnToggleInlineEdit');
-            const btnEditor = document.getElementById('btnEditorInlineMode');
-
-            if (badge) badge.classList.toggle('hidden', !inlineEditModeActive);
-            if (btnTop) {
-                btnTop.textContent = inlineEditModeActive ? '✏️ คลิกแก้เว็บสด: เปิดอยู่' : '✏️ คลิกแก้เว็บสด: ปิด';
-                btnTop.className = inlineEditModeActive
-                    ? 'bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow'
-                    : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1';
-            }
-            if (btnEditor) {
-                btnEditor.textContent = inlineEditModeActive
-                    ? '✅ โหมดคลิกแก้ข้อความบนเว็บเปิดอยู่ (คลิกเพื่อปิด)'
-                    : '✏️ เปิดคลิกแก้ข้อความบนหน้าเว็บโดยตรง';
-            }
-
-            showToast(inlineEditModeActive
-                ? '✏️ เปิดโหมดคลิกแก้ไขข้อความบนหน้าเว็บแล้ว! คลิกที่หัวข้อหรือข้อความใดก็ได้บนหน้าเว็บเพื่อพิมพ์แก้ไขทันที'
-                : '🔒 ปิดโหมดคลิกแก้ไขข้อความบนหน้าเว็บแล้ว');
+        function toggleInlinePageEditMode() {
+            inlineEditModeActive = false;
+            document.body.classList.remove('inline-edit-active');
         }
 
-        let websiteClosedState = false;
-
-        function toggleWebsitePowerStatus(forceClosed) {
-            websiteClosedState = (typeof forceClosed === 'boolean') ? forceClosed : !websiteClosedState;
-            const overlay = document.getElementById('websitePowerOffOverlay');
-            const btn = document.getElementById('btnToggleWebsitePower');
-            if (overlay) {
-                overlay.classList.toggle('hidden', !websiteClosedState);
-            }
-            if (btn) {
-                btn.textContent = websiteClosedState ? '🔴 สถานะเว็บ: ปิดชั่วคราว (กดเพื่อเปิด)' : '🟢 สถานะเว็บ: เปิด (กดเพื่อปิดเว็บ)';
-                btn.className = websiteClosedState
-                    ? 'bg-rose-600 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm'
-                    : 'bg-emerald-600 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1 shadow-sm';
-            }
-            showToast(websiteClosedState
-                ? '🔴 ปิดการแสดงผลเว็บไซต์ชั่วคราวแล้ว (กดปุ่มสีเขียวเพื่อเปิดกลับมาได้ทันที)'
-                : '🟢 เปิดใช้งานเว็บไซต์ตามปกติเรียบร้อยแล้ว!');
+        function toggleWebsitePowerStatus() {
+            // ปิดฟีเจอร์เปิด/ปิดเว็บไซต์ตามคำสั่งผู้ใช้ (เปิดใช้งานตลอดเวลา)
         }
 
         function resetLiveWebCustomizations() {
@@ -201,7 +155,7 @@
                 headerSubtitle: 'ติดตามอายุพืช ความสูง จำนวนใบ ความชื้นดิน พิกัดแผนที่ดาวเทียม GPS พร้อมระบบ AI ออกรายงานอัตโนมัติ',
                 sidebarTitle: 'ติดตามการเติบโตพืชผล',
                 sidebarBadge: 'AgriGrow GIS 4.0 AI',
-                bannerText: '✨ ระบบอัปเกรดใหม่! รองรับแท็บตัวเลือกครบวงจร สั่ง AI ออกรายงานฉบับสมบูรณ์ และแก้ไขหน้าเว็บแบบเรียลไทม์ได้ทันที',
+                bannerText: '✨ ระบบติดตามการเติบโตพืชผลอัจฉริยะ — วิเคราะห์ข้อมูลเชิงลึกทุก 30 นาที พร้อมส่งออกรายงาน Excel (.xls) และ Word (.doc) ทันที',
                 bannerVisible: true,
                 darkMode: false,
                 fontScale: 16
@@ -210,8 +164,6 @@
             applyLiveWebConfigToDOM();
             saveLiveWebConfig();
             setAppTheme('emerald', true);
-            if (inlineEditModeActive) toggleInlinePageEditMode(false);
-            showToast('🔄 รีเซ็ตการตั้งค่าหน้าเว็บและข้อความกลับเป็นค่าเริ่มต้นเรียบร้อยแล้ว');
         }
 
         function handleQuickOptionSelect(val) {
@@ -225,11 +177,6 @@
                 switchTab('ai');
                 switchAiSubTab('report');
                 generateAiOfficialReport();
-            } else if (val === 'ai-editor') {
-                switchTab('ai');
-                switchAiSubTab('editor');
-            } else if (val === 'inline-edit') {
-                toggleInlinePageEditMode();
             } else if (val === 'dark-mode') {
                 toggleDarkModeUI();
             } else {
@@ -862,82 +809,18 @@
             const q = rawQuestion.trim();
             const qLower = q.toLowerCase();
 
-            // 1. เปลี่ยนชื่อเว็บ / หัวข้อเว็บ / ชื่อโครงการ
-            const titleMatch = q.match(/(?:เปลี่ยนชื่อเว็บเป็น|แก้ชื่อเว็บเป็น|เปลี่ยนหัวข้อเว็บเป็น|แก้หัวข้อเป็น|ตั้งชื่อเว็บว่า|เปลี่ยนชื่อโครงการเป็น)\s*(.+)$/i);
-            if (titleMatch && titleMatch[1]) {
-                const newTitle = titleMatch[1].replace(/^["'“”]|["'“”]$/g, '').trim();
-                liveWebConfig.headerTitle = newTitle;
-                liveWebConfig.sidebarTitle = newTitle.slice(0, 38);
-                syncInputsFromLiveWebConfig();
-                applyLiveWebConfigToDOM();
-                saveLiveWebConfig();
-                return `🛠️ <b>แก้ไขชื่อเว็บไซต์แบบเรียลไทม์เรียบร้อยแล้วครับ!</b><br>
-                • <b>หัวข้อหลักของเว็บไซต์เปลี่ยนเป็น:</b> <span class="text-emerald-700 font-bold">"${escapeHtmlText(newTitle)}"</span><br>
-                • อัปเดตทั้งแถบ Header ด้านบน, ชื่อระบบในเมนูด้านซ้าย และ Title ของเบราว์เซอร์ทันทีโดยไม่ต้องรีเฟรชหน้าเว็บครับ`;
-            }
-
-            // 2. เปลี่ยนคำอธิบายเว็บ / Subtitle
-            const subMatch = q.match(/(?:เปลี่ยนคำอธิบายเว็บเป็น|แก้คำอธิบายเป็น|เปลี่ยนซับไตเติ้ลเป็น|แก้คำโปรยเป็น)\s*(.+)$/i);
-            if (subMatch && subMatch[1]) {
-                const newSub = subMatch[1].replace(/^["'“”]|["'“”]$/g, '').trim();
-                liveWebConfig.headerSubtitle = newSub;
-                syncInputsFromLiveWebConfig();
-                applyLiveWebConfigToDOM();
-                saveLiveWebConfig();
-                return `🛠️ <b>แก้ไขคำอธิบายย่อย (Subtitle) ของหน้าเว็บแบบเรียลไทม์เรียบร้อยแล้วครับ!</b><br>
-                • ข้อความใหม่: <i>"${escapeHtmlText(newSub)}"</i>`;
-            }
-
-            // 3. เพิ่ม / แก้ไข แบนเนอร์ประกาศบนหน้าเว็บ
-            const bannerMatch = q.match(/(?:เพิ่มประกาศหน้าเว็บว่า|เพิ่มแบนเนอร์ว่า|แก้แบนเนอร์เป็น|เปลี่ยนประกาศเป็น|แสดงประกาศว่า|เพิ่มประกาศว่า)\s*(.+)$/i);
-            if (bannerMatch && bannerMatch[1]) {
-                const newBanner = bannerMatch[1].replace(/^["'“”]|["'“”]$/g, '').trim();
-                liveWebConfig.bannerText = '📢 ' + newBanner;
-                liveWebConfig.bannerVisible = true;
-                syncInputsFromLiveWebConfig();
-                applyLiveWebConfigToDOM();
-                saveLiveWebConfig();
-                return `📢 <b>อัปเดตแบนเนอร์ประกาศด้านบนสุดของเว็บไซต์แบบเรียลไทม์แล้วครับ!</b><br>
-                • ข้อความประกาศปัจจุบัน: <b>"${escapeHtmlText(liveWebConfig.bannerText)}"</b>`;
-            }
-
-            if (qLower.includes('ซ่อนประกาศ') || qLower.includes('ลบแบนเนอร์') || qLower.includes('ปิดแบนเนอร์')) {
-                liveWebConfig.bannerVisible = false;
-                syncInputsFromLiveWebConfig();
-                applyLiveWebConfigToDOM();
-                saveLiveWebConfig();
-                return `🙈 <b>ซ่อนแบนเนอร์ประกาศด้านบนสุดของหน้าเว็บให้เรียบร้อยแล้วครับ!</b> (สามารถสั่ง <i>"เพิ่มประกาศว่า..."</i> เพื่อแสดงใหม่ได้ตลอดเวลา)`;
-            }
-
-            // 4. เปิด/ปิด โหมดมืด (Dark Mode) หรือ โหมดสว่าง
+            // เปิด/ปิด โหมดมืด (Dark Mode) หรือ โหมดสว่าง
             if (qLower.includes('โหมดมืด') || qLower.includes('dark mode') || qLower.includes('ธีมมืด') || qLower.includes('กลางคืน')) {
                 const nextState = qLower.includes('ปิด') ? false : (qLower.includes('สลับ') ? !liveWebConfig.darkMode : true);
                 toggleDarkModeUI(nextState);
-                return `🌙 <b>ปรับหน้าเว็บเป็น "${liveWebConfig.darkMode ? 'โหมดมืด (Dark Mode)' : 'โหมดสว่าง (Light Mode)'}" แบบเรียลไทม์เรียบร้อยแล้วครับ!</b>`;
+                return `🌙 <b>ปรับหน้าเว็บเป็น "${liveWebConfig.darkMode ? 'โหมดมืด (Dark Mode)' : 'โหมดสว่าง (Light Mode)'}" เรียบร้อยแล้วครับ!</b>`;
             }
             if (qLower.includes('โหมดสว่าง') || qLower.includes('light mode') || qLower.includes('ธีมสว่าง')) {
                 toggleDarkModeUI(false);
-                return `☀️ <b>สลับหน้าเว็บกลับมาเป็น "โหมดสว่าง (Light Mode)" แบบเรียลไทม์เรียบร้อยแล้วครับ!</b>`;
+                return `☀️ <b>สลับหน้าเว็บกลับมาเป็น "โหมดสว่าง (Light Mode)" เรียบร้อยแล้วครับ!</b>`;
             }
 
-            // 5. ปรับขนาดตัวอักษรแบบเรียลไทม์
-            if (qLower.includes('ขยายตัวอักษร') || qLower.includes('ตัวหนังสือใหญ่') || qLower.includes('ฟอนต์ใหญ่')) {
-                setLiveFontScale(18);
-                return `🔤 <b>ขยายขนาดตัวอักษรทั้งเว็บไซต์ให้ใหญ่ขึ้น (18px) แบบเรียลไทม์แล้วครับ!</b>`;
-            }
-            if (qLower.includes('ตัวอักษรปกติ') || qLower.includes('ฟอนต์ปกติ') || qLower.includes('ขนาดตัวอักษรเดิม')) {
-                setLiveFontScale(16);
-                return `🔤 <b>ปรับขนาดตัวอักษรกลับเป็นขนาดมาตรฐาน (16px) เรียบร้อยแล้วครับ!</b>`;
-            }
-
-            // 6. เปิด/ปิด โหมดคลิกแก้ข้อความบนหน้าเว็บโดยตรง
-            if (qLower.includes('คลิกแก้ข้อความ') || qLower.includes('แก้ไขข้อความบนเว็บ') || qLower.includes('inline edit')) {
-                toggleInlinePageEditMode(true);
-                return `✏️ <b>เปิดโหมด "คลิกแก้ไขข้อความบนหน้าเว็บโดยตรง" ให้แล้วครับ!</b><br>
-                ตอนนี้คุณสามารถเอาเมาส์ไปคลิกที่หัวข้อ ชื่อการ์ด หรือข้อความใดก็ได้บนหน้าเว็บ แล้วพิมพ์แก้ไขสดๆ ได้เลยครับ`;
-            }
-
-            // 7. แก้ไขข้อมูลตัวเลขของต้นไม้/แปลงเพาะปลูกแบบเรียลไทม์ (เช่น "ปรับความสูงต้นที่ 1 เป็น 65", "แก้ความชื้นแปลงที่ 2 เป็น 78")
+            // แก้ไขข้อมูลตัวเลขของต้นไม้/แปลงเพาะปลูก (เช่น "ปรับความสูงต้นที่ 1 เป็น 65", "แก้ความชื้นแปลงที่ 2 เป็น 78")
             const targetPlot = findTargetPlotFromQuestion(qLower);
             if (targetPlot && (qLower.includes('ปรับ') || qLower.includes('แก้') || qLower.includes('ตั้งค่า') || qLower.includes('เปลี่ยน'))) {
                 let changedItems = [];
@@ -945,13 +828,7 @@
                 const moistMatch = q.match(/ความชื้น(?:ดิน)?(?:เป็น|อยู่ที่)?\s*(\d+(?:\.\d+)?)/);
                 const leafMatch = q.match(/(?:จำนวน)?ใบ(?:เป็น|อยู่ที่)?\s*(\d+)/);
                 const phMatch = q.match(/(?:ph|พีเอช)(?:เป็น|อยู่ที่)?\s*(\d+(?:\.\d+)?)/i);
-                const renameMatch = q.match(/(?:แก้ชื่อ|เปลี่ยนชื่อ)(?:แปลง|ต้น)?(?:ที่\s*\d+)?\s*เป็น\s*([^\s,].+)$/);
 
-                if (renameMatch && renameMatch[1]) {
-                    const cleanName = renameMatch[1].trim();
-                    updatePlotFieldLive(targetPlot.id, 'name', `แปลงที่ ${targetPlot.id}: ${cleanName}`);
-                    changedItems.push(`ชื่อแปลงเป็น "${targetPlot.name}"`);
-                }
                 if (heightMatch) {
                     updatePlotFieldLive(targetPlot.id, 'heightCm', Number(heightMatch[1]));
                     changedItems.push(`ความสูงเป็น ${heightMatch[1]} ซม.`);
@@ -971,9 +848,9 @@
 
                 if (changedItems.length > 0) {
                     renderLivePlotEditorTable();
-                    return `⚡ <b>อัปเดตข้อมูลของ "${escapeHtmlText(targetPlot.name)}" แบบเรียลไทม์เรียบร้อยแล้วครับ!</b><br>
-                    • รายการที่แก้ไขสด: <b>${changedItems.join(', ')}</b><br>
-                    • ระบบได้ซิงค์ข้อมูลใหม่เข้าสู่กราฟทุก 30 นาที, โมเดล 3D, แผนที่ GIS และรายงาน AI ทันทีครับ!`;
+                    return `⚡ <b>อัปเดตข้อมูลของ "${escapeHtmlText(targetPlot.name)}" เรียบร้อยแล้วครับ!</b><br>
+                    • รายการที่อัปเดต: <b>${changedItems.join(', ')}</b><br>
+                    • ซิงค์ข้อมูลใหม่เข้าสู่กราฟทุก 30 นาที, โมเดล 3D, แผนที่ GIS และรายงาน Excel/Word ทันทีครับ!`;
                 }
             }
 
@@ -996,19 +873,19 @@
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
-                    plainText: 'สวัสดีครับ! ผมคือ Antigravity AI (Google DeepMind Agent) ที่เข้ามาทำงานเป็นสมองกลหลักของเว็บไซต์นี้แล้วครับ คุณสามารถถามได้ทุกเรื่อง สั่งออกรายงานวิจัย หรือสั่งแก้ไขหน้าเว็บแบบเรียลไทม์ด้วยภาษาธรรมชาติได้ทันทีครับ',
-                    html: `สวัสดีครับ! 👋 ผมคือ <b>🧠 Antigravity AI Agent (Powered by Gemini & Cloud LLM)</b> ที่เข้ามาประจำการแทน AI ตัวเดิมบนเว็บไซต์นี้เรียบร้อยแล้วครับ!<br>
-                    ตอนนี้คุณสามารถคุยกับผมได้เหมือนคุยกับ AI อัจฉริยะทุกเรื่อง ไม่จำกัดแค่คำสั่งตายตัวอีกต่อไป:
+                    plainText: 'สวัสดีครับ! ผมคือ Antigravity AI Pro 5.0 สมองกลอัจฉริยะรุ่นใหม่ คุณสามารถถามวิเคราะห์เชิงลึกได้ทุกเรื่อง ขอไฟล์ Excel ได้ Excel ขอไฟล์ Word ได้ Word คำนวณสูตรปุ๋ย-น้ำ พยากรณ์ผลผลิต หรือถามความรู้ทั่วไปได้ทันทีครับ',
+                    html: `สวัสดีครับ! 👋 ผมคือ <b>🧠 Antigravity AI Pro 5.0 (Multi-Model Deep Reasoning & Report Engine)</b> ผู้ช่วยอัจฉริยะที่อัปเกรดความฉลาดขั้นสูงสำหรับระบบติดตามการเติบโตพืชผลครับ!<br>
+                    ความสามารถหลักที่คุณสั่งงานหรือถามผมได้ทันที:
                     <ul class="list-disc pl-5 mt-1.5 space-y-1 text-xs">
-                        <li>🧠 <b>ถาม-ตอบอัจฉริยะทุกเรื่อง (Deep Reasoning):</b> ถามวิเคราะห์เชิงลึก เขียนบทความ คำนวณสูตรปุ๋ย วิเคราะห์สถิติวิจัย วางแผนธุรกิจเกษตร หรือถามความรู้ทั่วไปได้ทุกคำถาม</li>
-                        <li>📑 <b>สั่งเขียนรายงานได้ทุกรูปแบบ (Custom & Official Report):</b> พิมพ์สั่งเช่น <i>"ขอรายงาน"</i>, <i>"เขียนรายงานวิเคราะห์เปรียบเทียบทุกแปลงแบบละเอียด"</i>, หรือ <i>"ร่างบทที่ 4 และบทที่ 5 สำหรับเล่มวิจัย"</i> พร้อมกดพิมพ์ PDF / โหลดไฟล์ Word (.doc) ได้ทันที</li>
-                        <li>⚡ <b>สั่งแก้ไขหน้าเว็บและควบคุมระบบแบบเรียลไทม์ (Agentic Live Edit):</b> พิมพ์สั่งด้วยภาษาพูดตามธรรมชาติ เช่น <i>"เปลี่ยนชื่อเว็บเป็น ติดตามการเติบโตพืชผล"</i>, <i>"เปิดโหมดมืดและเปลี่ยนธีมเป็นสีม่วง"</i>, <i>"แก้ความสูงต้นที่ 1 เป็น 72 ซม. แล้วเปิดน้ำทุกแปลง"</i> ผมจะลงมือแก้หน้าเว็บให้ทันที!</li>
+                        <li>📊 <b>ขอ Excel ได้ Excel / ขอ Word ได้ Word ทันที:</b> พิมพ์ <i>"ขอ Excel"</i> หรือ <i>"ขอ Word"</i> ระบบจะสร้างและดาวน์โหลดไฟล์ <code>.xls</code> หรือ <code>.doc</code> ที่รวมตารางสถิติ ($\bar{X}$, S.D.) และข้อมูลเซนเซอร์ 30 นาทีให้ทันที</li>
+                        <li>🧠 <b>วิเคราะห์เชิงลึกระดับผู้เชี่ยวชาญ (Deep Agronomic & Statistical Reasoning):</b> วิเคราะห์จัดอันดับการเติบโตทุกแปลง, คำนวณอัตราการเติบโตเฉลี่ยต่อวัน (ซม./วัน), คำนวณสูตรปุ๋ย N-P-K และปริมาณน้ำหยด (ลิตร/วัน), พยากรณ์รายได้และคาร์บอนเครดิต ($\text{tCO}_2\text{e}$)</li>
+                        <li>🌐 <b>ถาม-ตอบความรู้ทั่วไป & วิชาการได้ทุกเรื่อง:</b> เชื่อมต่อกับ Cloud LLM หลายโมเดลอัตโนมัติ ตอบได้ทั้งวิทยาศาสตร์ คณิตศาสตร์ การเขียนบทความวิจัย บทที่ 4–5 การเขียนโปรแกรม และความรู้รอบตัว</li>
                     </ul>
                     <div class="mt-2.5 flex flex-wrap gap-1.5">
                         <button type="button" onclick="askSmartFarmAI(null, 'ขอไฟล์ Excel สรุปข้อมูลทุกแปลงและเซนเซอร์ 30 นาที')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📊 ขอไฟล์ Excel (.xls)</button>
                         <button type="button" onclick="askSmartFarmAI(null, 'ขอไฟล์ Word รายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📘 ขอไฟล์ Word (.doc)</button>
-                        <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">📑 ขอรายงานฉบับเต็ม (A4)</button>
-                        <button type="button" onclick="switchTab('addTree')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">🌳 เปิดเมนูเพิ่มต้นไม้</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'วิเคราะห์เปรียบเทียบการเติบโตทุกแปลงเชิงลึก จัดอันดับ และชี้จุดที่ต้องปรับปรุง')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition shadow-sm">🏆 วิเคราะห์เปรียบเทียบทุกแปลง</button>
+                        <button type="button" onclick="askSmartFarmAI(null, 'คำนวณสูตรปุ๋ย N-P-K ปริมาณน้ำหยด และวิธีปรับค่า pH ดินของแต่ละแปลงอย่างละเอียด')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition">🧪 คำนวณสูตรปุ๋ย & น้ำ</button>
                     </div>`
                 });
             }
@@ -1433,10 +1310,211 @@
             `;
         }
 
+        // วิเคราะห์เชิงลึกเปรียบเทียบทุกแปลง จัดอันดับ Z-Score และอัตราการเติบโตต่อวัน
+        function buildDeepComparisonAnalysisHtml() {
+            const ctx = collectFullFarmAiContext();
+            const ranked = [...ctx.plotDetails].sort((a, b) => (b.latest.heightCm / Math.max(1, b.latest.ageDays)) - (a.latest.heightCm / Math.max(1, a.latest.ageDays)));
+            const heights = ctx.plotDetails.map(d => Number(d.latest.heightCm || 0));
+            const stH = calculateStats(heights);
+
+            const rowsHtml = ranked.map((d, i) => {
+                const growthVelocity = (Number(d.latest.heightCm) / Math.max(1, Number(d.latest.ageDays))).toFixed(2);
+                const zScore = stH.sd > 0 ? ((Number(d.latest.heightCm) - stH.mean) / stH.sd).toFixed(2) : '0.00';
+                const statusBadge = i === 0
+                    ? '<span class="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px] font-extrabold">🏆 อันดับ 1 (โตเร็วสุด)</span>'
+                    : (Number(d.latest.moisture) < 68
+                        ? '<span class="bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-extrabold">⚠️ ควรเพิ่มความชื้น</span>'
+                        : '<span class="bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full text-[10px] font-bold">✅ สมบูรณ์ดี</span>');
+                return `
+                    <tr class="border-b border-slate-200 hover:bg-emerald-50/40">
+                        <td class="py-2 px-2.5 font-extrabold text-center">#${i + 1}</td>
+                        <td class="py-2 px-2.5 font-bold text-slate-900">${d.plot.icon || '🌳'} ${escapeHtmlText(d.plot.name)}</td>
+                        <td class="py-2 px-2.5 text-center">${d.latest.ageDays} วัน</td>
+                        <td class="py-2 px-2.5 text-right font-extrabold text-emerald-700">${Number(d.latest.heightCm).toFixed(1)} ซม.</td>
+                        <td class="py-2 px-2.5 text-right font-bold text-teal-700">+${growthVelocity} ซม./วัน</td>
+                        <td class="py-2 px-2.5 text-center">${d.latest.leafCount} ใบ</td>
+                        <td class="py-2 px-2.5 text-center">${d.latest.moisture}% (pH ${d.latest.soilPh || 6.5})</td>
+                        <td class="py-2 px-2.5 text-right font-bold text-indigo-700">${Number(d.val30m).toFixed(ctx.metricCfg.decimals)}</td>
+                        <td class="py-2 px-2.5 text-center font-mono">${zScore}</td>
+                        <td class="py-2 px-2.5 text-center">${statusBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <div class="space-y-3">
+                    <div class="bg-emerald-950 text-white rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="text-xs sm:text-sm font-extrabold text-emerald-300">🏆 ผลการวิเคราะห์เปรียบเทียบเชิงลึกและจัดอันดับการเติบโต (${ctx.plotDetails.length} แปลง)</div>
+                            <div class="text-[11px] text-slate-300">คำนวณอัตราการเติบโตเฉลี่ยต่อวัน (Growth Velocity), ค่ามาตรฐาน Z-Score และเซนเซอร์รอบ ${ctx.slotTime} น.</div>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button type="button" onclick="exportAiExcelFile('telemetry30m')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📊 โหลด Excel</button>
+                            <button type="button" onclick="downloadAiReportWordDoc('executive')" class="bg-sky-400 hover:bg-sky-300 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📘 โหลด Word</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-xs border-collapse text-left bg-white">
+                            <thead>
+                                <tr class="bg-slate-900 text-white">
+                                    <th class="py-2 px-2.5 text-center">อันดับ</th>
+                                    <th class="py-2 px-2.5">แปลง / ชนิดพืช</th>
+                                    <th class="py-2 px-2.5 text-center">อายุ</th>
+                                    <th class="py-2 px-2.5 text-right">ความสูง</th>
+                                    <th class="py-2 px-2.5 text-right">อัตราโต/วัน</th>
+                                    <th class="py-2 px-2.5 text-center">ใบ</th>
+                                    <th class="py-2 px-2.5 text-center">ความชื้น/pH</th>
+                                    <th class="py-2 px-2.5 text-right">${escapeHtmlText(ctx.metricCfg.shortLabel)}</th>
+                                    <th class="py-2 px-2.5 text-center">Z-Score</th>
+                                    <th class="py-2 px-2.5 text-center">สถานะวินิจฉัย</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs space-y-1 text-slate-800">
+                        <div>📌 <b>สรุปเชิงสถิติ (Statistical Insight):</b> ความสูงเฉลี่ยทั้งฟาร์ม <b>X̄ = ${stH.mean.toFixed(2)} ซม.</b> (S.D. = ${stH.sd.toFixed(2)}, สัมประสิทธิ์การแปรผัน CV = ${((stH.sd / Math.max(1, stH.mean)) * 100).toFixed(1)}%)</div>
+                        <div>🥇 <b>แปลงที่เติบโตเร็วที่สุด:</b> <b>${escapeHtmlText(ranked[0].plot.name)}</b> ด้วยอัตราการเติบโต <b>+${(ranked[0].latest.heightCm / Math.max(1, ranked[0].latest.ageDays)).toFixed(2)} ซม./วัน</b></div>
+                        <div>💡 <b>ข้อเสนอแนะเชิงวิชาการ:</b> แปลงที่มีความชื้นต่ำกว่า 70% ควรเพิ่มเวลาเปิดระบบน้ำหยดช่วง 07:00–07:30 น. และ 16:30–17:00 น. เพื่อรักษาอัตราการสังเคราะห์แสงให้สูงต่อเนื่อง</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // คำนวณสูตรปุ๋ย N-P-K ปริมาณน้ำหยด (ลิตร/วัน) และวิธีปรับค่า pH ดินรายแปลงอย่างละเอียด
+        function buildFertilizerAndIrrigationPlanHtml() {
+            const ctx = collectFullFarmAiContext();
+            const rowsHtml = ctx.plotDetails.map(d => {
+                const age = Number(d.latest.ageDays || 28);
+                const height = Number(d.latest.heightCm || 40);
+                const moist = Number(d.latest.moisture || 70);
+                const ph = Number(d.latest.soilPh || 6.5);
+
+                const npkFormula = age <= 20 ? '25-7-7 (เร่งต้น-ราก)' : (age <= 45 ? '15-15-15 (บำรุงต้น-ใบสมดุล)' : '13-13-21 (เสริมโครงสร้างลำต้น)');
+                const npkGramPerTree = Math.round(15 + (height * 0.45));
+                const organicKg = (0.5 + (height * 0.015)).toFixed(2);
+                const waterDeficit = Math.max(0, 74 - moist);
+                const waterLitersPerDay = (1.8 + (height * 0.04) + (waterDeficit * 0.18)).toFixed(2);
+                const phAction = ph < 6.0
+                    ? `เติมโดโลไมท์ ${Math.round((6.5 - ph) * 120)} กรัม/ต้น`
+                    : (ph > 6.8 ? `เติมปุ๋ยหมักอินทรีย์น้ำปรับลด pH` : 'สมดุลดีมาก (ไม่ต้องปรับ)');
+
+                return `
+                    <tr class="border-b border-slate-200 hover:bg-sky-50/40">
+                        <td class="py-2 px-2.5 font-bold text-slate-900">${d.plot.icon || '🌳'} ${escapeHtmlText(d.plot.name)}</td>
+                        <td class="py-2 px-2.5 text-center">${age} วัน (${height} ซม.)</td>
+                        <td class="py-2 px-2.5 font-extrabold text-emerald-800">${npkFormula}</td>
+                        <td class="py-2 px-2.5 text-right font-bold text-teal-800">${npkGramPerTree} กรัม/ต้น/15วัน</td>
+                        <td class="py-2 px-2.5 text-right">${organicKg} กก./เดือน</td>
+                        <td class="py-2 px-2.5 text-right font-extrabold text-sky-700">${waterLitersPerDay} ลิตร/วัน</td>
+                        <td class="py-2 px-2.5 text-center">${ph.toFixed(1)} (${phAction})</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <div class="space-y-3">
+                    <div class="bg-sky-950 text-white rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="text-xs sm:text-sm font-extrabold text-sky-300">🧪 ตารางคำนวณสูตรปุ๋ย N-P-K ปริมาณการให้น้ำหยด และการจัดการดินรายแปลง</div>
+                            <div class="text-[11px] text-slate-300">คำนวณจากอายุพืช ความสูง ความชื้นสัมพัทธ์ในดิน และค่า pH จริงของแต่ละแปลง</div>
+                        </div>
+                        <button type="button" onclick="exportAiExcelFile('health')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📊 โหลดตาราง Excel</button>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-xs border-collapse text-left bg-white">
+                            <thead>
+                                <tr class="bg-slate-900 text-white">
+                                    <th class="py-2 px-2.5">แปลง / ชนิดพืช</th>
+                                    <th class="py-2 px-2.5 text-center">อายุ & ความสูง</th>
+                                    <th class="py-2 px-2.5">สูตรปุ๋ย N-P-K แนะนำ</th>
+                                    <th class="py-2 px-2.5 text-right">ปริมาณปุ๋ยเคมี</th>
+                                    <th class="py-2 px-2.5 text-right">ปุ๋ยอินทรีย์/หมัก</th>
+                                    <th class="py-2 px-2.5 text-right">ปริมาณน้ำหยด/วัน</th>
+                                    <th class="py-2 px-2.5 text-center">ค่า pH & การปรับปรุงดิน</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // พยากรณ์ผลผลิต รายได้ ต้นทุน กำไรสุทธิ และคาร์บอนเครดิต (tCO2e)
+        function buildEconomicAndCarbonForecastHtml() {
+            const ctx = collectFullFarmAiContext();
+            let totalRev = 0;
+            let totalCost = 0;
+            let totalCarbon = 0;
+
+            const rowsHtml = ctx.plotDetails.map(d => {
+                const h = Number(d.latest.heightCm || 40);
+                const leaves = Number(d.latest.leafCount || 16);
+                const estRevenue = Math.round(12500 + (h * 210) + (leaves * 180));
+                const estCost = Math.round(3200 + (h * 42));
+                const netProfit = estRevenue - estCost;
+                const roi = ((netProfit / estCost) * 100).toFixed(1);
+                const carbonTons = Number((0.42 + (h * 0.018)).toFixed(2));
+                totalRev += estRevenue;
+                totalCost += estCost;
+                totalCarbon += carbonTons;
+
+                return `
+                    <tr class="border-b border-slate-200 hover:bg-amber-50/40">
+                        <td class="py-2 px-2.5 font-bold text-slate-900">${d.plot.icon || '🌳'} ${escapeHtmlText(d.plot.name)}</td>
+                        <td class="py-2 px-2.5 text-right">${estRevenue.toLocaleString()} บาท</td>
+                        <td class="py-2 px-2.5 text-right text-slate-600">${estCost.toLocaleString()} บาท</td>
+                        <td class="py-2 px-2.5 text-right font-extrabold text-emerald-700">+${netProfit.toLocaleString()} บาท</td>
+                        <td class="py-2 px-2.5 text-center font-bold text-amber-700">${roi}%</td>
+                        <td class="py-2 px-2.5 text-right font-bold text-teal-800">${carbonTons.toFixed(2)} tCO₂e</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const totalNet = totalRev - totalCost;
+            return `
+                <div class="space-y-3">
+                    <div class="bg-amber-950 text-white rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="text-xs sm:text-sm font-extrabold text-amber-300">💰 รายงานพยากรณ์ผลตอบแทนทางเศรษฐกิจ กำไรสุทธิ (ROI) และคาร์บอนเครดิต</div>
+                            <div class="text-[11px] text-slate-300">ประเมินจากอัตราการเติบโตดัชนีมวลชีวภาพ (Biomass) และความสมบูรณ์ของแต่ละแปลง</div>
+                        </div>
+                        <button type="button" onclick="downloadAiReportWordDoc('financial')" class="bg-sky-400 hover:bg-sky-300 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📘 โหลดรายงาน Word</button>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-xs border-collapse text-left bg-white">
+                            <thead>
+                                <tr class="bg-slate-900 text-white">
+                                    <th class="py-2 px-2.5">แปลงเพาะปลูก</th>
+                                    <th class="py-2 px-2.5 text-right">รายได้ประเมิน</th>
+                                    <th class="py-2 px-2.5 text-right">ต้นทุนสะสม</th>
+                                    <th class="py-2 px-2.5 text-right">กำไรสุทธิคาดการณ์</th>
+                                    <th class="py-2 px-2.5 text-center">ROI (%)</th>
+                                    <th class="py-2 px-2.5 text-right">กักเก็บคาร์บอน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                                <tr class="bg-emerald-950 text-white font-extrabold">
+                                    <td class="py-2.5 px-2.5">รวมทั้งฟาร์ม (${ctx.plotDetails.length} แปลง)</td>
+                                    <td class="py-2.5 px-2.5 text-right text-amber-300">${totalRev.toLocaleString()} บาท</td>
+                                    <td class="py-2.5 px-2.5 text-right">${totalCost.toLocaleString()} บาท</td>
+                                    <td class="py-2.5 px-2.5 text-right text-emerald-300">+${totalNet.toLocaleString()} บาท</td>
+                                    <td class="py-2.5 px-2.5 text-center text-amber-300">${((totalNet / Math.max(1, totalCost)) * 100).toFixed(1)}%</td>
+                                    <td class="py-2.5 px-2.5 text-right text-teal-300">${totalCarbon.toFixed(2)} tCO₂e</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
         function buildLocalSmartFarmAiResponse(rawQuestion) {
             const q = rawQuestion.toLowerCase().trim();
 
-            // 0. ตรวจสอบคำสั่งแก้ไขหน้าเว็บแบบเรียลไทม์ก่อน
+            // 0. ตรวจสอบคำสั่งโหมดมืด/อัปเดตตัวเลขแปลง
             const liveEditResult = tryProcessRealTimeWebEdit(rawQuestion);
             if (liveEditResult) {
                 return liveEditResult;
@@ -1448,6 +1526,21 @@
             }
             if (q.includes('word') || q.includes('เวิร์ด') || q.includes('.doc') || q.includes('ไฟล์ word') || q.includes('รายงาน word')) {
                 return buildChatWordResponseCard(rawQuestion);
+            }
+
+            // 0.6 วิเคราะห์เปรียบเทียบทุกแปลงเชิงลึก / จัดอันดับ
+            if (q.includes('เปรียบเทียบ') || q.includes('จัดอันดับ') || q.includes('วิเคราะห์ทุกแปลง')) {
+                return buildDeepComparisonAnalysisHtml();
+            }
+
+            // 0.7 คำนวณสูตรปุ๋ย N-P-K / น้ำหยด / การปรับค่า pH ดิน
+            if (q.includes('ปุ๋ย') || q.includes('n-p-k') || q.includes('npk') || q.includes('น้ำหยด') || q.includes('ปรับค่า ph')) {
+                return buildFertilizerAndIrrigationPlanHtml();
+            }
+
+            // 0.8 พยากรณ์ผลผลิต รายได้ กำไร คาร์บอนเครดิต
+            if (q.includes('พยากรณ์') || q.includes('รายได้') || q.includes('กำไร') || q.includes('คาร์บอน') || q.includes('roi')) {
+                return buildEconomicAndCarbonForecastHtml();
             }
 
             // 1. ตรวจสอบว่าผู้ใช้กำลัง "ขอรายงาน" หรือไม่ -> สร้างรายงานฉบับสมบูรณ์ให้ทันที!
@@ -1509,19 +1602,19 @@
                 if (nameMatch && nameMatch[1] && !['ไม้', 'ไม้เพิ่ม', 'ใหม่', 'อีก', 'ให้หน่อย'].includes(nameMatch[1])) {
                     if (customInput) customInput.value = 'กล้าไม้' + nameMatch[1];
                 }
-                simulateAnotherTree30Min(false);
+                simulateAnotherTree30Min(true);
                 renderLivePlotEditorTable();
                 generateAiOfficialReport();
                 const newest = plots[plots.length - 1];
                 aiLastMentionedPlotId = newest.id;
-                return `🌱 <b>จัดให้เลยครับ! ผมสร้างและปักหมุด "${newest.name}" ลงบนเว็บแบบเรียลไทม์เรียบร้อยแล้ว</b>
+                return `🌱 <b>จัดให้เลยครับ! ผมสร้าง "${newest.name}" และเปิดหน้าแผนที่ดาวเทียมเพื่อให้คุณคลิกปักหมุดเรียบร้อยแล้ว</b>
                 <ul class="list-disc pl-5 mt-1 space-y-0.5">
-                    <li>📍 <b>พิกัดหมุดบนแผนที่ดาวเทียม:</b> ${Number(newest.lat).toFixed(4)}, ${Number(newest.lng).toFixed(4)}</li>
+                    <li>📍 <b>พิกัดเริ่มต้นบนแผนที่ดาวเทียม:</b> ${Number(newest.lat).toFixed(4)}, ${Number(newest.lng).toFixed(4)} (คลิกจุดใหม่บนแผนที่เพื่อย้ายหมุดได้ทันที)</li>
                     <li>📈 <b>กราฟทุก 30 นาที & รายงาน:</b> เพิ่มเส้นกราฟและอัปเดตตารางรายงานให้ทันที</li>
                 </ul>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                     <button type="button" onclick="switchTab('report30m')" class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-lg">📈 ดูกราฟที่เพิ่งเพิ่ม</button>
-                    <button type="button" onclick="jumpToPlotOnMap(${newest.id})" class="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-lg">🗺️ ซูมดูหมุดบนแผนที่</button>
+                    <button type="button" onclick="startPinningTreeOnMap(${newest.id})" class="bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-lg">📍 ไปคลิกปักหมุดบนแผนที่</button>
                 </div>`;
             }
 
@@ -1533,7 +1626,7 @@
                 else if (q.includes('ม่วง')) themeKey = 'violet';
                 else if (q.includes('ชมพู') || q.includes('แดง')) themeKey = 'rose';
                 setAppTheme(themeKey);
-                return `🎨 เปลี่ยนโทนสีของเว็บไซต์แบบเรียลไทม์เป็น <b>"${THEMES[themeKey].name}"</b> ให้เรียบร้อยแล้วครับ!`;
+                return `🎨 เปลี่ยนโทนสีของเว็บไซต์เป็น <b>"${THEMES[themeKey].name}"</b> ให้เรียบร้อยแล้วครับ!`;
             }
 
             if (q.includes('เปิดน้ำ') || q.includes('รดน้ำ')) {
@@ -1549,61 +1642,56 @@
             }
 
             // 5. ปรึกษาปัญหาโรคพืช / อาการผิดปกติ
-            if (q.includes('ใบเหลือง') || q.includes('ใบไหม้') || q.includes('รากเน่า') || q.includes('โรค') || q.includes('แมลง') || q.includes('หนอน') || q.includes('เพลี้ย') || q.includes('เหี่ยว') || q.includes('โตช้า')) {
-                return `🩺 <b>การวินิจฉัยอาการผิดปกติของต้นไม้และวิธีแก้ไขโดย AgriGrow AI:</b><br>
+            if (q.includes('ใบเหลือง') || q.includes('ใบไหม้') || q.includes('รากเน่า') || q.includes('โรค') || q.includes('แมลง') || q.includes('หนอน') || q.includes('เพลี้ย') || q.includes('เหี่ยว') || q.includes('โตช้า') || q.includes('วินิจฉัย')) {
+                return `🩺 <b>การวินิจฉัยความเสี่ยงโรคพืช แมลงศัตรูพืช และแนวทางป้องกันรักษาโดย Antigravity AI Pro:</b><br>
                 <div class="space-y-2 mt-1.5 text-xs">
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5">
-                        <b>🍂 1. อาการใบเหลือง / ขอบใบไหม้:</b>
-                        <ul class="list-disc pl-4 mt-0.5 space-y-0.5">
-                            <li><b>ใบล่างเหลืองก่อน:</b> มักเกิดจากขาดธาตุไนโตรเจน (N) หรือความชื้นในดินต่ำกว่า 60% แนะนำให้เสริมปุ๋ยอินทรีย์น้ำหรือปุ๋ยสูตรเสมอ 15-15-15</li>
-                            <li><b>ใบอ่อนเหลืองซีดแต่เส้นใบเขียว:</b> เกิดจากค่า pH ดินสูงเกิน 7.0 ทำให้รากดูดธาตุเหล็กไม่ได้ ควรปรับ pH ดินให้อยู่ในช่วง <b>6.0 – 6.6</b></li>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                        <b>🍂 1. อาการใบเหลือง / ขอบใบไหม้ / โตช้า:</b>
+                        <ul class="list-disc pl-4 mt-1 space-y-0.5">
+                            <li><b>ใบล่างเหลืองก่อน (ขาดไนโตรเจน N):</b> แนะนำให้เสริมปุ๋ยสูตร 25-7-7 หรือ 15-15-15 อัตรา 25–35 กรัม/ต้น ร่วมกับน้ำหมักชีวภาพ</li>
+                            <li><b>ใบอ่อนเหลืองแต่เส้นใบยังเขียว (ขาดธาตุเหล็ก Fe / pH สูง):</b> ตรวจสอบค่า pH ดินให้อยู่ในช่วง <b>6.0 – 6.6</b> เพื่อให้รากดูดซึมจุลธาตุได้เต็มประสิทธิภาพ</li>
                         </ul>
                     </div>
-                    <div class="bg-rose-50 border border-rose-200 rounded-xl p-2.5">
-                        <b>🦠 2. อาการโคนเน่า / รากเน่า:</b>
-                        งดให้น้ำชั่วคราว พรวนดินผิวหน้าให้โปร่ง และใช้เชื้อราไตรโคเดอร์มา (Trichoderma) ผสมน้ำราดโคนต้น
+                    <div class="bg-rose-50 border border-rose-200 rounded-xl p-3">
+                        <b>🦠 2. การป้องกันโรครากเน่า-โคนเน่า (Phytophthora) และแมลงกินใบ:</b>
+                        <ul class="list-disc pl-4 mt-1 space-y-0.5">
+                            <li>ควบคุมความชื้นดินไม่ให้ขังแฉะเกิน 80% RH และใช้เชื้อรา <b>ไตรโคเดอร์มา (Trichoderma harzianum)</b> อัตรา 50 กรัม/น้ำ 20 ลิตร ราดโคนต้นทุก 15 วัน</li>
+                            <li>ป้องกันหนอนและเพลี้ยไฟด้วยสารสกัดสะเดา (Azadirachtin) หรือเชื้อราบิวเวอเรียฉีดพ่นช่วงเย็น</li>
+                        </ul>
                     </div>
                 </div>`;
             }
 
-            // 6. หากถามเจาะจงถึงต้นไม้รายต้น -> แสดงข้อมูลพร้อมปุ่มออกรายงานของต้นนั้น
+            // 6. หากถามเจาะจงถึงต้นไม้รายต้น -> แสดงข้อมูลเชิงลึกพร้อมปุ่มออกรายงานของต้นนั้น
             const targetPlot = findTargetPlotFromQuestion(q);
             if (targetPlot) {
                 const detail = treeDetails.find(t => t.plot.id === targetPlot.id) || treeDetails[0];
                 const rank = [...treeDetails].sort((a, b) => b.val30m - a.val30m).findIndex(t => t.plot.id === targetPlot.id) + 1;
-                return `🔍 <b>ข้อมูลวิเคราะห์เจาะจง: ${detail.plot.icon || '🌳'} ${detail.plot.name}</b><br>
+                const velocity = (Number(detail.latest.heightCm) / Math.max(1, Number(detail.latest.ageDays))).toFixed(2);
+                return `🔍 <b>ข้อมูลวิเคราะห์เชิงลึก: ${detail.plot.icon || '🌳'} ${detail.plot.name}</b><br>
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-1.5 text-xs space-y-1">
                     <div>📍 <b>โซนและพิกัดหมุดแผนที่:</b> ${detail.plot.zone} (Lat ${Number(detail.plot.lat || 17.394).toFixed(4)}, Lng ${Number(detail.plot.lng || 104.769).toFixed(4)})</div>
-                    <div>📏 <b>การเติบโตล่าสุด:</b> อายุ <b>${detail.latest.ageDays} วัน</b> • ความสูง <b>${detail.latest.heightCm} ซม.</b> • จำนวนใบ <b>${detail.latest.leafCount} ใบ</b></div>
+                    <div>📏 <b>การเติบโตล่าสุด:</b> อายุ <b>${detail.latest.ageDays} วัน</b> • ความสูง <b>${detail.latest.heightCm} ซม.</b> (โตเฉลี่ย <b>+${velocity} ซม./วัน</b>) • จำนวนใบ <b>${detail.latest.leafCount} ใบ</b></div>
                     <div>💧 <b>สภาพดิน:</b> ความชื้น <b>${detail.latest.moisture}% RH</b> • ค่า pH <b>${detail.latest.soilPh || 6.5}</b> • คะแนนสุขภาพ <b>${detail.healthAvg.toFixed(2)} / 5.00</b></div>
                     <div>⏱️ <b>ค่าในกราฟทุก 30 นาที (${slotTime} น.):</b> วัดค่า ${metricCfg.shortLabel} ได้ <b>${detail.val30m.toFixed(metricCfg.decimals)} ${metricCfg.unit}</b> (อันดับที่ <b>${rank}</b> จาก ${plots.length} ต้น)</div>
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
-                    <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานของ แปลงที่ ${detail.plot.id}')" class="bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-lg">📑 ออกรายงานเฉพาะต้นนี้</button>
-                    <button type="button" onclick="jumpToPlotOnMap(${detail.plot.id})" class="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-lg">🗺️ ซูมดูหมุดบนแผนที่</button>
+                    <button type="button" onclick="exportAiExcelFile('telemetry30m', '${detail.plot.id}')" class="bg-emerald-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg">📊 โหลด Excel เฉพาะต้นนี้</button>
+                    <button type="button" onclick="downloadAiReportWordDoc('executive', '${detail.plot.id}')" class="bg-sky-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg">📘 โหลด Word เฉพาะต้นนี้</button>
+                    <button type="button" onclick="jumpToPlotOnMap(${detail.plot.id})" class="bg-amber-500 text-slate-950 text-xs font-bold px-3 py-1 rounded-lg">🗺️ ซูมดูหมุดบนแผนที่</button>
                 </div>`;
             }
 
             // 7. คำถามเกี่ยวกับกราฟทุก 30 นาที / สรุปผล
-            if (q.includes('30') || q.includes('กราฟ') || q.includes('สรุป') || q.includes('ดีสุด') || q.includes('เปรียบเทียบ')) {
+            if (q.includes('30') || q.includes('กราฟ') || q.includes('สรุป') || q.includes('ดีสุด')) {
                 return buildChatReportResponseCard('รายงานกราฟ 30 นาที');
             }
 
-            // 8. คำตอบสนทนาอัจฉริยะพร้อมปุ่มขอรายงานและแก้ไขเว็บสด
-            return `💬 <b>เกี่ยวกับ "${escapeHtmlText(rawQuestion)}" ที่คุณสอบถาม:</b><br>
-            จากข้อมูลในระบบสมาร์ทฟาร์ม จ.นครพนม ขณะนี้ (มีต้นไม้ทั้งหมด <b>${plots.length} ต้น</b>, รอบสรุปผลทุก 30 นาทีเวลา <b>${slotTime} น.</b>):
-            <ul class="list-disc pl-5 mt-1.5 space-y-1 text-xs">
-                <li>🏆 <b>ต้นที่เติบโตโดดเด่นที่สุด:</b> <b>${best30m.plot.name}</b> (สูง ${best30m.latest.heightCm} ซม., ${metricCfg.shortLabel} = ${best30m.val30m.toFixed(metricCfg.decimals)} ${metricCfg.unit})</li>
-                <li>💧 <b>ความชื้นดินเฉลี่ยทั้งฟาร์ม:</b> <b>${calculateStats(treeDetails.map(t => t.latest.moisture)).mean.toFixed(1)}% RH</b> (ค่า pH เฉลี่ย 6.5)</li>
-                <li>💡 <b>สั่งงานด่วน:</b> พิมพ์ว่า <b>"ขอรายงาน"</b> เพื่อรับรายงานตารางสถิติฉบับเต็ม หรือพิมพ์ <b>"เปลี่ยนชื่อเว็บเป็น..."</b> เพื่อแก้ไขหน้าเว็บแบบเรียลไทม์ได้เลยครับ!</li>
-            </ul>
-            <div class="mt-2 flex flex-wrap gap-1.5">
-                <button type="button" onclick="askSmartFarmAI(null, 'ขอรายงานสรุปภาพรวมสมาร์ทฟาร์มฉบับเต็ม')" class="bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-lg">📑 ขอรายงานฉบับเต็มทันที</button>
-                <button type="button" onclick="switchAiSubTab('editor')" class="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-lg">🛠️ เปิดแผงแก้ไขเว็บเรียลไทม์</button>
-            </div>`;
+            // 8. คำตอบวิเคราะห์ภาพรวมอัจฉริยะ
+            return buildDeepComparisonAnalysisHtml();
         }
 
-        // ประมวลผลคำสั่ง Agentic Action จาก LLM (<AGY_ACTION>{...}</AGY_ACTION>) เพื่อแก้ไขหน้าเว็บสด
+        // ประมวลผลคำสั่ง Agentic Action จาก LLM (<AGY_ACTION>{...}</AGY_ACTION>) สำหรับจัดการข้อมูลเกษตรและรายงาน
         function executeAgenticJsonActions(rawLlmText) {
             if (!rawLlmText) return '';
             const matches = [...String(rawLlmText).matchAll(/<AGY_ACTION>([\s\S]*?)<\/AGY_ACTION>/gi)];
@@ -1612,29 +1700,6 @@
             for (const m of matches) {
                 try {
                     const act = JSON.parse(m[1].trim());
-                    if (act.setTitle) {
-                        liveWebConfig.headerTitle = String(act.setTitle);
-                        liveWebConfig.sidebarTitle = String(act.setTitle).slice(0, 38);
-                        syncInputsFromLiveWebConfig();
-                        applyLiveWebConfigToDOM();
-                        saveLiveWebConfig();
-                        executedBadges.push(`✅ เปลี่ยนชื่อเว็บเป็น "${act.setTitle}"`);
-                    }
-                    if (act.setSubtitle) {
-                        liveWebConfig.headerSubtitle = String(act.setSubtitle);
-                        syncInputsFromLiveWebConfig();
-                        applyLiveWebConfigToDOM();
-                        saveLiveWebConfig();
-                        executedBadges.push(`✅ เปลี่ยนคำอธิบายเว็บ`);
-                    }
-                    if (act.setBanner) {
-                        liveWebConfig.bannerText = '📢 ' + String(act.setBanner);
-                        liveWebConfig.bannerVisible = true;
-                        syncInputsFromLiveWebConfig();
-                        applyLiveWebConfigToDOM();
-                        saveLiveWebConfig();
-                        executedBadges.push(`📢 อัปเดตแบนเนอร์ประกาศ`);
-                    }
                     if (typeof act.darkMode === 'boolean') {
                         toggleDarkModeUI(act.darkMode);
                         executedBadges.push(act.darkMode ? `🌙 เปิดโหมดมืด` : `☀️ เปิดโหมดสว่าง`);
@@ -1651,7 +1716,7 @@
                     if (act.addTree && typeof simulateAnotherTree30Min === 'function') {
                         const customInput = document.getElementById('inputSimTreeName');
                         if (customInput && typeof act.addTree === 'string') customInput.value = act.addTree;
-                        simulateAnotherTree30Min(false);
+                        simulateAnotherTree30Min(true);
                         renderLivePlotEditorTable();
                         executedBadges.push(`🌳 เพิ่มต้นไม้ใหม่ลงระบบ`);
                     }
@@ -1678,16 +1743,16 @@
             }
             if (executedBadges.length === 0) return '';
             return `<div class="bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl px-3 py-2 text-xs font-bold mb-2 flex flex-wrap gap-1.5 items-center">
-                <span>⚡ <b>Antigravity Action Executed:</b></span>
+                <span>⚡ <b>Antigravity AI Action:</b></span>
                 ${executedBadges.map(b => `<span class="bg-white border border-emerald-200 px-2 py-0.5 rounded-lg">${escapeHtmlText(b)}</span>`).join('')}
             </div>`;
         }
 
         async function callAntigravityCloudLLM(question, systemPrompt) {
             const savedApiKey = localStorage.getItem(STORAGE_KEY_GEMINI_API) || '';
-            const recentTurns = aiChatHistory.slice(-8).map(m => ({
+            const recentTurns = aiChatHistory.slice(-10).map(m => ({
                 role: m.role === 'user' ? 'user' : 'assistant',
-                content: (m.plainText || m.html.replace(/<[^>]+>/g, ' ')).slice(0, 1200)
+                content: (m.plainText || m.html.replace(/<[^>]+>/g, ' ')).slice(0, 1600)
             }));
 
             // 1. หากผู้ใช้ใส่ Gemini API Key ไว้ ให้ยิงตรงไปยัง Google Gemini 2.5 Flash
@@ -1702,7 +1767,8 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             systemInstruction: { parts: [{ text: systemPrompt }] },
-                            contents: geminiTurns
+                            contents: geminiTurns,
+                            generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
                         })
                     });
                     const data = await resp.json();
@@ -1711,36 +1777,39 @@
                 } catch (err) {}
             }
 
-            // 2. เชื่อมต่ออัตโนมัติกับ Antigravity Cloud LLM (OpenAI/Gemini Compatible — ไม่ต้องใช้ API Key)
-            try {
-                const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 14000);
-                const resp = await fetch('https://text.pollinations.ai/openai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    signal: ctrl.signal,
-                    body: JSON.stringify({
-                        model: 'openai',
-                        messages: [
-                            { role: 'system', content: systemPrompt },
-                            ...recentTurns
-                        ],
-                        temperature: 0.5
-                    })
-                });
-                clearTimeout(timer);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    const text = data?.choices?.[0]?.message?.content;
-                    if (text && text.trim()) return text.trim();
-                }
-            } catch (err) {}
+            // 2. เชื่อมต่ออัตโนมัติแบบ Multi-Model Cascade (openai-large -> openai -> mistral)
+            const modelsToTry = ['openai-large', 'openai', 'mistral'];
+            for (const modelName of modelsToTry) {
+                try {
+                    const ctrl = new AbortController();
+                    const timer = setTimeout(() => ctrl.abort(), 14000);
+                    const resp = await fetch('https://text.pollinations.ai/openai', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        signal: ctrl.signal,
+                        body: JSON.stringify({
+                            model: modelName,
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                ...recentTurns
+                            ],
+                            temperature: 0.4
+                        })
+                    });
+                    clearTimeout(timer);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const text = data?.choices?.[0]?.message?.content;
+                        if (text && text.trim()) return text.trim();
+                    }
+                } catch (err) {}
+            }
 
             // 3. Fallback Cloud Endpoint สำรอง
             try {
                 const ctrl2 = new AbortController();
                 const timer2 = setTimeout(() => ctrl2.abort(), 10000);
-                const shortSys = systemPrompt.slice(0, 700);
+                const shortSys = systemPrompt.slice(0, 750);
                 const url = `https://text.pollinations.ai/${encodeURIComponent(question)}?model=openai&system=${encodeURIComponent(shortSys)}`;
                 const resp2 = await fetch(url, { signal: ctrl2.signal });
                 clearTimeout(timer2);
@@ -1757,7 +1826,7 @@
             const inputEl = sourceInputId ? document.getElementById(sourceInputId) : null;
             const question = (presetQuestionText || (inputEl ? inputEl.value : '') || '').trim();
             if (!question) {
-                showToast('กรุณาพิมพ์ข้อความหรือคำสั่งให้ Antigravity AI ครับ');
+                showToast('กรุณาพิมพ์คำถามหรือคำสั่งให้ Antigravity AI Pro ครับ');
                 return;
             }
             if (inputEl && !presetQuestionText) {
@@ -1772,7 +1841,6 @@
             });
 
             const qLower = question.toLowerCase();
-            // ตรวจสอบคำสั่งแก้ไขเว็บเรียลไทม์ หรือ ขอรายงานทางการที่ต้องทำงานทันที 0 วินาที
             const instantWebEditHtml = tryProcessRealTimeWebEdit(question);
             if (instantWebEditHtml) {
                 aiChatHistory.push({
@@ -1827,6 +1895,49 @@
                 return;
             }
 
+            // คำถามวิเคราะห์เชิงลึกเฉพาะทาง (แสดงตารางคำนวณทันที 0 วินาที!)
+            if (qLower.includes('เปรียบเทียบ') || qLower.includes('จัดอันดับ') || qLower.includes('วิเคราะห์ทุกแปลง')) {
+                const compHtml = buildDeepComparisonAnalysisHtml();
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'วิเคราะห์เปรียบเทียบเชิงลึกและจัดอันดับการเติบโตของทุกแปลงเรียบร้อยแล้วครับ',
+                    html: compHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('วิเคราะห์เปรียบเทียบเชิงลึกและจัดอันดับการเติบโตของทุกแปลงให้เรียบร้อยแล้วครับ');
+                return;
+            }
+
+            if (qLower.includes('คำนวณสูตรปุ๋ย') || qLower.includes('คำนวณปุ๋ย') || qLower.includes('n-p-k') || qLower.includes('ปริมาณน้ำหยด')) {
+                const fertHtml = buildFertilizerAndIrrigationPlanHtml();
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'คำนวณสูตรปุ๋ย N-P-K ปริมาณน้ำหยด และวิธีปรับค่า pH ดินของแต่ละแปลงให้เรียบร้อยแล้วครับ',
+                    html: fertHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('คำนวณสูตรปุ๋ยและปริมาณน้ำหยดรายแปลงให้เรียบร้อยแล้วครับ');
+                return;
+            }
+
+            if (qLower.includes('พยากรณ์ผลผลิต') || qLower.includes('พยากรณ์รายได้') || qLower.includes('คาร์บอนเครดิต')) {
+                const econHtml = buildEconomicAndCarbonForecastHtml();
+                aiChatHistory.push({
+                    role: 'ai',
+                    time: getCurrentTimeShort(),
+                    plainText: 'พยากรณ์ผลผลิต รายได้ กำไรสุทธิ และคาร์บอนเครดิตของทั้งฟาร์มให้เรียบร้อยแล้วครับ',
+                    html: econHtml
+                });
+                renderAiChatMessages();
+                renderAiLiveDiagnostics();
+                speakAiText('พยากรณ์ผลผลิต รายได้ และคาร์บอนเครดิตของทั้งฟาร์มให้เรียบร้อยแล้วครับ');
+                return;
+            }
+
             const isDirectReportRequest =
                 qLower.includes('ขอรายงาน') || qLower.includes('ออกรายงาน') ||
                 qLower.includes('สร้างรายงาน') || qLower.includes('รายงานสรุป') ||
@@ -1851,37 +1962,47 @@
 
             const slotTime = typeof currentActive30MinSlot !== 'undefined' ? currentActive30MinSlot : '12:00';
             const metricKey = typeof current30MinMetric !== 'undefined' ? current30MinMetric : 'growthRate';
+            const heightsAll = plots.map(p => {
+                const l = logs.filter(r => r.plotId === p.id).sort((a, b) => b.ageDays - a.ageDays)[0];
+                return Number(l?.heightCm || 40);
+            });
+            const stHeight = calculateStats(heightsAll);
             const farmContext = plots.map(p => {
                 const pLogs = logs.filter(r => r.plotId === p.id).sort((a, b) => b.ageDays - a.ageDays);
                 const latest = pLogs[0] || {};
+                const age = Number(latest.ageDays || 28);
+                const h = Number(latest.heightCm || 40);
+                const vel = (h / Math.max(1, age)).toFixed(2);
                 const val30 = (typeof telemetry30MinStore !== 'undefined' && telemetry30MinStore[p.id] && telemetry30MinStore[p.id][metricKey])
                     ? telemetry30MinStore[p.id][metricKey][slotTime]
                     : '-';
-                return `[แปลงที่ ${p.id}] ${p.name} (โซน: ${p.zone}, พิกัด ${p.lat},${p.lng}): อายุ ${latest.ageDays || 28} วัน, สูง ${latest.heightCm || 40} ซม., ใบ ${latest.leafCount || 16} ใบ, ความชื้นดิน ${latest.moisture || 70}%, pH ${latest.soilPh || 6.5}, อัตราเติบโตรอบ 30 นาที (${slotTime} น.) = ${val30}`;
+                return `[แปลงที่ ${p.id}] ${p.name} (โซน: ${p.zone}, พิกัด ${p.lat},${p.lng}): อายุ ${age} วัน, ความสูง ${h} ซม. (อัตราโต +${vel} ซม./วัน), จำนวนใบ ${latest.leafCount || 16} ใบ, ความชื้นดิน ${latest.moisture || 70}%, pH ${latest.soilPh || 6.5}, อัตราเติบโตรอบ 30 นาที (${slotTime} น.) = ${val30}`;
             }).join('\n');
 
-            const systemPrompt = `คุณคือ "Antigravity AI" ผู้ช่วยอัจฉริยะระดับสูงที่พัฒนาโดยทีม Google DeepMind ประจำอยู่บนเว็บไซต์ "ติดตามการเติบโตพืชผล (AgriGrow Nakhon Phanom)"
-หน้าที่ของคุณ:
-1. ตอบคำถามทุกเรื่องอย่างฉลาดลึกซึ้ง เป็นธรรมชาติ ชัดเจน มีโครงสร้างสวยงาม (ใช้หัวข้อ, ตาราง Markdown, รายการย่อย) ไม่ว่าจะเป็นเรื่องการเกษตร วิทยาศาสตร์ การเขียนรายงาน วิจัย คณิตศาสตร์ การเขียนโปรแกรม หรือความรู้ทั่วไป
-2. ข้อมูลจริงของแปลงปลูกในระบบขณะนี้ (${plots.length} แปลง, รอบเวลาทุก 30 นาทีล่าสุดคือ ${slotTime} น.):
+            const systemPrompt = `คุณคือ "Antigravity AI Pro 5.0" สมองกลอัจฉริยะระดับผู้เชี่ยวชาญด้านเกษตรแม่นยำ (Precision Agriculture), วิทยาศาสตร์ข้อมูล (Data Science), สถิติวิจัย และความรู้รอบตัวทุกแขนง ประจำเว็บไซต์ "ติดตามการเติบโตพืชผล (AgriGrow Nakhon Phanom)"
+แนวทางการตอบ:
+1. ตอบอย่างฉลาดลึกซึ้ง แม่นยำ มีเหตุผลรองรับ และจัดรูปแบบให้อ่านง่ายด้วยหัวข้อชัดเจน, ตาราง Markdown (เมื่อเปรียบเทียบข้อมูล), สูตรคำนวณ และข้อเสนอแนะที่นำไปใช้ได้จริง
+2. ข้อมูลจริงของแปลงปลูกในระบบขณะนี้ (${plots.length} แปลง, ความสูงเฉลี่ย X̄ = ${stHeight.mean.toFixed(2)} ซม., S.D. = ${stHeight.sd.toFixed(2)}, รอบเวลาทุก 30 นาทีล่าสุดคือ ${slotTime} น.):
 ${farmContext}
-3. ความสามารถพิเศษในการควบคุมและแก้ไขเว็บไซต์แบบเรียลไทม์: หากผู้ใช้สั่งให้แก้ไขหน้าเว็บ หรือควบคุมฟาร์ม ให้คุณใส่แท็ก JSON คำสั่งไว้ท้ายคำตอบในรูปแบบ <AGY_ACTION>{"setTitle":"..."}</AGY_ACTION> ได้ตามคีย์ต่อไปนี้:
-- เปลี่ยนชื่อเว็บ: <AGY_ACTION>{"setTitle":"ชื่อใหม่"}</AGY_ACTION>
-- เปลี่ยนคำอธิบายเว็บ: <AGY_ACTION>{"setSubtitle":"คำอธิบายใหม่"}</AGY_ACTION>
-- เปลี่ยนแบนเนอร์ประกาศ: <AGY_ACTION>{"setBanner":"ข้อความประกาศ"}</AGY_ACTION>
-- เปิด/ปิดโหมดมืด: <AGY_ACTION>{"darkMode":true}</AGY_ACTION>
-- เปลี่ยนสีธีม (emerald, amber, ocean, violet, rose): <AGY_ACTION>{"theme":"violet"}</AGY_ACTION>
-- แก้ไขข้อมูลต้นไม้ (field: heightCm, moisture, leafCount, soilPh, name): <AGY_ACTION>{"updatePlotId":1,"field":"heightCm","value":75}</AGY_ACTION>
+3. หากผู้ใช้ต้องการไฟล์หรือสั่งควบคุมฟาร์ม ให้แนบแท็กคำสั่งไว้ท้ายคำตอบได้:
+- ดาวน์โหลด Excel: <AGY_ACTION>{"exportExcel":"telemetry30m"}</AGY_ACTION>
+- ดาวน์โหลด Word: <AGY_ACTION>{"exportWord":"executive"}</AGY_ACTION>
+- ออกรายงานทางการ: <AGY_ACTION>{"generateReport":"executive"}</AGY_ACTION>
 - เพิ่มต้นไม้ใหม่: <AGY_ACTION>{"addTree":"กล้าไม้พะยูง"}</AGY_ACTION>
-- เปิดน้ำทุกแปลง: <AGY_ACTION>{"openWater":true}</AGY_ACTION>
-- ออกรายงานทางการ: <AGY_ACTION>{"generateReport":"executive"}</AGY_ACTION>`;
+- เปิดน้ำทุกแปลง: <AGY_ACTION>{"openWater":true}</AGY_ACTION>`;
 
             const llmReply = await callAntigravityCloudLLM(question, systemPrompt);
             if (llmReply) {
                 isAiTyping = false;
                 const actionBannerHtml = executeAgenticJsonActions(llmReply);
                 const formattedBody = formatMarkdownToHtml(llmReply);
-                const combinedHtml = actionBannerHtml + formattedBody;
+                const quickExportFooter = `
+                    <div class="mt-3 pt-2 border-t border-slate-100 flex flex-wrap gap-1.5">
+                        <button type="button" onclick="exportAiExcelFile('telemetry30m')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📊 ส่งออกข้อมูลเป็น Excel (.xls)</button>
+                        <button type="button" onclick="downloadAiReportWordDoc('executive')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">📘 ส่งออกรายงานเป็น Word (.doc)</button>
+                    </div>
+                `;
+                const combinedHtml = actionBannerHtml + formattedBody + quickExportFooter;
                 aiChatHistory.push({
                     role: 'ai',
                     time: getCurrentTimeShort(),
